@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management</title>
+    <link rel="stylesheet" href="inventory.css">
+    <script src="inventory.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Inventory Management</h1>
+
+        <!-- Form to add new product -->
+        <form id="productForm">
+            <label for="Product-name">Po Number:</label>
+            <input type="text" id="product-name" name="product-name" required>
+
+            <label for="quantity">Original Quantity:</label>
+            <input type="number" id="quantity" name="quantity" required>
+
+            <label for="received-quantity">Received Quantity:</label>
+            <input type="number" id="received-quantity" name="received-quantity" required>
+
+            <label for="location">Warehouse Location:</label>
+            <input type="text" id="location" name="location" required>
+
+                <input type="submit" value="Add Product" class="submit-button">
+
+        </form>
+
+        <!-- Search input field -->
+        <input type="text" id="searchInput" placeholder="Search by product name">
+
+        <!-- Inventory table -->
+        <table id="inventoryTable">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Location</th>
+                    <th>Received Quantity</th>
+                    <th>Remaining Quantity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be added dynamically here -->
+            </tbody>
+        </table>
+
+        <!-- Export button -->
+        <button onclick="exportToExcel()">Export to Excel</button>
+    </div>
+</body>
+</html>

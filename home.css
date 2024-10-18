@@ -1,0 +1,183 @@
+/* تحسين التصميم العام للصفحة */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.8); /* خلفية بيضاء مع شفافية */
+    position: relative; /* ضروري لوضع الخلفية بشكل صحيح */
+    overflow: hidden; /* لمنع تمرير الصفحة */
+}
+
+/* إضافة الخلفية */
+.main-container {
+    text-align: center;
+    position: relative; /* لضمان أن العناصر النسبية تظهر بشكل صحيح */
+    z-index: 1; /* تأكد من أن المحتوى فوق الخلفية */
+    padding: 20px; /* لإضافة مساحة داخلية */
+    background: transparent; /* تأكد من عدم وجود لون خلفية */
+    border-radius: 10px; /* لجعل الحواف مستديرة */
+}
+
+/* إضافة الخلفية */
+.main-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 110%;
+    height: 110%;
+    background-image: url('file:///C:/Users/tasneem.m.RAMATEXGROUP/Music/test/vna.png'); /* تأكد من صحة المسار */
+    background-size: cover; /* لجعل الصورة تغطي كامل الحاوية */
+    background-repeat: no-repeat; /* لمنع تكرار الصورة */
+    background-position: center; /* لمركز الصورة */
+    opacity: 0.5; /* تحديد الشفافية */
+    z-index: -1; /* لضمان أن الخلفية تحت المحتوى */
+    animation: moveBackground 8s linear infinite; /* إضافة حركة للخلفية */
+}
+
+@keyframes moveBackground {
+    from {
+        background-position: 0 0; /* البداية من الزاوية العليا اليسرى */
+    }
+    to {
+        background-position: 100% 0; /* الحركة أفقيًا نحو اليمين */
+    }
+}
+header h1 {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 20px;
+    animation: headerSlideIn 0.9s ease forwards; /* تطبيق التأثير */
+}
+
+/* تأثير حركة العنوان عند التحميل */
+@keyframes headerSlideIn {
+    from {
+        transform: translateY(-50px); /* بداية الحركة من الأعلى */
+        opacity: 0; /* الشفافية 0 عند البداية */
+    }
+    to {
+        transform: translateY(0); /* العودة إلى الموضع الأصلي */
+        opacity: 1; /* الشفافية 1 عند النهاية */
+    }
+}
+
+/* تصميم قسم المزايا */
+.features {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.features h2 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+}
+
+
+
+/* تصميم الحاوية والنماذج */
+.form-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.form-container:hover {
+    box-shadow: 
+        0 12px 24px rgba(76, 175, 80, 0.4),  /* ظل أخضر */
+        0 20px 40px rgba(76, 175, 80, 0.5),  /* ظل أخضر إضافي */
+        0 25px 50px rgba(255, 0, 0, 0.4),    /* ظل أحمر */
+        0 30px 60px rgba(255, 0, 0, 0.6);    /* ظل أحمر إضافي */
+    animation: glowing 6s infinite ease-in-out; /* تأثير توهج متتابع بطيء */
+}
+
+@keyframes glowing {
+    0% {
+        box-shadow: 0 0 20px rgba(76, 175, 80, 1), 0 0 40px rgba(76, 175, 80, 1); /* توهج أخضر مشع */
+    }
+    50% {
+        box-shadow: 0 0 0 rgba(76, 175, 80, 0), 0 0 0 rgba(76, 175, 80, 0); /* يختفي التوهج ببطء */
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(255, 0, 0, 1), 0 0 40px rgba(255, 0, 0, 1); /* توهج أحمر مشع */
+    }
+}
+
+.hidden {
+    display: none;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.5s ease;
+}
+
+.form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form input {
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: border 0.3s ease;
+}
+
+.form input:focus {
+    border-color: #4CAF50;
+    outline: none; /* إزالة الحدود الافتراضية عند التركيز */
+}
+
+.form button {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form button:hover {
+    background-color: #45a049;
+}
+
+.form p {
+    text-align: center;
+}
+
+.form a {
+    color: #4CAF50;
+    cursor: pointer;
+}
+
+/* إخفاء نموذج التسجيل عند تحميل الصفحة */
+#registerForm {
+    display: none;
+}
+
+/* تأثير الحركة عند الدخول */
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

@@ -1,0 +1,224 @@
+/* تحسين المظهر العام للنموذج */
+form {
+    width: 50%; /* حجم النموذج 50% من الصفحة */
+    margin: 30px auto; /* توسيط النموذج */
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    transition: box-shadow 0.3s ease;
+    
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0; 
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1; 
+    }
+}
+
+form:hover {
+    box-shadow: 
+        0 12px 24px rgba(76, 175, 80, 0.4),  /* ظل أخضر */
+        0 20px 40px rgba(76, 175, 80, 0.5),  /* ظل أخضر إضافي */
+        0 25px 50px rgba(255, 0, 0, 0.4),    /* ظل أحمر */
+        0 30px 60px rgba(255, 0, 0, 0.6);    /* ظل أحمر إضافي */
+        animation: glowing 6s infinite ease-in-out; /* تأثير توهج متتابع بطيء */
+
+}
+
+@keyframes glowing {
+    0% {
+        box-shadow: 0 0 20px rgba(76, 175, 80, 1), 0 0 40px rgba(76, 175, 80, 1); /* توهج أخضر مشع */
+    }
+    50% {
+        box-shadow: 0 0 0 rgba(76, 175, 80, 0), 0 0 0 rgba(76, 175, 80, 0); /* يختفي التوهج ببطء */
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(255, 0, 0, 1), 0 0 40px rgba(255, 0, 0, 1); /* توهج أحمر مشع */
+    }
+}
+/* تحسين تنسيق النصوص */
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 18px;
+    text-align: center; 
+    font-weight: bold;
+    color: #333;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+label:hover {
+    color: #4CAF50; 
+    transform: scale(1.05); 
+}
+
+/* تحسين مظهر الجدول */
+#inventoryTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#inventoryTable th, #inventoryTable td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* تنسيق رأس الجدول */
+#inventoryTable th {
+    background-color: #4CAF50;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* تنسيق خلايا الجدول */
+#inventoryTable td {
+    background-color: #f9f9f9;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#inventoryTable tr:hover td {
+    background-color: #e1ffe1; 
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* إضافة تباين بين الصفوف */
+#inventoryTable tr:nth-child(even) {
+    background-color: #f2f2f2; 
+}
+
+/* تحسين النصوص */
+#inventoryTable th, #inventoryTable td {
+    font-family: Arial, sans-serif; 
+    font-size: 14px; 
+}
+
+/* تحسين صناديق الإدخال */
+input[type="text"], input[type="number"], select {
+    width: 50%; 
+    padding: 10px;
+    margin: 8px auto; 
+    display: block;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease; 
+}
+
+input[type="text"]:focus, input[type="number"]:focus {
+    border-color: #4CAF50; 
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+    outline: none; 
+}
+
+/* تنسيق الأزرار */
+input[type="submit"].submit-button {
+    position: relative; /* جعل الزر في موضع نسبي */
+    width: 50%; /* حجم الزر 50% */
+    padding: 12px;
+    margin: 20px auto;
+    display: block;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease; 
+}
+
+input[type="submit"].submit-button:hover {
+    background-color: #45a049; 
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); 
+    transform: scale(1.05); 
+}
+
+input[type="submit"].submit-button:active {
+    transform: scale(0.95); 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+}
+
+/* تحسين الأزرار الإضافية */
+button.action-button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 10px; 
+    cursor: pointer;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+button.action-button:hover {
+    background-color: #45a049;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* تحسين صندوق البحث */
+#searchInput {
+    padding: 10px;
+    margin-top: 10px;
+    width: 300px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* تحسين العناوين بتأثيرات ثلاثية الأبعاد وتدرج ألوان متغير */
+h1 {
+    text-align: center;
+    color: #4CAF50; /* لون افتراضي للنص */
+    font-size: 36px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    background: linear-gradient(45deg, #4CAF50, #ff5722, #2196F3, #ffeb3b); /* تدرج ألوان */
+    background-size: 400% 400%; /* حجم الخلفية */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; /* تطبيق الخلفية على النص */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2), 
+                 0 0 10px rgba(76, 175, 80, 0.6), 
+                 0 0 20px rgba(76, 175, 80, 0.4);
+    transition: transform 0.3s ease, text-shadow 0.3s ease;
+}
+
+h1:hover {
+    transform: scale(1.05); /* تكبير النص قليلاً عند التحويم */
+    animation: colorChange 3s ease infinite; /* حركة تغير الألوان */
+    text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3), 
+                 0 0 20px rgba(76, 175, 80, 0.7), 
+                 0 0 30px rgba(76, 175, 80, 0.6);
+}
+
+/* تحريك تدرج الألوان */
+@keyframes colorChange {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
