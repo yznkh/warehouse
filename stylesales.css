@@ -1,0 +1,62 @@
+/* شريط التنقل */
+nav ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: space-around;
+    background-color: #333;
+    padding: 10px;
+}
+
+nav ul li {
+    margin: 0;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav ul li a:hover {
+    color: #ffcc00;
+}
+
+/* تحسين الأقسام */
+.intro, .features, .cta, .contact {
+    margin: 20px;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.feature-card {
+    display: inline-block;
+    margin: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 30%;
+    transition: transform 0.3s;
+}
+
+.feature-card:hover {
+    transform: scale(1.05);
+}
+
+.cta button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 10px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.cta button:hover {
+    background-color: #218838;
+    transform: scale(1.1);
+}
