@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="inventory.css">
     <script src="inventory.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' https://cdnjs.cloudflare.com; img-src 'self'; connect-src 'self'; font-src 'self'; frame-src 'none';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' https://cdnjs.cloudflare.com; img-src 'self'; connect-src 'self'; font-src 'self'; frame-src 'none';">
 </head>
 <body>
     <div class="container">
@@ -15,20 +15,19 @@
 
         <!-- Form to add new product -->
         <form id="productForm">
-            <label for="Product-name">Po Number:</label>
-            <input type="text" id="product-name" name="product-name" required>
+            <label for="product-name">Po Number:</label>
+            <input type="text" id="product-name" name="product-name" required maxlength="50" pattern="[A-Za-z0-9\s]+" title="Only alphanumeric characters and spaces are allowed.">
 
             <label for="quantity">Original Quantity:</label>
-            <input type="number" id="quantity" name="quantity" required>
+            <input type="number" id="quantity" name="quantity" required min="1" max="1000" title="Enter a quantity between 1 and 1000.">
 
             <label for="received-quantity">Received Quantity:</label>
-            <input type="number" id="received-quantity" name="received-quantity" required>
+            <input type="number" id="received-quantity" name="received-quantity" required min="0" max="1000" title="Enter a received quantity between 0 and 1000.">
 
             <label for="location">Warehouse Location:</label>
-            <input type="text" id="location" name="location" required>
+            <input type="text" id="location" name="location" required maxlength="100" pattern="[A-Za-z0-9\s]+" title="Only alphanumeric characters and spaces are allowed.">
 
-                <input type="submit" value="Add Product" class="submit-button">
-
+            <input type="submit" value="Add Product" class="submit-button">
         </form>
 
         <!-- Search input field -->
