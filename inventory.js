@@ -1,4 +1,5 @@
 // حفظ البيانات في localStorage
+// Save data to localStorage
 function saveToLocalStorage() {
     const table = document.getElementById("inventoryTable").getElementsByTagName("tbody")[0];
     const rows = table.getElementsByTagName("tr");
@@ -20,10 +21,17 @@ function saveToLocalStorage() {
 }
 
 // استعادة البيانات من localStorage
+// Load data from localStorage
 function loadFromLocalStorage() {
-    const products = JSON.parse(localStorage.getItem("products")) || [];
+    let products = [];
+    try {
+        products = JSON.parse(localStorage.getItem("products")) || [];
+    } catch (e) {
+        console.error("Error parsing localStorage data: ", e);
+    }
+
     const table = document.getElementById("inventoryTable").getElementsByTagName("tbody")[0];
-    table.innerHTML = ""; // مسح البيانات القديمة
+    table.innerHTML = ""; // Clear old data
 
     products.forEach(product => {
         const newRow = table.insertRow();
@@ -34,14 +42,15 @@ function loadFromLocalStorage() {
             <td>${product.receivedQuantity}</td>
             <td>${product.remainingQuantity}</td>
             <td>
-                <button class="action-button" onclick="editRow(this)">تعديل</button>
-                <button class="action-button" onclick="deleteRow(this)">حذف</button>
+                <button class="action-button" onclick="editRow(this)">Edit</button>
+                <button class="action-button" onclick="deleteRow(this)">Delete</button>
             </td>
         `;
     });
 }
 
 // دالة لتعديل صف المنتج
+// Function to edit a product row
 function editRow(button) {
     const row = button.parentNode.parentNode;
     const cells = row.getElementsByTagName("td");
@@ -59,15 +68,18 @@ function editRow(button) {
 }
 
 // دالة لحذف صف المنتج
+// Function to delete a product row
 function deleteRow(button) {
     const row = button.parentNode.parentNode;
     row.parentNode.removeChild(row);
 
-    // حفظ التحديثات إلى localStorage
+    // Save updates to localStorage
     saveToLocalStorage();
 }
 
+
 // دالة للبحث عن المنتجات في الجدول
+// Search function
 document.getElementById("searchInput").addEventListener("input", function() {
     const input = document.getElementById("searchInput").value.toLowerCase();
     const table = document.getElementById("inventoryTable").getElementsByTagName("tbody")[0];
@@ -100,18 +112,44 @@ function exportToExcel() {
     XLSX.writeFile(workbook, "inventory.xlsx");
 }
 
-// إضافة حدث عند تقديم النموذج لإضافة منتج جديد
+// Add new product event
 document.getElementById("productForm").addEventListener("submit", function(event) {
     event.preventDefault();
+    const referer = document.referrer;
+    if (!referer || !referer.includes(window.location.hostname)) {
+        alert("Invalid request source. Potential CSRF detected.");
+        event.preventDefault();}
+    
+    const productName = document.getElementById("product-name").value.trim();
+    const quantity = document.getElementById("quantity").value.trim();
+    const receivedQuantity = document.getElementById("received-quantity").value.trim();
+    const location = document.getElementById("location").value.trim();
 
-    const productName = document.getElementById("product-name").value;
-    const quantity = document.getElementById("quantity").value;
-    const receivedQuantity = document.getElementById("received-quantity").value;
-    const location = document.getElementById("location").value;
-
+    // Check for duplicate product names
     const table = document.getElementById("inventoryTable").getElementsByTagName("tbody")[0];
-    const newRow = table.insertRow();
+    const rows = table.getElementsByTagName("tr");
+    for (let i = 0; i < rows.length; i++) {
+        if (rows[i].getElementsByTagName("td")[0].innerText.toLowerCase() === productName.toLowerCase()) {
+            alert("Product with this name already exists.");
+            return;
+        }
+    }
 
+    // Check inputs
+    const alphaNumericRegex = /^[A-Za-z0-9\s]+$/;
+    if (!alphaNumericRegex.test(productName) || !alphaNumericRegex.test(location)) {
+        alert("Product Name and Location must contain only alphanumeric characters and spaces.");
+        event.preventDefault();
+        return;
+    }
+
+    if (Number(receivedQuantity) > Number(quantity)) {
+        alert("Received quantity cannot exceed original quantity.");
+        event.preventDefault();
+        return;
+    }
+
+    const newRow = table.insertRow();
     newRow.innerHTML = `
         <td>${productName}</td>
         <td>${quantity}</td>
@@ -119,19 +157,35 @@ document.getElementById("productForm").addEventListener("submit", function(event
         <td>${receivedQuantity}</td>
         <td>${quantity - receivedQuantity}</td>
         <td>
-            <button class="action-button" onclick="editRow(this)">تعديل</button>
-            <button class="action-button" onclick="deleteRow(this)">حذف</button>
+            <button class="action-button" onclick="editRow(this)">Edit</button>
+            <button class="action-button" onclick="deleteRow(this)">Delete</button>
         </td>
     `;
 
-    // إعادة تعيين النموذج
     document.getElementById("productForm").reset();
-
-    // حفظ البيانات إلى localStorage
     saveToLocalStorage();
 });
 
-// تحميل البيانات من localStorage عند تحميل الصفحة
+// Load data from localStorage on page load
 window.onload = function() {
     loadFromLocalStorage();
 };
+
+// Additional validation on form submission
+document.getElementById("productForm").addEventListener("submit", function(event) {
+    const productName = document.getElementById("product-name").value.trim();
+    const quantity = document.getElementById("quantity").value.trim();
+    const receivedQuantity = document.getElementById("received-quantity").value.trim();
+    const location = document.getElementById("location").value.trim();
+
+    const alphaNumericRegex = /^[A-Za-z0-9\s]+$/;
+    if (!alphaNumericRegex.test(productName) || !alphaNumericRegex.test(location)) {
+        alert("Product Name and Location must contain only alphanumeric characters and spaces.");
+        event.preventDefault(); // Prevent form submission
+    }
+
+    if (Number(receivedQuantity) > Number(quantity)) {
+        alert("Received quantity cannot exceed original quantity.");
+        event.preventDefault();
+    }
+});
