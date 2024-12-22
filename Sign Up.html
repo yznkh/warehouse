@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="Sign Up.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+    <script defer src="Sign Up.js"></script>
+</head>
+<body>
+<div class="container">
+        <h1>Sign Up</h1>
+
+        <!-- Form to add new employee -->
+        <form id="Signupform">
+            <label for="Employeename">Employee Name:</label>
+            <input 
+                            type="text" 
+                            id="Employeename" 
+                            name="Employeename" 
+                            required 
+                            maxlength="50" 
+                            pattern="[A-Za-z\s]+" 
+                            title="Name must contain only letters (A-Z or a-z), no numbers or symbols."
+             >
+
+            <label for="Email">Email</label>
+            <input     
+                                type="email" 
+                                id="Email" 
+                                name="Email" 
+                                required 
+                                maxlength="100" 
+pattern="[a-z0-9._%+\-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                                title="Enter a valid email address, e.g., example@example.com."
+                      >
+
+            <label for="PhoneNumber">Phone Number:</label>
+            <input    
+                                type="number" 
+                                id="PhoneNumber" 
+                                name="PhoneNumber" 
+                                required 
+                                maxlength="15" 
+                                pattern="\d{1,15}" 
+                                title="Enter a valid phone number with up to 15 digits."
+                        >
+
+            <label for="Password">Password:</label>
+            <input 
+                            type="Password" id="Password" 
+                            name="Password" required 
+                            maxlength="50" 
+                            pattern="[A-Za-z0-9\s]+" title="Only alphanumeric characters and spaces are allowed."
+                        >
+
+            <label for="RePassword">Re-Password:</label>
+            <input 
+                            type="Password" 
+                            id="RePassword" 
+                            name="RePassword" required 
+                            maxlength="50" 
+                            pattern="[A-Za-z0-9\s]+" title="Only alphanumeric characters and spaces are allowed."
+                         >
+
+            <input type="submit" value="Sign-UP" class="submit-button">
+        </form>
+
+    </div>
+</body>
+</html>
