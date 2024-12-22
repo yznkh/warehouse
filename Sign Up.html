@@ -38,7 +38,7 @@ pattern="[a-z0-9._%+\-]+@[a-z0-9.-]+\.[a-z]{2,}$"
 
             <label for="PhoneNumber">Phone Number:</label>
             <input    
-                                type="number" 
+                                type="text" 
                                 id="PhoneNumber" 
                                 name="PhoneNumber" 
                                 required 
@@ -52,7 +52,7 @@ pattern="[a-z0-9._%+\-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                             type="Password" id="Password" 
                             name="Password" required 
                             maxlength="50" 
-                            pattern="[A-Za-z0-9\s]+" title="Only alphanumeric characters and spaces are allowed."
+                            pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" title="Only alphanumeric characters and spaces are allowed."
                         >
 
             <label for="RePassword">Re-Password:</label>
@@ -61,7 +61,8 @@ pattern="[a-z0-9._%+\-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                             id="RePassword" 
                             name="RePassword" required 
                             maxlength="50" 
-                            pattern="[A-Za-z0-9\s]+" title="Only alphanumeric characters and spaces are allowed."
+                           pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
+ title="Only alphanumeric characters and spaces are allowed."
                          >
 
             <input type="submit" value="Sign-UP" class="submit-button">
