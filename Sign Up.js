@@ -9,20 +9,21 @@ document.getElementById("SignUpForm").addEventListener("submit", function(event)
 
     // Validate if password and confirm password match
     if (password !== confirmPassword) {
-        alert("Passwords do not match.");
+        alert("كلمة المرور غير متطابقة.");
         return;
     }
 
-    // Validate the email and password (can be expanded based on your security needs)
-    const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+    // Validate email format (only allowing .com domain)
+    const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.(com)$/i;
     if (!emailRegex.test(email)) {
-        alert("Please enter a valid email address.");
+        alert("يرجى إدخال بريد إلكتروني صالح ينتهي بـ .com.");
         return;
     }
 
+    // Validate password strength (must contain both letters and numbers and at least 8 characters)
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
     if (!passwordRegex.test(password)) {
-        alert("Password must be at least 8 characters long and contain both letters and numbers.");
+        alert("يجب أن تحتوي كلمة المرور على حروف وأرقام، وألا تقل عن 8 أحرف.");
         return;
     }
 
@@ -47,11 +48,11 @@ document.getElementById("SignUpForm").addEventListener("submit", function(event)
     .then(response => response.json())
     .then(data => {
         console.log('Success:', data);
-        alert("Sign Up successful! Please log in.");
+        alert("تم التسجيل بنجاح! الآن يمكنك تسجيل الدخول.");
         window.location.href = 'login.html'; // Redirect to login page after successful sign up
     })
     .catch((error) => {
         console.error('Error:', error);
-        alert("There was an error while signing up. Please try again.");
+        alert("حدث خطأ أثناء التسجيل، يرجى المحاولة مرة أخرى.");
     });
 });
