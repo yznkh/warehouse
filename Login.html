@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none';">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="Sign Up.css">
+    <script defer src="Login.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Login</h1>
+
+        <!-- Form to login -->
+        <form id="LoginForm">
+            <label for="Email">Email:</label>
+            <input 
+                type="email" 
+                id="Email" 
+                name="Email" 
+                required 
+                maxlength="100" 
+                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                title="Enter a valid email address, e.g., example@example.com."
+            >
+
+            <label for="Password">Password:</label>
+            <input 
+                type="Password" 
+                id="Password" 
+                name="Password" 
+                required 
+                maxlength="50"
+                pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" 
+                title="Only alphanumeric characters and spaces are allowed."
+            >
+
+            <input type="submit" value="Login" class="submit-button">
+        </form>
+    </div>
+</body>
+</html>
