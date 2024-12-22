@@ -21,7 +21,7 @@ document.getElementById("SignUpForm").addEventListener("submit", function(event)
     }
 
     // Validate password strength (must contain both letters and numbers and at least 8 characters)
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$/;
     if (!passwordRegex.test(password)) {
         alert("يجب أن تحتوي كلمة المرور على حروف وأرقام، وألا تقل عن 8 أحرف.");
         return;
@@ -49,7 +49,7 @@ document.getElementById("SignUpForm").addEventListener("submit", function(event)
     .then(data => {
         console.log('Success:', data);
         alert("تم التسجيل بنجاح! الآن يمكنك تسجيل الدخول.");
-        window.location.href = 'login.html'; // Redirect to login page after successful sign up
+        window.location.href = 'Login.html'; // Redirect to login page after successful sign up
     })
     .catch((error) => {
         console.error('Error:', error);
