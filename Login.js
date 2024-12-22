@@ -4,21 +4,34 @@ document.getElementById("LoginForm").addEventListener("submit", function(event) 
     const email = document.getElementById("Email").value.trim();
     const password = document.getElementById("Password").value.trim();
 
-    // Email Validation
-    const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
-    if (!emailRegex.test(email)) {
-        alert("Enter a valid email address, e.g., example@example.com.");
-        return;
-    }
+    // Fetch the user data from JSONBin
+    fetch('https://api.jsonbin.io/v3/b/67689c24ad19ca34f8df6ddf', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Master-Key': '$2a$10$HqM1bdrr41131InBzameUOsGOzVlBP5j278TTKfP.OSQWn6daWmFi',
+            'X-Bin-Private': 'true'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        let userFound = false;
 
-    // Password Validation
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    if (!passwordRegex.test(password)) {
-        alert("Password must be at least 8 characters and contain both letters and numbers.");
-        return;
-    }
+        // Iterate through stored users to check for email and password match
+        data.record.forEach(user => {
+            if (user.email === email && user.password === password) {
+                userFound = true;
+                alert("تم تسجيل الدخول بنجاح!");
+                window.location.href = 'inventory.html'; // Redirect to inventory page
+            }
+        });
 
-    // If validation passes, simulate login process (in real case, you'll compare with your data)
-    // For now, we will simply redirect to the inventory page.
-    window.location.href = 'inventory.html';
+        if (!userFound) {
+            alert("البريد الإلكتروني أو كلمة المرور غير صحيحة.");
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        alert("حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة لاحقًا.");
+    });
 });
