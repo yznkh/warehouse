@@ -1,3 +1,8 @@
+function sanitizeInput(input) {
+    return input.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+
 document.getElementById("Signupform").addEventListener("submit", function(event) {
     event.preventDefault();
 
