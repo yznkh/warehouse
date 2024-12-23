@@ -15,17 +15,12 @@ document.getElementById("LoginForm").addEventListener("submit", function(event) 
     })
     .then(response => response.json())
     .then(data => {
-        let userFound = false;
-
-        // التحقق من البريد الإلكتروني وكلمة المرور
-        data.record.forEach(user => {
-            if (user.email === email && user.password === password) {
-                userFound = true;
-                window.location.href = 'inventory.html'; // الانتقال مباشرة إلى صفحة inventory
-            }
-        });
-
-        if (!userFound) {
+        // تحقق من مطابقة البريد الإلكتروني وكلمة المرور
+        const user = data.record;  // هذا المستخدم الوحيد في JSONBin
+        if (user.email === email && user.password === password) {
+            alert("تم تسجيل الدخول بنجاح!");
+            window.location.href = 'inventory.html'; // تحويل إلى صفحة المخزون
+        } else {
             alert("البريد الإلكتروني أو كلمة المرور غير صحيحة.");
         }
     })
