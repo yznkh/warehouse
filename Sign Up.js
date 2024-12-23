@@ -1,5 +1,10 @@
-document.getElementById("SignUpForm").addEventListener("submit", function(event) {
-    event.preventDefault();  // منع إعادة تحميل الصفحة
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+
+// Initialize Firebase Database
+const db = getDatabase();
+
+document.getElementById("SignUpForm").addEventListener("submit", function (event) {
+    event.preventDefault();
 
     const name = document.getElementById("Name").value.trim();
     const email = document.getElementById("Email").value.trim();
@@ -27,32 +32,20 @@ document.getElementById("SignUpForm").addEventListener("submit", function(event)
         return;
     }
 
-    // بيانات المستخدم لإرسالها
-    const userData = {
+    // بيانات المستخدم
+    const userId = email.replace(/[.#$[\]]/g, "_"); // استبدال الأحرف الغير مدعومة
+    set(ref(db, 'users/' + userId), {
         name: name,
         email: email,
         phoneNumber: phoneNumber,
-        password: password // لا حاجة لإرسال ConfirmPassword
-    };
-
-    // إرسال البيانات إلى JSONBin باستخدام fetch
-    fetch('https://api.jsonbin.io/v3/b/6768b123e41b4d34e469bd21', {
-        method: 'PUT',  // استخدم 'PUT' لتحديث البيانات إذا كانت موجودة
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Master-Key': '$2a$10$HqM1bdrr41131InBzameUOsGOzVlBP5j278TTKfP.OSQWn6daWmFi',
-            'X-Bin-Private': 'true'
-        },
-        body: JSON.stringify(userData)
+        password: password
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log('تم إرسال البيانات بنجاح:', data);
-        alert("تم التسجيل بنجاح! يرجى تسجيل الدخول.");
-        window.location.href = 'Login.html'; // التوجيه إلى صفحة تسجيل الدخول
-    })
-    .catch((error) => {
-        console.error('حدث خطأ:', error);
-        alert("حدث خطأ أثناء التسجيل. يرجى المحاولة لاحقًا.");
-    });
+        .then(() => {
+            alert("تم التسجيل بنجاح! يرجى تسجيل الدخول.");
+            window.location.href = 'Login.html'; // التوجيه إلى صفحة تسجيل الدخول
+        })
+        .catch((error) => {
+            console.error("حدث خطأ أثناء التسجيل:", error);
+            alert("حدث خطأ أثناء التسجيل. يرجى المحاولة لاحقًا.");
+        });
 });
