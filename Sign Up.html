@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'; frame-src 'none';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self';"> 
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
     <link rel="stylesheet" href="Sign Up.css">
-    <script defer src="SignUp.js"></script>
+    <script defer src="Sign Up.js"></script>
 </head>
 <body>
     <div class="container">
@@ -26,7 +26,7 @@
             <input type="number" id="PhoneNumber" name="PhoneNumber" required maxlength="15" pattern="^\d{10,15}$" title="Enter a valid phone number.">
 
             <label for="Password">Password:</label>
-            <input type="password" id="Password" name="Password" required maxlength="50" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" title="Password must be at least 8 characters and contain both letters and numbers.">
+            <input type="password" id="Password" name="Password" required maxlength="50" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$" title="Password must be at least 8 characters and contain both letters and numbers.">
 
             <label for="ConfirmPassword">Confirm Password:</label>
             <input type="password" id="ConfirmPassword" name="ConfirmPassword" required maxlength="50">
