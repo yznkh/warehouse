@@ -5,7 +5,7 @@ document.getElementById("LoginForm").addEventListener("submit", function(event) 
     const password = document.getElementById("Password").value.trim();
 
     // جلب بيانات المستخدم من JSONBin
-    fetch('https://api.jsonbin.io/v3/b/67689c24ad19ca34f8df6ddf', {
+    fetch('https://api.jsonbin.io/v3/b/6768b123e41b4d34e469bd21', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
