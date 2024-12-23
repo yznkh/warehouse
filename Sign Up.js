@@ -21,7 +21,7 @@ document.getElementById("SignUpForm").addEventListener("submit", function(event)
     }
 
     // تحقق من كلمة المرور
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
     if (!passwordRegex.test(password)) {
         alert("يجب أن تكون كلمة المرور مكونة من 8 أحرف على الأقل وتشمل حروفًا وأرقامًا.");
         return;
@@ -29,15 +29,20 @@ document.getElementById("SignUpForm").addEventListener("submit", function(event)
 
     // بيانات المستخدم لإرسالها
     const userData = {
-        name: name,
-        email: email,
-        phoneNumber: phoneNumber,
-        password: password // يجب عليك تشفير كلمة المرور قبل إرسالها
+        "users": [
+            {
+                "name": name,
+                "email": email,
+                "phoneNumber": phoneNumber,
+                "password": password,  // يجب عليك تشفير كلمة المرور قبل إرسالها
+                "ConfirmPassword" : ConfirmPassword
+            }
+        ]
     };
 
     // إرسال البيانات إلى JSONBin باستخدام fetch
-    fetch('https://api.jsonbin.io/v3/b/67689c24ad19ca34f8df6ddf', {
-        method: 'POST', // استخدم POST بدلاً من PUT لإضافة بيانات جديدة
+    fetch('https://api.jsonbin.io/v3/b/6768b123e41b4d34e469bd21', {
+        method: 'PUT',  // استخدم 'PUT' لتحديث البيانات إذا كانت موجودة
         headers: {
             'Content-Type': 'application/json',
             'X-Master-Key': '$2a$10$HqM1bdrr41131InBzameUOsGOzVlBP5j278TTKfP.OSQWn6daWmFi',
