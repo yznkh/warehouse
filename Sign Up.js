@@ -49,7 +49,7 @@ document.getElementById("SignUpForm").addEventListener("submit", function(event)
     .then(data => {
         console.log('تم إرسال البيانات بنجاح:', data);
         alert("تم التسجيل بنجاح! يرجى تسجيل الدخول.");
-        window.location.href = 'login.html'; // التوجيه إلى صفحة تسجيل الدخول
+        window.location.href = 'Login.html'; // التوجيه إلى صفحة تسجيل الدخول
     })
     .catch((error) => {
         console.error('حدث خطأ:', error);
