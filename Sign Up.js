@@ -1,7 +1,19 @@
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+// Initialize Firebase App
+const firebaseConfig = {
+    apiKey: "AIzaSyCL42m42SqINcLOn8-1ldpxEKJnq6UlRHc",
+    authDomain: "leeninventory.firebaseapp.com",
+    projectId: "leeninventory",
+    storageBucket: "leeninventory.firebasestorage.app",
+    messagingSenderId: "1045771520492",
+    appId: "1:1045771520492:web:8d92e0c0c382d9881a58c9",
+    measurementId: "G-N1SDTWKTSB"
+};
 
-// Initialize Firebase Database
-const db = getDatabase();
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Initialize Database
+const db = firebase.database();
 
 document.getElementById("SignUpForm").addEventListener("submit", function (event) {
     event.preventDefault();
@@ -34,7 +46,7 @@ document.getElementById("SignUpForm").addEventListener("submit", function (event
 
     // بيانات المستخدم
     const userId = email.replace(/[.#$[\]]/g, "_"); // استبدال الأحرف الغير مدعومة
-    set(ref(db, 'users/' + userId), {
+    firebase.database().ref('users/' + userId).set({
         name: name,
         email: email,
         phoneNumber: phoneNumber,
