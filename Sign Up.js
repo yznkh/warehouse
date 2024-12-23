@@ -29,15 +29,10 @@ document.getElementById("SignUpForm").addEventListener("submit", function(event)
 
     // بيانات المستخدم لإرسالها
     const userData = {
-        "users": [
-            {
-                "name": name,
-                "email": email,
-                "phoneNumber": phoneNumber,
-                "password": password,  // يجب عليك تشفير كلمة المرور قبل إرسالها
-                "ConfirmPassword" : ConfirmPassword
-            }
-        ]
+        name: name,
+        email: email,
+        phoneNumber: phoneNumber,
+        password: password // لا حاجة لإرسال ConfirmPassword
     };
 
     // إرسال البيانات إلى JSONBin باستخدام fetch
