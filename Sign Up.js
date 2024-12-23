@@ -3,7 +3,7 @@ const firebaseConfig = {
     apiKey: "AIzaSyCL42m42SqINcLOn8-1ldpxEKJnq6UlRHc",
     authDomain: "leeninventory.firebaseapp.com",
     projectId: "leeninventory",
-    storageBucket: "leeninventory.firebasestorage.app",
+    storageBucket: "leeninventory.appspot.com",  // تعديل العنوان الخاطئ
     messagingSenderId: "1045771520492",
     appId: "1:1045771520492:web:8d92e0c0c382d9881a58c9",
     measurementId: "G-N1SDTWKTSB"
@@ -46,18 +46,18 @@ document.getElementById("SignUpForm").addEventListener("submit", function (event
 
     // بيانات المستخدم
     const userId = email.replace(/[.#$[\]]/g, "_"); // استبدال الأحرف الغير مدعومة
-    firebase.database().ref('users/' + userId).set({
+    db.ref('users/' + userId).set({
         name: name,
         email: email,
         phoneNumber: phoneNumber,
         password: password
     })
-        .then(() => {
-            alert("تم التسجيل بنجاح! يرجى تسجيل الدخول.");
-            window.location.href = 'Login.html'; // التوجيه إلى صفحة تسجيل الدخول
-        })
-        .catch((error) => {
-            console.error("حدث خطأ أثناء التسجيل:", error);
-            alert("حدث خطأ أثناء التسجيل. يرجى المحاولة لاحقًا.");
-        });
+    .then(() => {
+        alert("تم التسجيل بنجاح! يرجى تسجيل الدخول.");
+        window.location.href = 'Login.html'; // التوجيه إلى صفحة تسجيل الدخول
+    })
+    .catch((error) => {
+        console.error("حدث خطأ أثناء التسجيل:", error);
+        alert("حدث خطأ أثناء التسجيل. يرجى المحاولة لاحقًا.");
+    });
 });
