@@ -21,7 +21,7 @@ document.getElementById("SignUpForm").addEventListener("submit", function(event)
     }
 
     // تحقق من كلمة المرور
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$/;
     if (!passwordRegex.test(password)) {
         alert("يجب أن تكون كلمة المرور مكونة من 8 أحرف على الأقل وتشمل حروفًا وأرقامًا.");
         return;
