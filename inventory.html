@@ -13,7 +13,7 @@
         <h1>Inventory Management</h1>
 
         <!-- Form to add new product -->
-        <form id="productForm">
+        <form id="productForm" action="/submit_product" method="post">
             <label for="product-name">Po Number:</label>
             <input type="text" id="product-name" name="product-name" required maxlength="50" pattern="[A-Za-z0-9\s]+" title="Only alphanumeric characters and spaces are allowed.">
 
