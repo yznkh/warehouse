@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Education Sector SOC Survey | National Cybersecurity Center</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --ncsc-primary: #005f87;
+            --ncsc-secondary: #003d57;
+            --ncsc-accent: #f7931e;
+            --ncsc-light: #e6f4f9;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .ncsc-header {
+            background: linear-gradient(135deg, var(--ncsc-primary), var(--ncsc-secondary));
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .ncsc-logo {
+            height: 60px;
+            margin-right: 15px;
+        }
+        
+        .main-container {
+            max-width: 1000px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            margin: 0 auto 30px;
+            position: relative;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .survey-header {
+            background-color: var(--ncsc-primary);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .survey-body {
+            padding: 2.5rem;
+        }
+        
+        .section-card {
+            border-left: 4px solid var(--ncsc-accent);
+            background-color: white;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-title {
+            color: var(--ncsc-primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--ncsc-light);
+        }
+        
+        .question-group {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            transition: all 0.3s;
+        }
+        
+        .question-group:hover {
+            background-color: var(--ncsc-light);
+        }
+        
+        .question-label {
+            font-weight: 600;
+            color: var(--ncsc-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 4px;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--ncsc-accent);
+            box-shadow: 0 0 0 0.25rem rgba(247, 147, 30, 0.25);
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--ncsc-accent);
+            border-color: var(--ncsc-accent);
+        }
+        
+        .btn-ncsc {
+            background-color: var(--ncsc-accent);
+            color: white;
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(247, 147, 30, 0.3);
+        }
+        
+        .btn-ncsc:hover {
+            background-color: #e07d0a;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(247, 147, 30, 0.4);
+        }
+        
+        .progress-container {
+            background-color: #eee;
+            border-radius: 5px;
+            height: 10px;
+            margin-bottom: 2rem;
+        }
+        
+        .progress-bar {
+            background-color: var(--ncsc-accent);
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s;
+        }
+        
+        .other-specify {
+            margin-top: 0.5rem;
+            display: none;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .survey-body {
+                padding: 1.5rem;
+            }
+            
+            .section-card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with NCSC Logo -->
+    <header class="ncsc-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-2 text-center text-md-start">
+                    <img src="https://example.com/ncsc-logo.png" alt="National Cybersecurity Center" class="ncsc-logo">
+                </div>
+                <div class="col-md-10 text-center text-md-start">
+                    <h1 class="h4 mb-0">National Cybersecurity Center</h1>
+                    <p class="mb-0">Education Sector SOC Maturity Assessment</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Survey Container -->
+    <div class="main-container">
+        <div class="survey-header">
+            <h1 class="h2 mb-3">Education Sector SOC Survey</h1>
+            <p class="mb-0">Comprehensive assessment of SOC capabilities for educational institutions</p>
+        </div>
+        
+        <div class="survey-body">
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" id="surveyProgress" style="width: 0%"></div>
+            </div>
+            
+            <form id="educationSurveyForm">
+                <!-- IT Asset Inventory Section -->
+                <div class="section-card">
+                    <h2 class="section-title">
+                        <i class="fas fa-server me-2"></i> IT Asset Inventory
+                    </h2>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Organization Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="orgName" id="orgName" required>
+                        <div class="error-message" id="orgNameError">This field is required.</div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Is the entity part of the Government or Private Sector? <span class="text-danger">*</span></label>
+                        <select class="form-select" name="entitySector" id="entitySector" required>
+                            <option value="">Select an option</option>
+                            <option value="Government">Government</option>
+                            <option value="Private">Private</option>
+                        </select>
+                        <div class="error-message" id="entitySectorError">This field is required.</div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Type of Educational Entity <span class="text-danger">*</span></label>
+                        <select class="form-select" id="eduType" name="eduType" required>
+                            <option value="">Select an option</option>
+                            <option value="University">University</option>
+                            <option value="School">School</option>
+                            <option value="Technical Institute">Technical Institute</option>
+                            <option value="Research Center">Research Center</option>
+                            <option value="Other">Other (specify)</option>
+                        </select>
+                        <div class="error-message" id="eduTypeError">This field is required.</div>
+                        <div class="other-specify" id="eduTypeOther">
+                            <input type="text" class="form-control mt-2" name="eduTypeOther" placeholder="Please specify">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="question-group">
+                                <label class="question-label">Number of Campuses/Sites</label>
+                                <input type="number" class="form-control" name="numCampuses" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="question-group">
+                                <label class="question-label">Location(s) of Campuses</label>
+                                <select class="form-select" name="campusLocations">
+                                    <option value="">Select a governorate</option>
+                                    <option value="Amman">Amman</option>
+                                    <option value="Irbid">Irbid</option>
+                                    <option value="Zarqa">Zarqa</option>
+                                    <option value="Balqa">Balqa</option>
+                                    <option value="Madaba">Madaba</option>
+                                    <option value="Jerash">Jerash</option>
+                                    <option value="Ajloun">Ajloun</option>
+                                    <option value="Karak">Karak</option>
+                                    <option value="Tafilah">Tafilah</option>
+                                    <option value="Ma'an">Ma'an</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3 class="h5 mt-4 mb-3" style="color: var(--ncsc-primary);">Security Devices</h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="question-group">
+                                <label class="question-label">Number of Firewalls</label>
+                                <input type="number" class="form-control" name="numFirewalls" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="question-group">
+                                <label class="question-label">Email Security Gateways</label>
+                                <input type="number" class="form-control" name="numEmailGateways" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="question-group">
+                                <label class="question-label">Web Application Firewalls</label>
+                                <input type="number" class="form-control" name="numWAF" min="0">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="question-group">
+                                <label class="question-label">Intrusion Prevention Systems</label>
+                                <input type="number" class="form-control" name="numIPS" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="question-group">
+                                <label class="question-label">Endpoint Protection Systems</label>
+                                <input type="number" class="form-control" name="numAntimalware" min="0">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Other Cybersecurity Devices</label>
+                        <input type="text" class="form-control" name="otherCyberDevices" placeholder="Please specify">
+                    </div>
+                    
+                    <h3 class="h5 mt-4 mb-3" style="color: var(--ncsc-primary);">Servers</h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="question-group">
+                                <label class="question-label">Email Servers</label>
+                                <input type="number" class="form-control" name="numEmailServers" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="question-group">
+                                <label class="question-label">Application Servers</label>
+                                <input type="number" class="form-control" name="numAppServers" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="question-group">
+                                <label class="question-label">Database Servers</label>
+                                <input type="number" class="form-control" name="numDbServers" min="0">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="question-group">
+                                <label class="question-label">Web Servers</label>
+                                <input type="number" class="form-control" name="numWebServers" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="question-group">
+                                <label class="question-label">Other Servers</label>
+                                <input type="text" class="form-control" name="otherServers" placeholder="Please specify">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3 class="h5 mt-4 mb-3" style="color: var(--ncsc-primary);">Network Devices</h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="question-group">
+                                <label class="question-label">Routers</label>
+                                <input type="number" class="form-control" name="numRouters" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="question-group">
+                                <label class="question-label">Switches</label>
+                                <input type="number" class="form-control" name="numSwitches" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="question-group">
+                                <label class="question-label">Wireless Access Points</label>
+                                <input type="number" class="form-control" name="numWirelessAccessPoints" min="0">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="question-group">
+                                <label class="question-label">Number of Network Monitoring Devices</label>
+                                <input type="number" class="form-control" name="numNetworkMonitoring" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="question-group">
+                                <label class="question-label">Other Network Devices</label>
+                                <input type="text" class="form-control" name="otherNetworkDevices" placeholder="Please specify">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- OT/IoT/IIoT Devices Section -->
+                <div class="section-card">
+                    <h2 class="section-title">
+                        <i class="fas fa-network-wired me-2"></i> OT/IoT/IIoT Devices
+                    </h2>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Do you have Building Management System (BMS) devices deployed across your facilities?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="bmsDevices" id="bmsYes" value="Yes">
+                            <label class="form-check-label" for="bmsYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="bmsDevices" id="bmsNo" value="No">
+                            <label class="form-check-label" for="bmsNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Do you have HVAC systems connected to your network?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="hvacSystems" id="hvacYes" value="Yes">
+                            <label class="form-check-label" for="hvacYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="hvacSystems" id="hvacNo" value="No">
+                            <label class="form-check-label" for="hvacNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Do you utilize Uninterruptible Power Supply (UPS) systems with remote monitoring capabilities?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="upsSystems" id="upsYes" value="Yes">
+                            <label class="form-check-label" for="upsYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="upsSystems" id="upsNo" value="No">
+                            <label class="form-check-label" for="upsNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Are there smart lighting or energy management systems in place?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="smartLighting" id="smartLightingYes" value="Yes">
+                            <label class="form-check-label" for="smartLightingYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="smartLighting" id="smartLightingNo" value="No">
+                            <label class="form-check-label" for="smartLightingNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Do your facilities include access control systems or surveillance (CCTV) integrated with IT/IoT?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="accessControl" id="accessControlYes" value="Yes">
+                            <label class="form-check-label" for="accessControlYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="accessControl" id="accessControlNo" value="No">
+                            <label class="form-check-label" for="accessControlNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Are smart classroom technologies (e.g., connected projectors, boards, tablets) used?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="smartClassroom" id="smartClassroomYes" value="Yes">
+                            <label class="form-check-label" for="smartClassroomYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="smartClassroom" id="smartClassroomNo" value="No">
+                            <label class="form-check-label" for="smartClassroomNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Do you use any environmental sensors (temperature, humidity, air quality) connected via IoT?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="envSensors" id="envSensorsYes" value="Yes">
+                            <label class="form-check-label" for="envSensorsYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="envSensors" id="envSensorsNo" value="No">
+                            <label class="form-check-label" for="envSensorsNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Are there any connected lab equipment/devices used in science or engineering departments?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="labEquipment" id="labEquipmentYes" value="Yes">
+                            <label class="form-check-label" for="labEquipmentYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="labEquipment" id="labEquipmentNo" value="No">
+                            <label class="form-check-label" for="labEquipmentNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Are there any additional OT/IoT/IIoT devices not listed above?</label>
+                        <input type="text" class="form-control" name="otherOtDevices" placeholder="Please specify">
+                    </div>
+                </div>
+                
+                <!-- Main SOC Questionnaire Section -->
+                <div class="section-card">
+                    <h2 class="section-title">
+                        <i class="fas fa-shield-alt me-2"></i> SOC Capabilities Assessment
+                    </h2>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Does your organization currently have a Security Operations Center (SOC)?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="hasSOC" id="hasSOCYes" value="Yes">
+                            <label class="form-check-label" for="hasSOCYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="hasSOC" id="hasSOCNo" value="No">
+                            <label class="form-check-label" for="hasSOCNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group" id="socTypeGroup">
+                        <label class="question-label">What type of SOC does your organization operate?</label>
+                        <select class="form-select" name="socType">
+                            <option value="">Select an option</option>
+                            <option value="In-house">In-house</option>
+                            <option value="Outsourced">Outsourced</option>
+                            <option value="Hybrid">Hybrid</option>
+                        </select>
+                    </div>
+                    
+                    <div class="question-group" id="socCoverageGroup">
+                        <label class="question-label">Which environments does your SOC cover?</label>
+                        <select class="form-select" name="socCoverage">
+                            <option value="">Select an option</option>
+                            <option value="IT only">IT only</option>
+                            <option value="OT only">OT only</option>
+                            <option value="Both">Both</option>
+                        </select>
+                    </div>
+                    
+                    <div class="question-group" id="socOperationalTimeGroup">
+                        <label class="question-label">How long has your SOC been operational?</label>
+                        <select class="form-select" name="socOperationalTime">
+                            <option value="">Select an option</option>
+                            <option value="< 1 year">< 1 year</option>
+                            <option value="1-3 years">1-3 years</option>
+                            <option value="3-5 years">3-5 years</option>
+                            <option value="> 5 years">> 5 years</option>
+                        </select>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="question-group">
+                                <label class="question-label">Number of campuses/buildings</label>
+                                <input type="number" class="form-control" name="numCampusesOperated" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="question-group">
+                                <label class="question-label">Campuses monitored by SOC</label>
+                                <input type="number" class="form-control" name="numMonitoredCampuses" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="question-group">
+                                <label class="question-label">Campuses sending logs to SOC</label>
+                                <input type="number" class="form-control" name="numLogsCampuses" min="0">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Which systems/devices are integrated into the SOC/SIEM?</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="integratedSystems" id="sysFirewalls" value="Firewalls">
+                                    <label class="form-check-label" for="sysFirewalls">Firewalls</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="integratedSystems" id="sysRouters" value="Routers">
+                                    <label class="form-check-label" for="sysRouters">Routers</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="integratedSystems" id="sysLMS" value="LMS">
+                                    <label class="form-check-label" for="sysLMS">LMS</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="integratedSystems" id="sysAD" value="AD">
+                                    <label class="form-check-label" for="sysAD">AD</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="integratedSystems" id="sysStudentInfo" value="Student Info Systems">
+                                    <label class="form-check-label" for="sysStudentInfo">Student Info Systems</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="integratedSystems" id="sysOT" value="OT systems">
+                                    <label class="form-check-label" for="sysOT">OT Systems</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">What percentage of assets are covered by SIEM/SOC monitoring?</label>
+                        <select class="form-select" name="percentageAssets">
+                            <option value="">Select an option</option>
+                            <option value="<25%"><25%</option>
+                            <option value="25-50%">25-50%</option>
+                            <option value="51-75%">51-75%</option>
+                            <option value=">75%">>75%</option>
+                        </select>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Does your SOC cover OT/IoT/IIoT environments?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="otCoverage" id="otCoverageYes" value="Yes">
+                            <label class="form-check-label" for="otCoverageYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="otCoverage" id="otCoverageNo" value="No">
+                            <label class="form-check-label" for="otCoverageNo">No</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="otCoverage" id="otCoverageNA" value="Not Applicable">
+                            <label class="form-check-label" for="otCoverageNA">Not Applicable</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">What are the main OT/IoT systems monitored (if any)?</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="otSystemsMonitored" id="otHVAC" value="HVAC">
+                                    <label class="form-check-label" for="otHVAC">HVAC</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="otSystemsMonitored" id="otBMS" value="BMS">
+                                    <label class="form-check-label" for="otBMS">BMS</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="otSystemsMonitored" id="otUPS" value="UPS">
+                                    <label class="form-check-label" for="otUPS">UPS</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="otSystemsMonitored" id="otAccessControl" value="Access Control">
+                                    <label class="form-check-label" for="otAccessControl">Access Control</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="otSystemsMonitored" id="otNone" value="None">
+                                    <label class="form-check-label" for="otNone">None</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">What percentage of your OT/IoT/IIoT assets are monitored by the SOC?</label>
+                        <select class="form-select" name="percentageOTAssets">
+                            <option value="">Select an option</option>
+                            <option value="<25%"><25%</option>
+                            <option value="25-50%">25-50%</option>
+                            <option value="51-75%">51-75%</option>
+                            <option value=">75%">>75%</option>
+                        </select>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Which tools are used for cybersecurity monitoring in your SOC?</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="cyberTools" id="toolSentinel" value="Microsoft Sentinel">
+                                    <label class="form-check-label" for="toolSentinel">Microsoft Sentinel</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="cyberTools" id="toolSplunk" value="Splunk">
+                                    <label class="form-check-label" for="toolSplunk">Splunk</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="cyberTools" id="toolQRadar" value="IBM QRadar">
+                                    <label class="form-check-label" for="toolQRadar">IBM QRadar</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="cyberTools" id="toolOther" value="Other">
+                                    <label class="form-check-label" for="toolOther">Other (specify)</label>
+                                </div>
+                                <div class="other-specify" id="cyberToolsOther">
+                                    <input type="text" class="form-control mt-2" name="cyberToolsOther" placeholder="Specify other tools">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Do you use education-specific monitoring tools (e.g., student systems, LMS logs)?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="eduTools" id="eduToolsYes" value="Yes">
+                            <label class="form-check-label" for="eduToolsYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="eduTools" id="eduToolsNo" value="No">
+                            <label class="form-check-label" for="eduToolsNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Does your SOC conduct periodic threat simulations or cybersecurity drills?</label>
+                        <select class="form-select" name="threatSimulations">
+                            <option value="">Select an option</option>
+                            <option value="Never">Never</option>
+                            <option value="Annually">Annually</option>
+                            <option value="Biannually">Biannually</option>
+                            <option value="Quarterly">Quarterly</option>
+                        </select>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Does your SOC have defined incident response playbooks for educational systems?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="playbooks" id="playbooksYes" value="Yes">
+                            <label class="form-check-label" for="playbooksYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="playbooks" id="playbooksNo" value="No">
+                            <label class="form-check-label" for="playbooksNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Is your SIEM integrated with threat intelligence services?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="threatIntel" id="threatIntelYes" value="Yes">
+                            <label class="form-check-label" for="threatIntelYes">Yes (list providers)</label>
+                        </div>
+                        <div class="other-specify" id="threatIntelProviders">
+                            <input type="text" class="form-control mt-2" name="threatIntelProviders" placeholder="e.g., Mandiant, Google TI">
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="threatIntel" id="threatIntelNo" value="No">
+                            <label class="form-check-label" for="threatIntelNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Does your SOC use SOAR platforms to automate responses?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="soar" id="soarYes" value="Yes">
+                            <label class="form-check-label" for="soarYes">Yes (specify platform)</label>
+                        </div>
+                        <div class="other-specify" id="soarPlatform">
+                            <input type="text" class="form-control mt-2" name="soarPlatform" placeholder="e.g., XSOAR">
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="soar" id="soarNo" value="No">
+                            <label class="form-check-label" for="soarNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">What systems are integrated with the SIEM to enhance visibility?</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="siemSystems" id="siemFirewall" value="Firewall">
+                                    <label class="form-check-label" for="siemFirewall">Firewall</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="siemSystems" id="siemIDS" value="IDS">
+                                    <label class="form-check-label" for="siemIDS">IDS</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="siemSystems" id="siemEndpoint" value="Endpoint">
+                                    <label class="form-check-label" for="siemEndpoint">Endpoint</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="siemSystems" id="siemOTSensors" value="OT Sensors">
+                                    <label class="form-check-label" for="siemOTSensors">OT Sensors</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="siemSystems" id="siemLMS" value="LMS">
+                                    <label class="form-check-label" for="siemLMS">LMS</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="siemSystems" id="siemAppLogs" value="Application Logs">
+                                    <label class="form-check-label" for="siemAppLogs">Application Logs</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Is there real-time correlation between IT and OT event data in your SOC?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="itOtCorrelation" id="itOtCorrelationYes" value="Yes">
+                            <label class="form-check-label" for="itOtCorrelationYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="itOtCorrelation" id="itOtCorrelationNo" value="No">
+                            <label class="form-check-label" for="itOtCorrelationNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Are there regulatory requirements that mandate security monitoring in your sector?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="regulatory" id="regulatoryYes" value="Yes">
+                            <label class="form-check-label" for="regulatoryYes">Yes (name the regulation)</label>
+                        </div>
+                        <div class="other-specify" id="regulationName">
+                            <input type="text" class="form-control mt-2" name="regulationName" placeholder="e.g., NESA, EDU-CSF">
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="regulatory" id="regulatoryNo" value="No">
+                            <label class="form-check-label" for="regulatoryNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Do you have a governance structure overseeing SOC operations?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="governance" id="governanceYes" value="Yes">
+                            <label class="form-check-label" for="governanceYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="governance" id="governanceNo" value="No">
+                            <label class="form-check-label" for="governanceNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Do you perform regular SOC readiness assessments?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="readinessAssessments" id="readinessYes" value="Yes">
+                            <label class="form-check-label" for="readinessYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="readinessAssessments" id="readinessNo" value="No">
+                            <label class="form-check-label" for="readinessNo">No</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="readinessAssessments" id="readinessPlanned" value="Planned">
+                            <label class="form-check-label" for="readinessPlanned">Planned</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Do you perform regular audits of your SOC capabilities and maturity?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="socAudits" id="socAuditsYes" value="Yes">
+                            <label class="form-check-label" for="socAuditsYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="socAudits" id="socAuditsNo" value="No">
+                            <label class="form-check-label" for="socAuditsNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Do you maintain documentation of cybersecurity roles, responsibilities, and processes?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="cyberDoc" id="cyberDocYes" value="Yes">
+                            <label class="form-check-label" for="cyberDocYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="cyberDoc" id="cyberDocNo" value="No">
+                            <label class="form-check-label" for="cyberDocNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Do you maintain documentation of SOC procedures and playbooks?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="socDoc" id="socDocYes" value="Yes">
+                            <label class="form-check-label" for="socDocYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="socDoc" id="socDocNo" value="No">
+                            <label class="form-check-label" for="socDocNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Do you maintain a list of crown jewel systems?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="crownJewel" id="crownJewelYes" value="Yes">
+                            <label class="form-check-label" for="crownJewelYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="crownJewel" id="crownJewelNo" value="No">
+                            <label class="form-check-label" for="crownJewelNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Has the institution conducted a Business Impact Analysis (BIA)?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="bia" id="biaYes" value="Yes">
+                            <label class="form-check-label" for="biaYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="bia" id="biaNo" value="No">
+                            <label class="form-check-label" for="biaNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Do you have a dedicated IT Security Team?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="itSecurityTeam" id="itSecurityTeamYes" value="Yes">
+                            <label class="form-check-label" for="itSecurityTeamYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="itSecurityTeam" id="itSecurityTeamNo" value="No">
+                            <label class="form-check-label" for="itSecurityTeamNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Do you have a designated CISO or equivalent role?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="ciso" id="cisoYes" value="Yes">
+                            <label class="form-check-label" for="cisoYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="ciso" id="cisoNo" value="No">
+                            <label class="form-check-label" for="cisoNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">What is the size of the SOC team (number of personnel)?</label>
+                        <input type="number" class="form-control" name="socTeamSize" min="0">
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Does your SOC operate 24/7?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="soc247" id="soc247Yes" value="Yes">
+                            <label class="form-check-label" for="soc247Yes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="soc247" id="soc247No" value="No">
+                            <label class="form-check-label" for="soc247No">No</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="soc247" id="soc247Partial" value="Partial">
+                            <label class="form-check-label" for="soc247Partial">Partial</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Is your SOC centralized or distributed across campuses?</label>
+                        <select class="form-select" name="socStructure">
+                            <option value="">Select an option</option>
+                            <option value="Centralized">Centralized</option>
+                            <option value="Distributed">Distributed</option>
+                            <option value="Hybrid">Hybrid</option>
+                        </select>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">What tools are used for log management?</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="logTools" id="logSplunk" value="Splunk">
+                                    <label class="form-check-label" for="logSplunk">Splunk</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="logTools" id="logQRadar" value="IBM QRadar">
+                                    <label class="form-check-label" for="logQRadar">IBM QRadar</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="logTools" id="logAzure" value="Azure Sentinel">
+                                    <label class="form-check-label" for="logAzure">Azure Sentinel</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="logTools" id="logOther" value="Other">
+                                    <label class="form-check-label" for="logOther">Other (specify)</label>
+                                </div>
+                                <div class="other-specify" id="logToolsOther">
+                                    <input type="text" class="form-control mt-2" name="logToolsOther" placeholder="Specify other tools">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Does your SOC integrate with national or sectorial CERT?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="certIntegration" id="certIntegrationYes" value="Yes">
+                            <label class="form-check-label" for="certIntegrationYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="certIntegration" id="certIntegrationNo" value="No">
+                            <label class="form-check-label" for="certIntegrationNo">No</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="certIntegration" id="certIntegrationPlanned" value="Planned">
+                            <label class="form-check-label" for="certIntegrationPlanned">Planned</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Do you conduct regular threat hunting exercises?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="threatHunting" id="threatHuntingYes" value="Yes">
+                            <label class="form-check-label" for="threatHuntingYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="threatHunting" id="threatHuntingNo" value="No">
+                            <label class="form-check-label" for="threatHuntingNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Do you receive OT/IoT-specific threat intelligence feeds?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="otThreatIntel" id="otThreatIntelYes" value="Yes">
+                            <label class="form-check-label" for="otThreatIntelYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="otThreatIntel" id="otThreatIntelNo" value="No">
+                            <label class="form-check-label" for="otThreatIntelNo">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Are there challenges in monitoring legacy systems?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="legacyChallenges" id="legacyChallengesYes" value="Yes">
+                            <label class="form-check-label" for="legacyChallengesYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="legacyChallenges" id="legacyChallengesNo" value="No">
+                            <label class="form-check-label" for="legacyChallengesNo">No</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="legacyChallenges" id="legacyChallengesNA" value="Not Applicable">
+                            <label class="form-check-label" for="legacyChallengesNA">Not Applicable</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">Is there an integration with SOAR platforms?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="soarIntegration" id="soarIntegrationYes" value="Yes">
+                            <label class="form-check-label" for="soarIntegrationYes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="soarIntegration" id="soarIntegrationNo" value="No">
+                            <label class="form-check-label" for="soarIntegrationNo">No</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="soarIntegration" id="soarIntegrationPlanned" value="Planned">
+                            <label class="form-check-label" for="soarIntegrationPlanned">Planned</label>
+                        </div>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label class="question-label">What is the annual budget allocated for SOC operations?</label>
+                        <input type="text" class="form-control" name="socBudget" placeholder="Enter budget amount">
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-ncsc">
+                            <i class="fas fa-paper-plane me-2"></i> Submit Survey
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="text-center text-muted mt-5 mb-4">
+        <div class="container">
+            <p class="mb-1">© 2023 National Cybersecurity Center. All rights reserved.</p>
+            <p class="mb-0">
+                <a href="#" class="text-muted me-3">Terms of Service</a>
+                <a href="#" class="text-muted">Privacy Policy</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show/hide conditional fields
+            const eduType = document.getElementById('eduType');
+            const eduTypeOther = document.getElementById('eduTypeOther');
+            const hasSOCYes = document.getElementById('hasSOCYes');
+            const hasSOCNo = document.getElementById('hasSOCNo');
+            const socQuestions = ['socTypeGroup', 'socCoverageGroup', 'socOperationalTimeGroup'];
+            const toolOther = document.getElementById('toolOther');
+            const cyberToolsOther = document.getElementById('cyberToolsOther');
+            const logOther = document.getElementById('logOther');
+            const logToolsOther = document.getElementById('logToolsOther');
+            const threatIntelYes = document.getElementById('threatIntelYes');
+            const threatIntelProviders = document.getElementById('threatIntelProviders');
+            const soarYes = document.getElementById('soarYes');
+            const soarPlatform = document.getElementById('soarPlatform');
+            const regulatoryYes = document.getElementById('regulatoryYes');
+            const regulationName = document.getElementById('regulationName');
+            
+            eduType.addEventListener('change', () => {
+                eduTypeOther.style.display = eduType.value === 'Other' ? 'block' : 'none';
+            });
+            
+            toolOther.addEventListener('change', () => {
+                cyberToolsOther.style.display = toolOther.checked ? 'block' : 'none';
+            });
+            
+            logOther.addEventListener('change', () => {
+                logToolsOther.style.display = logOther.checked ? 'block' : 'none';
+            });
+            
+            threatIntelYes.addEventListener('change', () => {
+                threatIntelProviders.style.display = threatIntelYes.checked ? 'block' : 'none';
+            });
+            
+            soarYes.addEventListener('change', () => {
+                soarPlatform.style.display = soarYes.checked ? 'block' : 'none';
+            });
+            
+            regulatoryYes.addEventListener('change', () => {
+                regulationName.style.display = regulatoryYes.checked ? 'block' : 'none';
+            });
+            
+            function toggleSocQuestions(hasSOC) {
+                socQuestions.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) element.style.display = hasSOC ? 'block' : 'none';
+                });
+            }
+            
+            hasSOCYes.addEventListener('change', () => toggleSocQuestions(true));
+            hasSOCNo.addEventListener('change', () => toggleSocQuestions(false));
+            if (hasSOCNo.checked) toggleSocQuestions(false);
+            
+            // Update progress bar
+            const form = document.getElementById('educationSurveyForm');
+            const progressBar = document.getElementById('surveyProgress');
+            
+            function updateProgress() {
+                const totalFields = form.querySelectorAll('input:not([type="checkbox"]), select, textarea').length +
+                    form.querySelectorAll('input[type="radio"]:checked').length +
+                    form.querySelectorAll('input[type="checkbox"]:checked').length;
+                const filledFields = Array.from(form.querySelectorAll('input:not([type="checkbox"]), select, textarea')).filter(field => field.value.trim() !== '').length +
+                    form.querySelectorAll('input[type="radio"]:checked').length +
+                    form.querySelectorAll('input[type="checkbox"]:checked').length;
+                
+                const progress = Math.min(100, Math.round((filledFields / totalFields) * 100));
+                progressBar.style.width = progress + '%';
+                progressBar.setAttribute('aria-valuenow', progress);
+            }
+            
+            form.addEventListener('change', updateProgress);
+            form.addEventListener('keyup', updateProgress);
+            updateProgress();
+            
+            // Form validation and submission
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                // Validate required fields
+                let isValid = true;
+                const orgName = document.getElementById('orgName');
+                const entitySector = document.getElementById('entitySector');
+                const eduType = document.getElementById('eduType');
+                
+                if (!orgName.value.trim()) {
+                    document.getElementById('orgNameError').style.display = 'block';
+                    isValid = false;
+                } else {
+                    document.getElementById('orgNameError').style.display = 'none';
+                }
+                
+                if (!entitySector.value) {
+                    document.getElementById('entitySectorError').style.display = 'block';
+                    isValid = false;
+                } else {
+                    document.getElementById('entitySectorError').style.display = 'none';
+                }
+                
+                if (!eduType.value) {
+                    document.getElementById('eduTypeError').style.display = 'block';
+                    isValid = false;
+                } else {
+                    document.getElementById('eduTypeError').style.display = 'none';
+                }
+                
+                if (!isValid) {
+                    alert('Please fill in all required fields.');
+                    return;
+                }
+                
+                const formData = new FormData(form);
+                const data = {
+                    OrganizationName: formData.get('orgName'),
+                    Answers: []
+                };
+                
+                // Map questions to IDs (should ideally come from the backend)
+                const questionMap = {
+                    'entitySector': 1,
+                    'eduType': 2,
+                    'eduTypeOther': 3,
+                    'numCampuses': 4,
+                    'campusLocations': 5,
+                    'numFirewalls': 6,
+                    'numEmailGateways': 7,
+                    'numWAF': 8,
+                    'numIPS': 9,
+                    'numAntimalware': 10,
+                    'otherCyberDevices': 11,
+                    'numEmailServers': 12,
+                    'numAppServers': 13,
+                    'numDbServers': 14,
+                    'numWebServers': 15,
+                    'otherServers': 16,
+                    'numRouters': 17,
+                    'numSwitches': 18,
+                    'numWirelessAccessPoints': 19,
+                    'numNetworkMonitoring': 20,
+                    'otherNetworkDevices': 21,
+                    'bmsDevices': 22,
+                    'hvacSystems': 23,
+                    'upsSystems': 24,
+                    'smartLighting': 25,
+                    'accessControl': 26,
+                    'smartClassroom': 27,
+                    'envSensors': 28,
+                    'labEquipment': 29,
+                    'otherOtDevices': 30,
+                    'hasSOC': 31,
+                    'socType': 32,
+                    'socCoverage': 33,
+                    'socOperationalTime': 34,
+                    'numCampusesOperated': 35,
+                    'numMonitoredCampuses': 36,
+                    'numLogsCampuses': 37,
+                    'integratedSystems': 38,
+                    'percentageAssets': 39,
+                    'otCoverage': 40,
+                    'otSystemsMonitored': 41,
+                    'percentageOTAssets': 42,
+                    'cyberTools': 43,
+                    'cyberToolsOther': 44,
+                    'eduTools': 45,
+                    'threatSimulations': 46,
+                    'playbooks': 47,
+                    'threatIntel': 48,
+                    'threatIntelProviders': 49,
+                    'soar': 50,
+                    'soarPlatform': 51,
+                    'siemSystems': 52,
+                    'itOtCorrelation': 53,
+                    'regulatory': 54,
+                    'regulationName': 55,
+                    'governance': 56,
+                    'readinessAssessments': 57,
+                    'socAudits': 58,
+                    'cyberDoc': 59,
+                    'socDoc': 60,
+                    'crownJewel': 61,
+                    'bia': 62,
+                    'itSecurityTeam': 63,
+                    'ciso': 64,
+                    'socTeamSize': 65,
+                    'soc247': 66,
+                    'socStructure': 67,
+                    'logTools': 68,
+                    'logToolsOther': 69,
+                    'certIntegration': 70,
+                    'threatHunting': 71,
+                    'otThreatIntel': 72,
+                    'legacyChallenges': 73,
+                    'soarIntegration': 74,
+                    'socBudget': 75
+                };
+                
+                formData.forEach((value, key) => {
+                    if (key === 'orgName') return; // Skip orgName as it's handled separately
+                    if (form.querySelector(`[name="${key}"]`).type === 'checkbox') {
+                        // Handle checkboxes (multiple values)
+                        const existingAnswer = data.Answers.find(a => a.QuestionId === questionMap[key]);
+                        if (existingAnswer) {
+                            existingAnswer.Value += `,${value}`;
+                        } else if (value) {
+                            data.Answers.push({
+                                QuestionId: questionMap[key],
+                                Value: value
+                            });
+                        }
+                    } else if (value) {
+                        // Handle other inputs
+                        data.Answers.push({
+                            QuestionId: questionMap[key],
+                            Value: value
+                        });
+                    }
+                });
+                
+                try {
+                    const response = await fetch('/api/survey/submit', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    if (response.ok) {
+                        alert('Survey submitted successfully!');
+                        form.reset();
+                        updateProgress();
+                    } else {
+                        alert('Error submitting survey. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Submission error:', error);
+                    alert('Error submitting survey. Please check your connection.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
