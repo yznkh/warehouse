@@ -350,27 +350,54 @@
 
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="question-group">
-                                <label class="question-label" for="campusLocations">Campus location(s)<span class="text-danger">*</span></label>
-                                <select class="form-select" name="campusLocations" id="campusLocations" multiple  aria-label="Select location">
-                                    <option value="">Select governorate</option>
-                                    <option value="Amman">Amman</option>
-                                    <option value="Irbid">Irbid</option>
-                                    <option value="Zarqa">Zarqa</option>
-                                    <option value="Balqa">Balqa</option>
-                                    <option value="Madaba">Madaba</option>
-                                    <option value="Jerash">Jerash</option>
-                                    <option value="Ajloun">Ajloun</option>
-                                    <option value="Karak">Karak</option>
-                                    <option value="Tafilah">Tafilah</option>
-                                    <option value="Ma'an">Ma'an</option>
-                                </select>
-                                <div class="error-message" id="orgNameError">This field is required.</div>
-
-                            </div>
-
-                        </div>
+                       <div class="col-md-6">
+    <div class="question-group">
+        <label class="question-label">Campus location(s)<span class="text-danger">*</span></label>
+        <div id="campusLocations" class="checkbox-grid">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="campusLocations[]" value="Amman" id="locAmman">
+                <label class="form-check-label" for="locAmman">Amman</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="campusLocations[]" value="Irbid" id="locIrbid">
+                <label class="form-check-label" for="locIrbid">Irbid</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="campusLocations[]" value="Zarqa" id="locZarqa">
+                <label class="form-check-label" for="locZarqa">Zarqa</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="campusLocations[]" value="Balqa" id="locBalqa">
+                <label class="form-check-label" for="locBalqa">Balqa</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="campusLocations[]" value="Madaba" id="locMadaba">
+                <label class="form-check-label" for="locMadaba">Madaba</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="campusLocations[]" value="Jerash" id="locJerash">
+                <label class="form-check-label" for="locJerash">Jerash</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="campusLocations[]" value="Ajloun" id="locAjloun">
+                <label class="form-check-label" for="locAjloun">Ajloun</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="campusLocations[]" value="Karak" id="locKarak">
+                <label class="form-check-label" for="locKarak">Karak</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="campusLocations[]" value="Tafilah" id="locTafilah">
+                <label class="form-check-label" for="locTafilah">Tafilah</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="campusLocations[]" value="Ma'an" id="locMaan">
+                <label class="form-check-label" for="locMaan">Ma'an</label>
+            </div>
+        </div>
+        <div class="error-message" id="campusLocationsError">This field is required.</div>
+    </div>
+</div>
                     </div>
 
                     <h3 class="h5 mt-4 mb-3" style="color: var(--ncsc-primary);">Security Devices</h3>
