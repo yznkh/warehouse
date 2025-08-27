@@ -1,0 +1,2783 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yazan — Innovative Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+          :root {
+            --primary-blue: #3b82f6;
+            --accent-green: #10b981;
+            --bg-light: #f1f5f9;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-dark: #1e293b;
+        }
+
+        body {
+            background: var(--bg-light);
+            color: var(--text-dark);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        /* Floating card effect */
+        .card-float {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform: translateY(0);
+        }
+        .card-float:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Section animation */
+        .section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    /* Image slider */
+    .slider-container {
+        display: none;
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+    .slider-container:not(.hidden) {
+        display: block;
+    }
+    .wms-content.hidden {
+        display: none;
+    }
+    .slider-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        display: none;
+        transition: transform 0.5s ease;
+    }
+    .slider-img.active {
+        display: block;
+    }
+    .slider-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 8px;
+        cursor: pointer;
+        border-radius: 50%;
+        z-index: 10; /* Ensure navigation buttons are above images */
+    }
+    .slider-btn.prev {
+        left: 10px;
+    }
+    .slider-btn.next {
+        right: 10px;
+    }
+    .slider-close-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: #ef4444; /* Red color */
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 20; /* Ensure close button is above everything */
+        transition: background-color 0.2s ease;
+    }
+    .slider-close-btn:hover {
+        background: #dc2626; /* Darker red on hover */
+    }
+
+        /* Modal for URL Analysis */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Terminal popup */
+        .terminal-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            background: #1e1e1e;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+        }
+        .terminal-popup.active {
+            display: flex;
+        }
+        .terminal-header {
+            background: #333;
+            padding: 8px;
+            border-bottom: 2px solid #444;
+            display: flex;
+            gap: 8px;
+        }
+        .header-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .terminal-body {
+            flex-grow: 1;
+            padding: 16px;
+            overflow-y: auto;
+            color: #00ff00;
+            font-family: 'Fira Code', monospace;
+            line-height: 1.5;
+        }
+        .terminal-input-line {
+            padding: 0 16px 16px;
+            display: flex;
+            align-items: center;
+        }
+        .prompt {
+            color: #98fb98;
+            margin-right: 8px;
+        }
+        .terminal-input {
+            background: none;
+            border: none;
+            outline: none;
+            color: #00ff00;
+            font-family: 'Fira Code', monospace;
+            flex-grow: 1;
+        }
+        .cursor {
+            display: inline-block;
+            background: #00ff00;
+            width: 8px;
+            height: 1em;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+.terminal-close-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #ff5f56;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+.terminal-close-btn:hover {
+    background: #e63946;
+}
+.output-line.success {
+    color: #10b981;
+}
+.output-line.error {
+    color: #ff6347;
+    animation: glitch 0.3s linear 2;
+}
+.output-line {
+    margin-bottom: 8px;
+    white-space: pre-wrap;
+}
+@keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(2px, -2px); }
+    60% { transform: translate(-2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+}
+.terminal-popup {
+    backdrop-filter: blur(5px);
+    background: rgba(30, 30, 30, 0.9);
+}
+ .task-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px;
+        background: #f8fafc;
+        border-radius: 8px;
+        transition: background 0.2s ease;
+    }
+    .task-item.completed {
+        background: #e6ffed;
+        text-decoration: line-through;
+        opacity: 0.8;
+    }
+    .task-item:hover {
+        background: #e5e7eb;
+    }
+    .task-actions {
+        display: flex;
+        gap: 8px;
+    }
+    .task-checkbox {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+    .edit-input {
+        flex-grow: 1;
+        padding: 8px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        outline: none;
+    }
+ .quiz-container {
+        padding: 0;
+    }
+    .quiz-container.hidden {
+        display: none;
+    }
+    .quiz-content.hidden {
+        display: none;
+    }
+    .quiz-question:not(.hidden) {
+        display: block;
+    }
+    .quiz-radio {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+    }
+    .quiz-result {
+        padding: 12px;
+        background: #e6ffed;
+        border-radius: 8px;
+    }
+    .file-upload-container.hidden {
+        display: none;
+    }
+    .file-upload-content.hidden {
+        display: none;
+    }
+    .file-upload-result {
+        padding: 12px;
+        border-radius: 8px;
+    }
+    .file-upload-result.success {
+        background: #e6ffed;
+        color: #166534;
+    }
+    .file-upload-result.error {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+ .analytics-container.hidden {
+        display: none;
+    }
+    .analytics-content.hidden {
+        display: none;
+    }
+    .analytics-container canvas {
+        max-height: 100px;
+        width: 100%;
+    }
+   .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 400px;
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.is-flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+            background-color: white;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .flip-card-front {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+        .card-glow:hover {
+            box-shadow: 0 0 15px 5px rgba(59, 130, 246, 0.3), 0 0 30px 10px rgba(59, 130, 246, 0.2);
+            transition: box-shadow 0.5s ease-in-out;
+        }
+        .icon-bounce:hover {
+            animation: bounce 0.6s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+        
+   /* New Styles for Particles */
+       #particles-js {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 1; /* يجب أن تكون قيمة z-index أقل من المحتوى */
+    }
+        
+       .skills-section {
+        position: relative;
+        overflow: hidden; /* لمنع الجسيمات من الظهور خارج القسم */
+    }
+        
+       .skills-section .section-content {
+        position: relative;
+        z-index: 2; /* يجب أن تكون قيمة z-index أعلى من الخلفية */
+    }
+
+        .skill-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .skill-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.3), 0 4px 6px -2px rgba(59, 130, 246, 0.2);
+        }
+         .typewriter-container h2 {
+            display: inline;
+        }
+        .typewriter-cursor {
+            display: inline-block;
+            width: .15em;
+            height: 1.2em;
+            background-color: #3b82f6; /* Tailwind blue-500 */
+            vertical-align: middle;
+            margin-inline-start: 4px; /* Space from the text */
+            animation: blink-caret .75s step-end infinite;
+        }
+        @keyframes blink-caret {
+            from, to { opacity: 0; }
+            50% { opacity: 1; }
+        }
+        .nav-icon-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.3s ease-in-out;
+        }
+        .nav-icon {
+            font-size: 1.25rem;
+            transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+        }
+        .nav-icon-link:hover .nav-icon {
+            transform: translateY(-3px);
+            color: #3b82f6;
+        }
+        .nav-link-with-underline {
+            position: relative;
+        }
+        .nav-link-with-underline::after {
+            content: '';
+            position: absolute;
+            width: 0%;
+            height: 2px;
+            background-color: #3b82f6; /* Tailwind blue-500 */
+            bottom: -6px;
+            left: 0;
+            transition: width 0.3s ease-in-out;
+        }
+        .nav-link-with-underline:hover::after {
+            width: 100%;
+        }
+  </Style>
+
+</head>
+<body>
+  
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-md z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 12h18" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M12 3v18" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-blue-600">Yazan</h1>
+                    <p class="text-sm text-gray-600">Web Developer · Cybersecurity Specialist</p>
+                </div>
+            </div>
+            <ul class="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-700">
+                <li>
+                    <a href="#about" class="nav-icon-link nav-link-with-underline hover:text-blue-600">
+                        <i class="ri-user-line nav-icon"></i>
+                        <span>About</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#skills" class="nav-icon-link nav-link-with-underline hover:text-blue-600">
+                        <i class="ri-code-s-slash-line nav-icon"></i>
+                        <span>Skills</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#projects" class="nav-icon-link nav-link-with-underline hover:text-blue-600">
+                        <i class="ri-file-code-line nav-icon"></i>
+                        <span>Projects</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#contact" class="nav-icon-link nav-link-with-underline hover:text-blue-600">
+                        <i class="ri-mail-line nav-icon"></i>
+                        <span>Contact</span>
+                    </a>
+                </li>
+                <li><a href="C:\Users\yazan.alkhawaldeh\Desktop\portfolio\File\Full-Stack.pdf" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Download CV</a></li>
+            </ul>
+            <button id="menuBtn" class="md:hidden p-2 rounded bg-blue-100 text-blue-600">☰</button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="fixed top-0 right-[-100%] w-3/4 h-full bg-white shadow-xl p-6 transition-all duration-300 z-50">
+        <button id="closeMenuBtn" class="p-2 rounded bg-blue-100 text-blue-600 mb-6">✕</button>
+        <ul class="space-y-6 text-lg text-gray-700 font-medium">
+            <li><a href="#about" class="hover:text-blue-600 transition" data-translate="nav_about_mobile">About</a></li>
+            <li><a href="#skills" class="hover:text-blue-600 transition" data-translate="nav_skills_mobile">Skills</a></li>
+            <li><a href="#projects" class="hover:text-blue-600 transition" data-translate="nav_projects_mobile">Projects</a></li>
+            <li><a href="#contact" class="hover:text-blue-600 transition" data-translate="nav_contact_mobile">Contact</a></li>
+            <li><a href="C:\Users\yazan.alkhawaldeh\Desktop\portfolio\File\Full-Stack.pdf" class="block px-4 py-2 bg-blue-600 text-white rounded-lg text-center hover:bg-blue-700 transition" data-translate="nav_cv_mobile">Download CV</a></li>
+        </ul>
+    </div>
+    <div id="backdrop" class="fixed inset-0 bg-black/50 hidden z-40"></div>
+
+    <!-- Hero -->
+     <header class="flex items-center bg-gradient-to-br from-blue-50 to-green-50" style="min-height: 80vh !important;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-16 text-center">
+            <div class="section typewriter-container">
+                <h2 class="text-4xl md:text-6xl font-extrabold text-gray-800 mb-6" data-text="Building Secure & High-Performance Digital Solutions.">
+                    <span></span><span class="typewriter-cursor"></span>
+                </h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    I build complete digital solutions. My approach blends high-performance engineering with intuitive design and robust cybersecurity, creating seamless, secure, and engaging experiences.
+                </p>
+                <div class="flex justify-center gap-4 mt-8">
+                    <a href="#projects" class="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition">View Projects</a>
+                    <a href="#contact" class="px-6 py-3 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition">Hire Me</a>
+                    <button id="terminalBtn" class="px-6 py-3 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition">Try My Terminal</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- About -->
+    <!-- About -->
+<section id="about" class="py-20 bg-white section">
+  
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800">About Me</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto mt-4">
+                    As a full-stack developer and cybersecurity specialist, I'm passionate about building secure, user-friendly solutions that turn complex ideas into reality.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+ <div class="flip-card cursor-pointer" onclick="this.classList.toggle('is-flipped');">
+    <div class="flip-card-inner card-glow">
+        <div class="flip-card-front">
+            <h3 class="text-xl font-semibold text-gray-700">Professional Experience</h3>
+            <i class="ri-briefcase-fill text-5xl text-blue-500 mt-4 icon-bounce"></i>
+            <p class="mt-4 text-gray-500">Click to learn about my professional background!</p>
+        </div>
+        <div class="flip-card-back text-left p-4">
+            <h3 class="text-xl font-semibold text-gray-700 mb-4">Core Competencies</h3>
+            <div class="grid grid-cols-1 gap-4">
+                <div class="flex items-start">
+                    <i class="ri-projector-line text-2xl text-blue-500 mr-3 mt-1"></i>
+                    <div>
+                        <h4 class="font-medium text-gray-700">Project Management</h4>
+                        <p class="text-xs text-gray-500">Agile and Scrum methodologies for efficient project delivery.</p>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <i class="ri-code-s-slash-fill text-2xl text-blue-500 mr-3 mt-1"></i>
+                    <div>
+                        <h4 class="font-medium text-gray-700">Web Development</h4>
+                        <p class="text-xs text-gray-500">Designing and developing secure, scalable web applications.</p>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <i class="ri-cpu-line text-2xl text-blue-500 mr-3 mt-1"></i>
+                    <div>
+                        <h4 class="font-medium text-gray-700">Software Solutions</h4>
+                        <p class="text-xs text-gray-500">Crafting custom software solutions tailored to client needs.</p>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <i class="ri-shield-check-line text-2xl text-green-500 mr-3 mt-1"></i>
+                    <div>
+                        <h4 class="font-medium text-gray-700">Security Audits</h4>
+                        <p class="text-xs text-gray-500">Conducting comprehensive security assessments and penetration testing.</p>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <i class="ri-database-2-fill text-2xl text-blue-500 mr-3 mt-1"></i>
+                    <div>
+                        <h4 class="font-medium text-gray-700">Database Management</h4>
+                        <p class="text-xs text-gray-500">Expertise in SQL and NoSQL databases for robust data handling.</p>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <i class="ri-lightbulb-line text-2xl text-yellow-500 mr-3 mt-1"></i>
+                    <div>
+                        <h4 class="font-medium text-gray-700">Problem-Solving</h4>
+                        <p class="text-xs text-gray-500">Applying a logical, security-first approach to complex challenges.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+              <div class="flip-card cursor-pointer" onclick="this.classList.toggle('is-flipped');">
+    <div class="flip-card-inner card-glow">
+        <div class="flip-card-front">
+            <h3 class="text-xl font-semibold text-gray-700">Secure Practices</h3>
+            <i class="ri-shield-check-fill text-5xl text-green-500 mt-4 icon-bounce"></i>
+            <p class="mt-4 text-gray-500">Click to learn about my security approach!</p>
+        </div>
+        <div class="flip-card-back text-left p-4">
+            <h3 class="text-xl font-semibold text-gray-700 mb-4">Security Philosophy</h3>
+            <div class="grid grid-cols-1 gap-4">
+                <div class="flex items-start">
+                    <i class="ri-code-s-slash-line text-2xl text-blue-500 mr-3 mt-1"></i>
+                    <div>
+                        <h4 class="font-medium text-gray-700">OWASP-Aware Development</h4>
+                        <p class="text-xs text-gray-500">Building code with a deep understanding of common web vulnerabilities.</p>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <i class="ri-lock-2-line text-2xl text-blue-500 mr-3 mt-1"></i>
+                    <div>
+                        <h4 class="font-medium text-gray-700">Data & Transport Security</h4>
+                        <p class="text-xs text-gray-500">Implementing HTTPS, secure headers, and encryption for data in transit and at rest.</p>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <i class="ri-input-field text-2xl text-blue-500 mr-3 mt-1"></i>
+                    <div>
+                        <h4 class="font-medium text-gray-700">Input & Query Protection</h4>
+                        <p class="text-xs text-gray-500">Using input validation and parameterized queries to prevent injections.</p>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <i class="ri-account-circle-line text-2xl text-blue-500 mr-3 mt-1"></i>
+                    <div>
+                        <h4 class="font-medium text-gray-700">Secure Session Management</h4>
+                        <p class="text-xs text-gray-500">Ensuring user sessions are handled securely with proper protocols.</p>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <i class="ri-shield-line text-2xl text-green-500 mr-3 mt-1"></i>
+                    <div>
+                        <h4 class="font-medium text-gray-700">Regular Security Audits</h4>
+                        <p class="text-xs text-gray-500">Proactively identifying and patching vulnerabilities through consistent reviews.</p>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <i class="ri-folder-lock-line text-2xl text-yellow-500 mr-3 mt-1"></i>
+                    <div>
+                        <h4 class="font-medium text-gray-700">Data Encryption</h4>
+                        <p class="text-xs text-gray-500">Applying encryption to protect sensitive data on the server and during transit.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </section>
+
+<section id="skills" class="py-20 skills-section">
+    <div id="particles-js"></div>
+
+    <div class="section-content max-w-7xl mx-auto px-4 sm:px-6">
+        <h2 class="text-3xl font-bold text-gray-800 text-center mb-12">Skills</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="skill-card text-center">
+                <h3 class="text-xl font-semibold text-gray-700 mb-4">Frontend</h3>
+                <div class="flex flex-wrap justify-center items-center gap-4">
+                    <div class="text-sm font-medium text-gray-700 flex flex-col items-center">
+                        <i class="ri-html5-fill text-3xl text-blue-600 mb-1"></i> HTML
+                    </div>
+                    <div class="text-sm font-medium text-gray-700 flex flex-col items-center">
+                        <i class="ri-css3-fill text-3xl text-blue-600 mb-1"></i> CSS
+                    </div>
+                    <div class="text-sm font-medium text-gray-700 flex flex-col items-center">
+                        <i class="ri-javascript-fill text-3xl text-yellow-500 mb-1"></i> JavaScript
+                    </div>
+                    <div class="text-sm font-medium text-gray-700 flex flex-col items-center">
+                        <i class="ri-reactjs-fill text-3xl text-blue-500 mb-1"></i> React
+                    </div>
+                    <div class="text-sm font-medium text-gray-700 flex flex-col items-center">
+                        <i class="ri-vuejs-fill text-3xl text-green-500 mb-1"></i> Vue.js
+                    </div>
+                    <div class="text-sm font-medium text-gray-700 flex flex-col items-center">
+                        <i class="ri-angularjs-fill text-3xl text-red-500 mb-1"></i> Angular
+                    </div>
+                    <div class="text-sm font-medium text-gray-700 flex flex-col items-center">
+                        <i class="ri-tailwind-css-fill text-3xl text-teal-400 mb-1"></i> Tailwind CSS
+                    </div>
+                </div>
+            </div>
+
+            <div class="skill-card text-center">
+                <h3 class="text-xl font-semibold text-gray-700 mb-4">Backend</h3>
+                <div class="flex flex-wrap justify-center items-center gap-4">
+                    <div class="text-sm font-medium text-gray-700 flex flex-col items-center">
+                        <i class="ri-terminal-fill text-3xl text-green-600 mb-1"></i> ASP.NET
+                    </div>
+                    <div class="text-sm font-medium text-gray-700 flex flex-col items-center">
+                        <i class="ri-braces-fill text-3xl text-green-500 mb-1"></i> Node.js
+                    </div>
+                    <div class="text-sm font-medium text-gray-700 flex flex-col items-center">
+                        <i class="ri-flask-fill text-3xl text-gray-700 mb-1"></i> Python (Flask)
+                    </div>
+                    <div class="text-sm font-medium text-gray-700 flex flex-col items-center">
+                        <i class="ri-database-2-fill text-3xl text-blue-800 mb-1"></i> SQL
+                    </div>
+                    <div class="text-sm font-medium text-gray-700 flex flex-col items-center">
+                        <i class="ri-database-2-line text-3xl text-green-700 mb-1"></i> MongoDB
+                    </div>
+                </div>
+            </div>
+
+            <div class="skill-card text-center">
+                <h3 class="text-xl font-semibold text-gray-700 mb-4">Cyber Security</h3>
+                <div class="flex flex-wrap justify-center items-center gap-4">
+                    <div class="text-sm font-medium text-gray-700 flex flex-col items-center">
+                        <i class="ri-bug-fill text-3xl text-red-600 mb-1"></i> Burp Suite
+                    </div>
+                    <div class="text-sm font-medium text-gray-700 flex flex-col items-center">
+                        <i class="ri-terminal-box-fill text-3xl text-red-600 mb-1"></i> Nmap
+                    </div>
+                    <div class="text-sm font-medium text-gray-700 flex flex-col items-center">
+                        <i class="ri-shield-check-fill text-3xl text-red-600 mb-1"></i> Web App Sec
+                    </div>
+                    <div class="text-sm font-medium text-gray-700 flex flex-col items-center">
+                        <i class="ri-tools-fill text-3xl text-gray-600 mb-1"></i> Metasploit
+                    </div>
+                    <div class="text-sm font-medium text-gray-700 flex flex-col items-center">
+                        <i class="ri-fingerprint-fill text-3xl text-gray-600 mb-1"></i> Penetration Testing
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Projects -->
+    <section id="projects" class="py-20 bg-white section">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <h2 class="text-3xl font-bold text-gray-800 text-center mb-12" data-translate="projects_title">Projects</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              
+      
+
+<article class="bg-white p-6 rounded-xl shadow-lg card-float">
+    <div class="relative">
+        <img id="wms-main-image-1" src="C:\Users\yazan.alkhawaldeh\Desktop\portfolio\Image\Warehouse_Managment.png" alt="Warehouse Management System" class="w-full h-48 object-cover rounded-lg main-image">
+        <div id="warehouse-slider" class="slider-container hidden absolute top-0 left-0 w-full h-48">
+            <button class="slider-close-btn absolute top-2 right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center hover:bg-red-600" data-slider="warehouse-slider" data-translate="close_btn">X</button>
+            <div class="relative w-full h-full">
+                <div class="slider flex overflow-hidden h-full">
+                    <!-- Replace with your actual image URLs -->
+                    <img src="https://placehold.co/600x352/1e293b/ffffff?text=Slide+1" alt="Slide 1" class="slider-img active w-full h-48 object-cover rounded-lg">
+                    <img src="https://placehold.co/600x352/1e293b/ffffff?text=Slide+2" alt="Slide 2" class="slider-img hidden w-full h-48 object-cover rounded-lg">
+                    <img src="https://placehold.co/600x352/1e293b/ffffff?text=Slide+3" alt="Slide 3" class="slider-img hidden w-full h-48 object-cover rounded-lg">
+                </div>
+                <button class="slider-btn prev absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full">◄</button>
+                <button class="slider-btn next absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full">►</button>
+            </div>
+        </div>
+    </div>
+    <div id="wms-content-1" class="wms-content">
+        <h3 class="text-lg font-semibold text-gray-800 mt-4" data-translate="project2_title">Warehouse Management System</h3>
+        <p class="text-sm text-gray-600 mt-2" data-translate="project2_desc">
+            A comprehensive system for managing inventory and logistics with real-time tracking and reporting.
+        </p>
+        <div class="mt-4 flex gap-3">
+            <button class="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200 preview-btn" data-slider="warehouse-slider" data-translate="preview_link">Preview</button>
+        </div>
+    </div>
+</article>
+                <article class="bg-white p-6 rounded-xl shadow-lg card-float">
+                    <img src="C:\Users\yazan.alkhawaldeh\Desktop\portfolio\Image\CyberD2.png" alt="Cybersecurity Dashboard" class="w-full h-48 object-cover rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 mt-4" data-translate="project3_title">Cybersecurity Dashboard</h3>
+                    <p class="text-sm text-gray-600 mt-2" data-translate="project3_desc">
+                        A dashboard for real-time network threat monitoring, reducing incident response time by 30%.
+                    </p>
+                    <div class="mt-4 flex gap-3">
+                        <a href="javascript:void(0)" class="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200 demo-btn" data-modal="cybersecurity-dashboard-modal" data-translate="live_link">Live</a>
+                    </div>
+                </article>
+
+<!-- Cybersecurity Dashboard Modal -->
+<div id="cybersecurity-dashboard-modal" class="modal">
+  <div class="modal-content" style="background:#0d1117; color:#e6edf3; border-radius:12px; max-width:1100px; width:95%;">
+    <div class="flex items-center justify-between mb-4">
+      <h5 class="text-xl font-semibold">Cybersecurity Dashboard</h5>
+      <button class="close-modal text-gray-500 hover:text-red-500" aria-label="Close">&times;</button>
+    </div>
+
+    <div class="dashboard" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+      <!-- Failed Login Attempts -->
+      <div class="card" style="background:#161b22; border-radius:12px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.3);">
+        <h2 style="color:#ff9800; font-size:18px; margin-bottom:15px;">Failed Login Attempts</h2>
+        <canvas id="loginChart" height="180"></canvas>
+      </div>
+
+      <!-- Blocked Files -->
+      <div class="card" style="background:#161b22; border-radius:12px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.3);">
+        <h2 style="color:#ff9800; font-size:18px; margin-bottom:15px;">Blocked Files</h2>
+        <canvas id="filesChart" height="180"></canvas>
+      </div>
+
+      <!-- Suspicious Links -->
+      <div class="card" style="background:#161b22; border-radius:12px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.3);">
+        <h2 style="color:#ff9800; font-size:18px; margin-bottom:15px;">Suspicious Links</h2>
+        <canvas id="linksChart" height="180"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+                <article class="bg-white p-6 rounded-xl shadow-lg card-float">
+                    <img src="C:\Users\yazan.alkhawaldeh\Desktop\portfolio\Image\Secure E-commerce.png" alt="Secure E-commerce" class="w-full h-48 object-cover rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 mt-4" data-translate="project4_title">Secure E-commerce</h3>
+                    <p class="text-sm text-gray-600 mt-2" data-translate="project4_desc">
+                        Implemented secure payment flows and tokenization for a safe e-commerce platform.
+                    </p>
+                    <div class="mt-4 flex gap-3">
+                        <a href="#" class="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200" data-translate="preview_link">Preview</a>
+                        <a href="#" class="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200" data-translate="repo_link">Repo</a>
+                    </div>
+                </article>
+
+
+       <!-- Add to Projects Section (inside the <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">) -->
+<article class="bg-white p-6 rounded-xl shadow-lg card-float">
+    <img src="C:\Users\yazan.alkhawaldeh\Desktop\portfolio\Image\Portfolio Analytics.png" alt="Portfolio Analytics Dashboard" class="w-full h-48 object-cover rounded-lg">
+    <div id="analytics-content-1" class="analytics-content">
+        <h3 class="text-lg font-semibold text-gray-800 mt-4" data-translate="project8_title">Portfolio Analytics Dashboard</h3>
+        <p class="text-sm text-gray-600 mt-2" data-translate="project8_desc">
+            A dashboard displaying visitor analytics for the portfolio, including visits, countries, and popular sections.
+        </p>
+        <div class="mt-4 flex gap-3">
+            <button class="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200 analytics-demo-btn" data-analytics="analytics-1" data-translate="demo_link">Try Demo</button>
+        </div>
+    </div>
+    <div id="analytics-1" class="analytics-container hidden">
+        <h4 class="text-base font-semibold text-gray-800 mb-3" data-translate="analytics_title">Portfolio Analytics (Demo)</h4>
+        <div class="space-y-4">
+            <div>
+                <h5 class="text-sm font-medium text-gray-700" data-translate="visits_chart_title">Total Visits</h5>
+                <canvas id="visits-chart-1" height="100"></canvas>
+            </div>
+            <div>
+                <h5 class="text-sm font-medium text-gray-700" data-translate="countries_chart_title">Visitors by Country</h5>
+                <canvas id="countries-chart-1" height="100"></canvas>
+            </div>
+            <div>
+                <h5 class="text-sm font-medium text-gray-700" data-translate="sections_chart_title">Popular Sections</h5>
+                <canvas id="sections-chart-1" height="100"></canvas>
+            </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-2" data-translate="demo_note">This is a demo with sample data. Full version available on request.</p>
+        <button class="mt-3 px-3 py-1 text-sm bg-gray-200 text-gray-800 rounded hover:bg-gray-300 analytics-reset-btn" data-analytics="analytics-1" data-translate="reset_btn">Back</button>
+    </div>
+</article>       
+
+<!-- HTML Security Scanner Card -->
+    <article class="bg-white p-6 rounded-xl shadow-lg card-float">
+      <img
+        src="C:\Users\yazan.alkhawaldeh\Desktop\portfolio\Image\HTML.png"
+        alt="HTML Security Scanner"
+        class="w-full h-48 object-cover rounded-lg"
+      >
+      <h3 class="text-lg font-semibold text-gray-800 mt-4">
+        HTML & JavaScript Security Scanner
+      </h3>
+      <p class="text-sm text-gray-600 mt-2">
+      A tool for scanning for XSS, CSRF, CSP and other vulnerabilities in HTML codes.
+      </p>
+      <div class="mt-4 flex gap-3">
+        <button
+          class="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200 demo-btn"
+          data-modal="html-scanner-modal"
+        >
+          Demo
+        </button>
+      </div>
+    </article>
+
+    <!-- HTML Security Scanner Modal (Your original code) -->
+    <div id="html-scanner-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">HTML & JS Security Scanner</h3>
+
+            <!-- HTML Input -->
+            <textarea
+              id="html-scanner-input"
+              class="w-full h-40 p-3 border border-gray-300 rounded-md mb-4"
+              placeholder="Paste Your Code Here"
+            ></textarea>
+
+            <div class="flex justify-end gap-3 mb-4">
+              <button
+                id="scan-html-btn"
+                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition flex items-center justify-center"
+              >
+                <i id="scan-icon" class="ri-search-line mr-2"></i>
+                <svg id="loading-spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Check the Code</span>
+              </button>
+              <button
+                id="clear-html-btn"
+                class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition"
+              >Clear Result</button>
+            </div>
+
+            <div
+              id="results-container"
+                           class="whitespace-pre-wrap bg-gray-50 p-4 border border-red-200 text-red-700 rounded-md max-h-64 overflow-y-auto"
+
+            >no results yet.</div>
+
+            <button
+              class="mt-6 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 close-modal"
+            >Close</button>
+        </div>
+    </div>
+      <article class="bg-white p-6 rounded-xl shadow-lg card-float">
+                    <img src="https://placehold.co/600x352/1e293b/ffffff?text=URL+Analysis" alt="URL Analysis" class="w-full h-48 object-cover rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-800 mt-4" data-translate="project1_title">URL Analysis</h3>
+                    <p class="text-sm text-gray-600 mt-2" data-translate="project1_desc">
+                        A tool to analyze website URLs for security vulnerabilities, providing detailed reports on potential risks.
+                    </p>
+                    <div class="mt-4 flex gap-3">
+                        <button class="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200 demo-btn" data-modal="url-analysis-modal" data-translate="demo_link">Demo</button>
+                    </div>
+                </article>
+
+<!-- Password Strength Checker Card -->
+<article class="bg-white p-6 rounded-xl shadow-lg card-float">
+  <img
+    src="C:\Users\yazan.alkhawaldeh\Desktop\portfolio\Image\pass.png"
+    alt="Password Strength Checker"
+    class="w-full h-48 object-cover rounded-lg"
+  >
+  <h3 class="text-lg font-semibold text-gray-800 mt-4" data-translate="project5_title">
+    Password Strength Checker
+  </h3>
+  <p class="text-sm text-gray-600 mt-2" data-translate="project5_desc">
+    A tool to evaluate password strength based on cybersecurity best practices.
+  </p>
+  <div class="mt-4 flex gap-3">
+    <button
+      class="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200 demo-btn"
+      data-modal="password-checker-modal"
+      data-translate="demo_link"
+    >
+      Demo
+    </button>
+  </div>
+</article>
+
+<!-- Password Checker Modal -->
+<div id="password-checker-modal" class="modal">
+  <div class="modal-content">
+    <h3 class="text-xl font-semibold text-gray-800 mb-4">
+      Password Strength Checker
+    </h3>
+
+    <!-- Password Input + Toggle + Copy -->
+    <div class="relative mb-4">
+      <input
+        type="password"
+        id="password-input"
+        placeholder="Enter your password"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        aria-describedby="criteria-list password-result"
+      />
+      <button
+        id="toggle-password-btn"
+        class="absolute top-2 right-12 text-sm text-gray-600"
+        aria-label="Show or hide password"
+      >
+        Show
+      </button>
+      <button
+        id="copy-password-btn"
+        class="absolute top-2 right-2 text-sm text-gray-600 disabled:opacity-50"
+        aria-label="Copy password to clipboard"
+        disabled
+      >
+        Copy
+      </button>
+    </div>
+
+    <!-- Strength Meter -->
+    <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+      <div id="strength-bar" class="h-2 rounded-full" style="width: 0%;"></div>
+    </div>
+
+    <!-- Criteria Checklist -->
+    <ul
+      id="criteria-list"
+      class="text-sm mb-4 space-y-1"
+      aria-live="polite"
+      role="status"
+    ></ul>
+
+    <!-- Evaluate Button -->
+    <button
+      id="check-password-btn"
+      class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+      disabled
+    >
+      Check Strength
+    </button>
+
+    <!-- Final Result -->
+    <div
+      id="password-result"
+      class="mt-4 text-sm text-gray-600"
+      aria-live="polite"
+      role="alert"
+    ></div>
+
+    <button
+      class="mt-4 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 close-modal"
+    >
+      Close
+    </button>
+  </div>
+</div>
+
+
+<!-- Personal Task Manager Card -->
+<article class="bg-white p-6 rounded-xl shadow-lg card-float">
+  <img
+    src="C:\Users\yazan.alkhawaldeh\Desktop\portfolio\Image\List.png"
+    alt="Personal Task Manager"
+    class="w-full h-48 object-cover rounded-lg"
+  >
+  <h3
+    class="text-lg font-semibold text-gray-800 mt-4"
+    data-translate="project5_title"
+  >
+    Personal Task Manager
+  </h3>
+  <p
+    class="text-sm text-gray-600 mt-2"
+    data-translate="project5_desc"
+  >
+    A simple web app to manage daily tasks with add, edit, and delete features, stored locally for seamless use.
+  </p>
+  <div class="mt-4 flex gap-3">
+    <button
+      class="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200 demo-btn"
+      data-modal="task-manager-modal"
+      data-translate="demo_link"
+    >
+      Demo
+    </button>
+  </div>
+</article>
+
+<!-- Task Manager Modal -->
+<div id="task-manager-modal" class="modal">
+  <div class="modal-content">
+    <h3
+      class="text-xl font-semibold text-gray-800 mb-4"
+      data-translate="task_manager_title"
+    >
+      Personal Task Manager
+    </h3>
+    <div class="flex gap-2 mb-4">
+      <input
+        type="text"
+        id="task-input"
+        placeholder="Add a new task"
+        class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+      <button
+        id="add-task-btn"
+        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+      >
+        Add
+      </button>
+    </div>
+    <div id="task-list" class="space-y-2 max-h-64 overflow-y-auto">
+      <!-- Tasks will be dynamically added here -->
+    </div>
+    <button
+      class="mt-4 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 close-modal"
+    >
+      Close
+    </button>
+  </div>
+</div>
+
+<!-- Simple Quiz Application Card -->
+<article class="bg-white p-6 rounded-xl shadow-lg card-float">
+  <img
+    src="C:\Users\yazan.alkhawaldeh\Desktop\portfolio\Image\Quiz.png"
+    alt="Simple Quiz Application"
+    class="w-full h-48 object-cover rounded-lg"
+  >
+  <div id="quiz-content-1" class="quiz-content">
+    <h3
+      class="text-lg font-semibold text-gray-800 mt-4"
+      data-translate="project6_title"
+    >
+      Simple Quiz Application
+    </h3>
+    <p
+      class="text-sm text-gray-600 mt-2"
+      data-translate="project6_desc"
+    >
+      An interactive quiz app for testing cybersecurity knowledge, perfect for educational platforms.
+    </p>
+    <div class="mt-4 flex gap-3">
+      <button
+        class="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200 quiz-demo-btn"
+        data-quiz="quiz-1"
+        data-translate="demo_link"
+      >
+        Try Demo
+      </button>
+    </div>
+  </div>
+
+  <!-- Quiz Container (hidden by default) -->
+  <div id="quiz-1" class="quiz-container hidden p-4">
+    <!-- Progress Bar -->
+    <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+      <div id="quiz-progress" class="bg-blue-600 h-2 rounded-full" style="width: 0%;"></div>
+    </div>
+
+    <!-- Timer -->
+    <div class="mb-2 text-right">
+      <span id="timer" class="text-sm text-red-500">00:30</span>
+    </div>
+
+    <!-- Questions -->
+    <div class="quiz-question">
+      <h4
+        class="text-base font-semibold text-gray-800 mb-3"
+        data-translate="quiz_question_1"
+      >
+        What is the first step in securing a web application?
+      </h4>
+      <div class="space-y-2">
+        <label class="flex items-center gap-2">
+          <input type="radio" name="q1-1" value="a" class="quiz-radio">
+          <span data-translate="quiz_q1_option_a">Implement HTTPS</span>
+        </label>
+        <label class="flex items-center gap-2">
+          <input type="radio" name="q1-1" value="b" class="quiz-radio">
+          <span data-translate="quiz_q1_option_b">Use weak passwords</span>
+        </label>
+        <label class="flex items-center gap-2">
+          <input type="radio" name="q1-1" value="c" class="quiz-radio">
+          <span data-translate="quiz_q1_option_c">Ignore updates</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="quiz-question hidden">
+      <h4
+        class="text-base font-semibold text-gray-800 mb-3"
+        data-translate="quiz_question_2"
+      >
+        What does XSS stand for?
+      </h4>
+      <div class="space-y-2">
+        <label class="flex items-center gap-2">
+          <input type="radio" name="q1-2" value="a" class="quiz-radio">
+          <span data-translate="quiz_q2_option_a">Cross-Site Scripting</span>
+        </label>
+        <label class="flex items-center gap-2">
+          <input type="radio" name="q1-2" value="b" class="quiz-radio">
+          <span data-translate="quiz_q2_option_b">Cross-Server Security</span>
+        </label>
+        <label class="flex items-center gap-2">
+          <input type="radio" name="q1-2" value="c" class="quiz-radio">
+          <span data-translate="quiz_q2_option_c">Client-Side Scripting</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="quiz-question hidden">
+      <h4
+        class="text-base font-semibold text-gray-800 mb-3"
+        data-translate="quiz_question_3"
+      >
+        Why is input validation important?
+      </h4>
+      <div class="space-y-2">
+        <label class="flex items-center gap-2">
+          <input type="radio" name="q1-3" value="a" class="quiz-radio">
+          <span data-translate="quiz_q3_option_a">Prevents SQL Injection</span>
+        </label>
+        <label class="flex items-center gap-2">
+          <input type="radio" name="q1-3" value="b" class="quiz-radio">
+          <span data-translate="quiz_q3_option_b">Improves UI design</span>
+        </label>
+        <label class="flex items-center gap-2">
+          <input type="radio" name="q1-3" value="c" class="quiz-radio">
+          <span data-translate="quiz_q3_option_c">Increases server speed</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Feedback Message -->
+    <p id="feedback-msg" class="mt-2 text-sm text-gray-600 hidden"></p>
+
+    <!-- Result and Skill Meter -->
+    <div class="quiz-result hidden mt-4 text-sm text-gray-600"></div>
+    <canvas id="skill-chart" width="150" height="150" class="mx-auto mt-4 hidden"></canvas>
+
+    <!-- Navigation Buttons -->
+    <div class="mt-4 flex gap-3">
+      <button
+        class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 quiz-next-btn"
+        data-quiz="quiz-1"
+      >
+        Next
+      </button>
+      <button
+        class="px-3 py-1 text-sm bg-gray-200 text-gray-800 rounded hover:bg-gray-300 quiz-reset-btn hidden"
+        data-quiz="quiz-1"
+      >
+        Try Again
+      </button>
+    </div>
+  </div>
+</article>
+     <!-- Add to Projects Section (inside the <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">) -->
+<article class="bg-white p-6 rounded-xl shadow-lg card-float">
+    <img src="https://placehold.co/600x352/1e293b/ffffff?text=File+Upload" alt="Secure File Upload Portal" class="w-full h-48 object-cover rounded-lg">
+    <div id="file-upload-content-1" class="file-upload-content">
+        <h3 class="text-lg font-semibold text-gray-800 mt-4" data-translate="project7_title">Secure File Upload Portal</h3>
+        <p class="text-sm text-gray-600 mt-2" data-translate="project7_desc">
+            A secure portal for uploading files with validation for type (PDF only) and size (max 10MB).
+        </p>
+        <div class="mt-4 flex gap-3">
+            <button class="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200 file-upload-demo-btn" data-upload="file-upload-1" data-translate="demo_link">Try Demo</button>
+            <a href="#" class="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200" data-translate="github_link">GitHub</a>
+        </div>
+    </div>
+    <div id="file-upload-1" class="file-upload-container hidden">
+        <h4 class="text-base font-semibold text-gray-800 mb-3" data-translate="file_upload_title">Upload a File (PDF, Max 10MB)</h4>
+        <input type="file" id="file-input-1" accept=".pdf" class="w-full p-2 border border-gray-300 rounded-lg mb-3">
+        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 upload-btn" data-upload="file-upload-1" data-translate="upload_btn">Upload</button>
+        <div id="file-upload-result-1" class="mt-3 text-sm text-gray-600"></div>
+        <button class="mt-3 px-3 py-1 text-sm bg-gray-200 text-gray-800 rounded hover:bg-gray-300 file-upload-reset-btn" data-upload="file-upload-1" data-translate="reset_btn">Back</button>
+    </div>
+</article>
+              
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="py-20 bg-gray-50 section">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6">
+            <h2 class="text-3xl font-bold text-gray-800 text-center mb-12" data-translate="contact_title">Contact</h2>
+            <div class="bg-white p-8 rounded-xl shadow-lg card-float">
+                <form id="contactForm" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input required name="name" placeholder="Your name" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input required name="email" type="email" placeholder="Your email" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <textarea required name="message" rows="5" placeholder="How can I help?" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    <div class="flex gap-4">
+                        <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition" data-translate="send_btn">Send Message</button>
+                        <a href="mailto:youremail@example.com" class="px-6 py-3 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition" data-translate="email_link">Or email me</a>
+                    </div>
+                </form>
+                <p id="formMsg" class="text-sm text-gray-600 mt-4 hidden"></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- URL Analysis Modal -->
+    <div id="url-analysis-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">URL Analysis Demo</h3>
+            <input type="url" id="url-input" placeholder="Enter website URL" class="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button id="analyze-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Analyze</button>
+            <div id="analysis-result" class="mt-4 text-sm text-gray-600"></div>
+            <button class="mt-4 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 close-modal">Close</button>
+        </div>
+    </div>
+
+    <!-- Terminal Popup -->
+    <!-- Terminal Popup -->
+<div id="terminalPopup" class="terminal-popup">
+    <div class="terminal-header">
+        <div class="header-btn red" style="background-color: #ff5f56;"></div>
+        <div class="header-btn yellow" style="background-color: #ffbd2e;"></div>
+        <div class="header-btn green" style="background-color: #27c93f;"></div>
+        <button class="terminal-close-btn">✕</button>
+    </div>
+    <div class="terminal-body" id="terminal-body">
+        <div class="output-line">Welcome to my interactive terminal!</div>
+        <div class="output-line">Type 'help' and press Enter to start.</div>
+    </div>
+    <div class="terminal-input-line">
+        <span class="prompt">user@portfolio:~ $</span>
+        <input type="text" id="terminal-input" class="terminal-input" autofocus>
+        <span id="cursor" class="cursor"></span>
+    </div>
+</div>
+<audio id="typeSound" src="https://www.soundjay.com/buttons/click-1.mp3"></audio>
+
+    <!-- Footer -->
+    <footer class="py-8 bg-white text-center text-gray-600">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <p data-translate="footer_copy">© 2025 Yazan — Built with security and innovation in mind</p>
+        </div>
+    </footer>
+<script>
+        // Language content
+        const langContent = {
+            en: {
+                nav_about: 'About',
+                nav_skills: 'Skills',
+                nav_projects: 'Projects',
+                nav_contact: 'Contact',
+                nav_cv: 'Download CV',
+                nav_about_mobile: 'About',
+                nav_skills_mobile: 'Skills',
+                nav_projects_mobile: 'Projects',
+                nav_contact_mobile: 'Contact',
+                nav_cv_mobile: 'Download CV',
+                job_title: 'Web Developer · Cybersecurity Specialist',
+                hero_title: 'Building Secure & High-Performance Digital Solutions.',
+                hero_desc: 'I build complete digital solutions. My approach blends high-performance engineering with intuitive design and robust cybersecurity, creating seamless, secure, and engaging experiences.',
+                hero_cta1: 'View Projects',
+                hero_cta2: 'Hire Me',
+                about_title: 'About Me',
+                about_desc: 'As a full-stack developer and cybersecurity specialist, passionate about building secure, user-friendly solutions that turn complex ideas into reality.',
+                about_list_title: 'Secure Practices:',
+                about_list_items: '<li>OWASP-aware implementations</li><li>HTTPS, CSP, and secure headers</li><li>Input validation & parameterized queries</li>',
+                exp_title: 'Experience & Tools',
+                skills_title: 'Skills',
+                skills_frontend: 'Frontend',
+                skills_backend: 'Backend',
+                skills_security: 'Security',
+                projects_title: 'Projects',
+                project1_title: 'URL Analysis',
+                project1_desc: 'A tool to analyze website URLs for security vulnerabilities, providing detailed reports on potential risks.',
+                project2_title: 'Warehouse Management System',
+                project2_desc: 'A comprehensive system for managing inventory and logistics with real-time tracking and reporting.',
+                project3_title: 'Cybersecurity Dashboard',
+                project3_desc: 'A dashboard for real-time network threat monitoring, reducing incident response time by 30%.',
+                project4_title: 'Secure E-commerce',
+                project4_desc: 'Implemented secure payment flows and tokenization for a safe e-commerce platform.',
+                demo_link: 'Demo',
+                github_link: 'GitHub',
+                preview_link: 'Preview',
+                repo_link: 'Repo',
+                live_link: 'Live',
+                contact_title: 'Contact',
+                send_btn: 'Send Message',
+                email_link: 'Or email me',
+                footer_copy: '© 2025 Yazan — Built with security and innovation in mind',
+              
+            },
+            ar: {
+                nav_about: 'عني',
+                nav_skills: 'المهارات',
+                nav_projects: 'المشاريع',
+                nav_contact: 'تواصل',
+                nav_cv: 'تحميل السيرة الذاتية',
+                nav_about_mobile: 'عني',
+                nav_skills_mobile: 'المهارات',
+                nav_projects_mobile: 'المشاريع',
+                nav_contact_mobile: 'تواصل',
+                nav_cv_mobile: 'تحميل السيرة الذاتية',
+                job_title: 'مطور ويب · مختص أمن سيبراني',
+                hero_title: 'صيغة حلول ويب آمنة ومبتكرة',
+                hero_desc: 'أمزج بين التصميم الإبداعي والأمن السيبراني القوي لتقديم تجارب ويب سلسة وآمنة وجذابة.',
+                hero_cta1: 'مشاهدة المشاريع',
+                hero_cta2: 'وظفني',
+                about_title: 'عني',
+                about_desc: 'مطور ويب وخبير أمن سيبراني شغوف بتحويل الأفكار المعقدة إلى حلول آمنة وسهلة الاستخدام.',
+                about_list_title: 'الممارسات الأمنية:',
+                about_list_items: '<li>تطبيق معايير OWASP</li><li>HTTPS, CSP, Headers آمنة</li><li>التحقق من المدخلات و parameterized queries</li>',
+                exp_title: 'الخبرة والأدوات',
+                skills_title: 'المهارات',
+                skills_frontend: 'الواجهات الأمامية',
+                skills_backend: 'الواجهات الخلفية',
+                skills_security: 'الأمن',
+                projects_title: 'المشاريع',
+                project1_title: 'تحليل الروابط',
+                project1_desc: 'أداة لتحليل روابط المواقع للكشف عن الثغرات الأمنية، مع تقارير مفصلة عن المخاطر المحتملة.',
+                project2_title: 'نظام إدارة المستودعات',
+                project2_desc: 'نظام شامل لإدارة المخزون واللوجستيات مع تتبع وتقارير في الوقت الفعلي.',
+                project3_title: 'لوحة تحكم الأمن السيبراني',
+                project3_desc: 'لوحة تحكم لمراقبة التهديدات الأمنية في الوقت الفعلي، مما قلل وقت الاستجابة للحوادث بنسبة 30%.',
+                project4_title: 'متجر إلكتروني آمن',
+                project4_desc: 'نفذت تدفقات دفع آمنة وترميز بيانات لحماية بيانات المستخدمين في منصة تجارة إلكترونية.',
+                demo_link: 'عرض',
+                github_link: 'جيت هاب',
+                preview_link: 'معاينة',
+                repo_link: 'المستودع',
+                live_link: 'مباشر',
+                contact_title: 'تواصل',
+                send_btn: 'إرسال رسالة',
+                email_link: 'أو راسلني عبر البريد',
+                footer_copy: '© 2025 يزن — بني بعقلية أمنية وابتكارية',
+            }
+        };
+        let currentLang = 'en';
+
+        // Update content based on language
+        function updateContent(lang) {
+            document.querySelectorAll('[data-translate]').forEach(el => {
+                const key = el.dataset.translate;
+                const newText = langContent[lang][key];
+                if (newText) {
+                    if (key.includes('_list_items') || key.includes('desc')) {
+                        el.innerHTML = newText;
+                    } else {
+                        el.textContent = newText;
+                    }
+                }
+            });
+            document.body.style.direction = lang === 'ar' ? 'rtl' : 'ltr';
+        }
+        updateContent(currentLang);
+
+        // Mobile menu
+        const menuBtn = document.getElementById('menuBtn');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const backdrop = document.getElementById('backdrop');
+        const navLinks = document.querySelectorAll('#mobileMenu a');
+
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('right-[-100%]');
+            mobileMenu.classList.toggle('right-0');
+            backdrop.classList.toggle('hidden');
+        }
+
+        menuBtn.addEventListener('click', toggleMobileMenu);
+        closeMenuBtn.addEventListener('click', toggleMobileMenu);
+        backdrop.addEventListener('click', toggleMobileMenu);
+        navLinks.forEach(link => link.addEventListener('click', toggleMobileMenu));
+
+        // Scroll animations
+        const sections = document.querySelectorAll('.section');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        sections.forEach(section => observer.observe(section));
+
+        // Contact form
+        const form = document.getElementById('contactForm');
+        const formMsg = document.getElementById('formMsg');
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            const message = currentLang === 'en' ? 'Thanks! Your message has been received (demo mode).' : 'شكراً! تم استلام رسالتك (وضع تجريبي).';
+            formMsg.textContent = message;
+            formMsg.classList.remove('hidden');
+            setTimeout(() => {
+                formMsg.classList.add('hidden');
+                form.reset();
+            }, 3000);
+        });
+// Image Slider for Warehouse Management System
+const previewButtons = document.querySelectorAll('.preview-btn');
+previewButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const sliderId = btn.dataset.slider;
+        const slider = document.getElementById(sliderId);
+        const content = document.getElementById(`wms-content-1`); // Fixed ID
+        content.classList.add('hidden');
+        slider.classList.remove('hidden');
+        initSlider(sliderId);
+    });
+});
+
+const closeButtons = document.querySelectorAll('.slider-close-btn');
+closeButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const sliderId = btn.dataset.slider;
+        const slider = document.getElementById(sliderId);
+        const content = document.getElementById(`wms-content-1`); // Fixed ID
+        slider.classList.add('hidden');
+        content.classList.remove('hidden');
+    });
+});
+
+function initSlider(sliderId) {
+    const slider = document.getElementById(sliderId);
+    const images = slider.querySelectorAll('.slider-img');
+    const prevBtn = slider.querySelector('.prev');
+    const nextBtn = slider.querySelector('.next');
+    let currentIndex = 0;
+
+    function showImage(index) {
+        images.forEach(img => img.classList.remove('active'));
+        images[index].classList.add('active');
+    }
+
+    prevBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        showImage(currentIndex);
+    });
+
+    nextBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % images.length;
+        showImage(currentIndex);
+    });
+
+    showImage(currentIndex);
+}
+
+        // URL Analysis Modal
+        const demoButtons = document.querySelectorAll('.demo-btn');
+        const modals = document.querySelectorAll('.modal');
+        const closeModalButtons = document.querySelectorAll('.close-modal');
+
+        demoButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modalId = btn.dataset.modal;
+                const modal = document.getElementById(modalId);
+                modal.classList.add('active');
+            });
+        });
+
+        closeModalButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modals.forEach(modal => modal.classList.remove('active'));
+            });
+        });
+
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const urlInput = document.getElementById('url-input');
+        const analysisResult = document.getElementById('analysis-result');
+
+        analyzeBtn.addEventListener('click', () => {
+            const url = urlInput.value.trim();
+            if (url) {
+                analysisResult.innerHTML = currentLang === 'en'
+                    ? `<p>Analyzing <strong>${url}</strong>...</p>
+                       <p>Status: Secure</p>
+                       <p>Vulnerabilities: None detected</p>
+                       <p>Recommendations: Ensure HTTPS, update dependencies.</p>`
+                    : `<p>جارٍ تحليل <strong>${url}</strong>...</p>
+                       <p>الحالة: آمن</p>
+                       <p>الثغرات: لم يتم الكشف عن أي ثغرات</p>
+                       <p>التوصيات: تأكد من استخدام HTTPS، قم بتحديث التبعيات.</p>`;
+            } else {
+                analysisResult.innerHTML = currentLang === 'en'
+                    ? `<p style="color: #ff6347;">Error: Please enter a valid URL.</p>`
+                    : `<p style="color: #ff6347;">خطأ: الرجاء إدخال رابط صالح.</p>`;
+            }
+        });
+      
+       // Analytics Dashboard Logic
+    const analyticsDemoButtons = document.querySelectorAll('.analytics-demo-btn');
+    analyticsDemoButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const analyticsId = btn.dataset.analytics;
+            const analyticsContainer = document.getElementById(analyticsId);
+            const analyticsContent = document.getElementById(`analytics-content-${analyticsId.split('-')[1]}`);
+            analyticsContent.classList.toggle('hidden');
+            analyticsContainer.classList.toggle('hidden');
+            if (!analyticsContainer.classList.contains('hidden')) {
+                initAnalyticsDashboard(analyticsId);
+            }
+        });
+    });
+
+    const analyticsResetButtons = document.querySelectorAll('.analytics-reset-btn');
+    analyticsResetButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const analyticsId = btn.dataset.analytics;
+            const analyticsContainer = document.getElementById(analyticsId);
+            const analyticsContent = document.getElementById(`analytics-content-${analyticsId.split('-')[1]}`);
+            analyticsContainer.classList.add('hidden');
+            analyticsContent.classList.remove('hidden');
+        });
+    });
+
+    function initAnalyticsDashboard(analyticsId) {
+        // Total Visits Chart (Line Chart)
+        const visitsChart = new Chart(document.getElementById(`visits-chart-${analyticsId.split('-')[1]}`), {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: currentLang === 'en' ? 'Visits' : 'الزيارات',
+                    data: [200, 300, 450, 600, 800, 1200],
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        // Visitors by Country Chart (Pie Chart)
+        const countriesChart = new Chart(document.getElementById(`countries-chart-${analyticsId.split('-')[1]}`), {
+            type: 'pie',
+            data: {
+                labels: currentLang === 'en' ? ['Jordan', 'Saudi Arabia', 'UAE', 'USA'] : ['الأردن', 'السعودية', 'الإمارات', 'الولايات المتحدة'],
+                datasets: [{
+                    data: [40, 30, 20, 10],
+                    backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Popular Sections Chart (Bar Chart)
+        const sectionsChart = new Chart(document.getElementById(`sections-chart-${analyticsId.split('-')[1]}`), {
+            type: 'bar',
+            data: {
+                labels: currentLang === 'en' ? ['Projects', 'Skills', 'About', 'Contact'] : ['المشاريع', 'المهارات', 'عني', 'تواصل'],
+                datasets: [{
+                    label: currentLang === 'en' ? 'Page Views' : 'مشاهدات الصفحة',
+                    data: [500, 300, 200, 100],
+                    backgroundColor: '#3b82f6'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    }
+      
+      // File Upload Logic
+    const fileUploadDemoButtons = document.querySelectorAll('.file-upload-demo-btn');
+    fileUploadDemoButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const uploadId = btn.dataset.upload;
+            const uploadContainer = document.getElementById(uploadId);
+            const uploadContent = document.getElementById(`file-upload-content-${uploadId.split('-')[2]}`);
+            uploadContent.classList.toggle('hidden');
+            uploadContainer.classList.toggle('hidden');
+        });
+    });
+
+    const uploadButtons = document.querySelectorAll('.upload-btn');
+    uploadButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const uploadId = btn.dataset.upload;
+            const fileInput = document.getElementById(`file-input-${uploadId.split('-')[2]}`);
+            const resultDiv = document.getElementById(`file-upload-result-${uploadId.split('-')[2]}`);
+            const file = fileInput.files[0];
+
+            if (!file) {
+                resultDiv.className = 'file-upload-result error';
+                resultDiv.innerHTML = currentLang === 'en'
+                    ? 'Error: Please select a file.'
+                    : 'خطأ: الرجاء اختيار ملف.';
+                return;
+            }
+
+            if (file.type !== 'application/pdf') {
+                resultDiv.className = 'file-upload-result error';
+                resultDiv.innerHTML = currentLang === 'en'
+                    ? 'Error: Only PDF files are allowed.'
+                    : 'خطأ: يُسمح فقط بملفات PDF.';
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) {
+                resultDiv.className = 'file-upload-result error';
+                resultDiv.innerHTML = currentLang === 'en'
+                    ? 'Error: File size exceeds 10MB.'
+                    : 'خطأ: حجم الملف يتجاوز 10 ميجابايت.';
+                return;
+            }
+
+            resultDiv.className = 'file-upload-result success';
+            resultDiv.innerHTML = currentLang === 'en'
+                ? `Success: "${file.name}" uploaded securely (Demo mode).`
+                : `نجاح: تم رفع "${file.name}" بأمان (وضع تجريبي).`;
+        });
+    });
+
+    const resetUploadButtons = document.querySelectorAll('.file-upload-reset-btn');
+    resetUploadButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const uploadId = btn.dataset.upload;
+            const uploadContainer = document.getElementById(uploadId);
+            const uploadContent = document.getElementById(`file-upload-content-${uploadId.split('-')[2]}`);
+            const fileInput = document.getElementById(`file-input-${uploadId.split('-')[2]}`);
+            const resultDiv = document.getElementById(`file-upload-result-${uploadId.split('-')[2]}`);
+            uploadContainer.classList.add('hidden');
+            uploadContent.classList.remove('hidden');
+            fileInput.value = '';
+            resultDiv.innerHTML = '';
+        });
+    });
+//quiz logic
+ // Quiz Logic
+// Quiz Logic
+const quizDemoButtons = document.querySelectorAll('.quiz-demo-btn');
+quizDemoButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const quizId = btn.dataset.quiz;
+    const quizContainer = document.getElementById(quizId);
+    const quizContent = document.getElementById(`quiz-content-${quizId.split('-')[1]}`);
+    quizContent.classList.toggle('hidden');
+    quizContainer.classList.toggle('hidden');
+
+    if (!quizContainer.classList.contains('hidden')) {
+      initQuiz(quizId);
+    }
+  });
+});
+
+function initQuiz(quizId) {
+  const quizContainer = document.getElementById(quizId);
+  const questions = quizContainer.querySelectorAll('.quiz-question');
+  const nextBtn = quizContainer.querySelector('.quiz-next-btn');
+  const resetBtn = quizContainer.querySelector('.quiz-reset-btn');
+  const resultDiv = quizContainer.querySelector('.quiz-result');
+  const progressBar = quizContainer.querySelector('#quiz-progress');
+  const timerEl = quizContainer.querySelector('#timer');
+  const feedbackEl = quizContainer.querySelector('#feedback-msg');
+  const skillCanvas = quizContainer.querySelector('#skill-chart');
+
+  let currentQuestion = 0;
+  let score = 0;
+  let timerInterval = null;
+  const correctAnswers = ['a', 'a', 'a'];
+  const badges = [
+    { threshold: 1, label: 'مبتدئ' },
+    { threshold: 2, label: 'متوسط' },
+    { threshold: 3, label: 'خبير' },
+  ];
+
+  function updateProgress(current, total) {
+    const percent = Math.round((current / total) * 100);
+    progressBar.style.width = percent + '%';
+  }
+
+  function startTimer(duration) {
+    clearInterval(timerInterval);
+    let time = duration;
+    timerEl.textContent = `00:${String(time).padStart(2, '0')}`;
+    timerInterval = setInterval(() => {
+      time--;
+      const min = String(Math.floor(time / 60)).padStart(2, '0');
+      const sec = String(time % 60).padStart(2, '0');
+      timerEl.textContent = `${min}:${sec}`;
+
+      if (time <= 0) {
+        clearInterval(timerInterval);
+        nextBtn.click();
+      }
+    }, 1000);
+  }
+
+  function giveFeedback(isCorrect) {
+    feedbackEl.textContent = isCorrect
+      ? '✅ إجابة صحيحة! هذا يحمي التطبيق من هجمات SQL Injection مثلاً.'
+      : '❌ إجابة خاطئة. التحقق من المدخلات يمنع إدخال أكواد خبيثة.';
+    feedbackEl.classList.remove('hidden');
+  }
+
+  function celebrate() {
+    if (typeof confetti === 'function') {
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    }
+  }
+
+  function renderSkillMeter(score, total) {
+    if (!window.Chart) return;
+    const ctx = skillCanvas.getContext('2d');
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Correct', 'Remaining'],
+        datasets: [{
+          data: [score, total - score],
+          backgroundColor: ['#3B82F6', '#E5E7EB']
+        }]
+      },
+      options: {
+        cutout: '75%',
+        plugins: { legend: { display: false } }
+      }
+    });
+  }
+
+  function showBadge(score) {
+    const badge = badges.slice().reverse().find(b => score >= b.threshold);
+    if (badge) {
+      alert(`🎖️ حصلت على شارة: ${badge.label}`);
+    }
+  }
+
+  function showQuestion(index) {
+    // hide all
+    questions.forEach(q => q.classList.add('hidden'));
+    resultDiv.classList.add('hidden');
+    skillCanvas.classList.add('hidden');
+    feedbackEl.classList.add('hidden');
+    nextBtn.classList.remove('hidden');
+    resetBtn.classList.add('hidden');
+
+    // progress & timer
+    updateProgress(index, questions.length);
+    startTimer(30);
+
+    // show current
+    const q = questions[index];
+    q.classList.remove('hidden');
+
+    // attach one-time feedback on change
+    const radios = q.querySelectorAll('input[type="radio"]');
+    radios.forEach(radio => {
+      radio.checked = false;
+      radio.addEventListener('change', () => {
+        giveFeedback(radio.value === correctAnswers[index]);
+      }, { once: true });
+    });
+  }
+
+  function showResult() {
+    clearInterval(timerInterval);
+    updateProgress(questions.length, questions.length);
+
+    questions.forEach(q => q.classList.add('hidden'));
+    nextBtn.classList.add('hidden');
+    resetBtn.classList.remove('hidden');
+    resultDiv.classList.remove('hidden');
+
+    const message = currentLang === 'en'
+      ? `You scored ${score} out of ${questions.length}! ${score === questions.length ? 'Perfect!' : 'Try again to improve.'}`
+      : `حصلت على ${score} من ${questions.length}! ${score === questions.length ? 'ممتاز!' : 'حاول مرة أخرى لتحسين النتيجة.'}`;
+
+    resultDiv.innerHTML = message;
+    skillCanvas.classList.remove('hidden');
+    renderSkillMeter(score, questions.length);
+    showBadge(score);
+    if (score === questions.length) celebrate();
+  }
+
+  nextBtn.addEventListener('click', () => {
+    const name = `q1-${currentQuestion + 1}`;
+    const selected = Array.from(
+      questions[currentQuestion].querySelectorAll(`input[name="${name}"]`)
+    ).find(r => r.checked);
+
+    if (selected && selected.value === correctAnswers[currentQuestion]) {
+      score++;
+    }
+
+    currentQuestion++;
+    if (currentQuestion < questions.length) {
+      showQuestion(currentQuestion);
+    } else {
+      showResult();
+    }
+  });
+
+  resetBtn.addEventListener('click', () => {
+    clearInterval(timerInterval);
+    score = 0;
+    currentQuestion = 0;
+    questions.forEach(q =>
+      q.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false)
+    );
+    showQuestion(0);
+  });
+
+  // keyboard: Enter to navigate
+  quizContainer.setAttribute('tabindex', '0');
+  quizContainer.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !nextBtn.classList.contains('hidden')) {
+      nextBtn.click();
+    }
+  });
+
+  showQuestion(0);
+}
+
+
+
+// Task Manager Logic
+const taskInput = document.getElementById('task-input');
+const addTaskBtn = document.getElementById('add-task-btn');
+const taskList = document.getElementById('task-list');
+
+// Load tasks from localStorage
+let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+function saveTasks() {
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+function renderTasks() {
+  taskList.innerHTML = '';
+  tasks.forEach((task, index) => {
+    const taskItem = document.createElement('div');
+    taskItem.className = `task-item ${task.completed ? 'completed' : ''}`;
+    taskItem.innerHTML = `
+      <input
+        type="checkbox"
+        class="task-checkbox"
+        ${task.completed ? 'checked' : ''}
+        data-index="${index}">
+      ${task.editing
+        ? `<input type="text" class="edit-input" value="${task.text}">
+           <div class="task-actions">
+             <button class="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 save-task" data-index="${index}">Save</button>
+             <button class="px-2 py-1 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 cancel-edit" data-index="${index}">Cancel</button>
+           </div>`
+        : `<span class="flex-grow">${task.text}</span>
+           <div class="task-actions">
+             <button class="px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 edit-task" data-index="${index}">Edit</button>
+             <button class="px-2 py-1 bg-red-100 text-red-600 rounded hover:bg-red-200 delete-task" data-index="${index}">Delete</button>
+           </div>`
+      }
+    `;
+    taskList.appendChild(taskItem);
+  });
+}
+
+// Add Task
+addTaskBtn.addEventListener('click', () => {
+  const taskText = taskInput.value.trim();
+  if (!taskText) return;
+  tasks.push({ text: taskText, completed: false, editing: false });
+  saveTasks();
+  renderTasks();
+  taskInput.value = '';
+});
+
+// Task Actions
+taskList.addEventListener('click', e => {
+  const idx = parseInt(e.target.dataset.index, 10);
+  if (e.target.classList.contains('task-checkbox')) {
+    tasks[idx].completed = e.target.checked;
+  } else if (e.target.classList.contains('edit-task')) {
+    tasks[idx].editing = true;
+  } else if (e.target.classList.contains('save-task')) {
+    const input = e.target.closest('.task-item').querySelector('.edit-input');
+    const txt = input.value.trim();
+    if (txt) {
+      tasks[idx].text = txt;
+      tasks[idx].editing = false;
+    }
+  } else if (e.target.classList.contains('cancel-edit')) {
+    tasks[idx].editing = false;
+  } else if (e.target.classList.contains('delete-task')) {
+    tasks.splice(idx, 1);
+  }
+  saveTasks();
+  renderTasks();
+});
+
+// Initialize Task Manager when modal opens
+document.querySelector('[data-modal="task-manager-modal"]')
+  .addEventListener('click', () => renderTasks());
+
+// Password Strength Checker Logic
+const passwordInput      = document.getElementById('password-input');
+const togglePasswordBtn  = document.getElementById('toggle-password-btn');
+const copyPasswordBtn    = document.getElementById('copy-password-btn');
+const strengthBar        = document.getElementById('strength-bar');
+const criteriaList       = document.getElementById('criteria-list');
+const checkPasswordBtn   = document.getElementById('check-password-btn');
+const passwordResult     = document.getElementById('password-result');
+let debounceTimer        = null;
+
+// Define the rules
+const rules = [
+  {
+    test: pwd => pwd.length >= 8,
+    msgEn: 'At least 8 characters',
+    msgAr: 'على الأقل 8 أحرف'
+  },
+  {
+    test: pwd => pwd.length >= 12,
+    msgEn: 'At least 12 characters',
+    msgAr: 'على الأقل 12 حرفًا'
+  },
+  {
+    test: pwd => /[A-Z]/.test(pwd),
+    msgEn: 'At least one uppercase letter',
+    msgAr: 'حرف كبير واحد'
+  },
+  {
+    test: pwd => /[0-9]/.test(pwd),
+    msgEn: 'At least one number',
+    msgAr: 'رقم واحد'
+  },
+  {
+    test: pwd => /[^A-Za-z0-9]/.test(pwd),
+    msgEn: 'At least one special character',
+    msgAr: 'رمز خاص واحد'
+  }
+];
+
+// Evaluate password on input, debounced
+passwordInput.addEventListener('input', () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(evaluatePassword, 300);
+});
+
+// Show / Hide password toggle
+togglePasswordBtn.addEventListener('click', () => {
+  const isHidden = passwordInput.type === 'password';
+  passwordInput.type = isHidden ? 'text' : 'password';
+  togglePasswordBtn.textContent = isHidden ? 'Hide' : 'Show';
+});
+
+// Copy to clipboard
+copyPasswordBtn.addEventListener('click', () => {
+  navigator.clipboard.writeText(passwordInput.value)
+    .then(() => {
+      copyPasswordBtn.textContent = currentLang === 'en' ? 'Copied!' : 'تم النسخ!';
+      setTimeout(() => copyPasswordBtn.textContent = 'Copy', 1500);
+    });
+});
+
+// Evaluate when “Check Strength” clicked
+checkPasswordBtn.addEventListener('click', () => {
+  evaluatePassword();
+  // Final feedback
+  const pct = parseInt(strengthBar.style.width, 10);
+  if (pct >= 80) {
+    passwordResult.textContent = currentLang === 'en'
+      ? '🎉 Your password is strong!'
+      : '🎉 كلمة المرور قوية!';
+    if (typeof confetti === 'function') confetti({ particleCount: 60, spread: 50 });
+  } else if (pct >= 60) {
+    passwordResult.textContent = currentLang === 'en'
+      ? '👍 Good, but you can strengthen it further.'
+      : '👍 جيدة، ولكن يمكنك تقويتها أكثر.';
+  } else {
+    passwordResult.textContent = currentLang === 'en'
+      ? '⚠️ Your password is weak.'
+      : '⚠️ كلمة المرور ضعيفة.';
+  }
+});
+
+// Core evaluation function
+function evaluatePassword() {
+  const pwd = passwordInput.value;
+
+  // Count how many rules are satisfied
+  const satisfied = rules.filter(r => r.test(pwd)).length;
+  const percent   = Math.round((satisfied / rules.length) * 100);
+
+  // Update progress bar
+  strengthBar.style.width = percent + '%';
+  strengthBar.className   = `h-2 rounded-full ${
+    percent >= 80 ? 'bg-green-500' :
+    percent >= 60 ? 'bg-yellow-400' :
+    percent >= 40 ? 'bg-orange-400' :
+                    'bg-red-500'
+  }`;
+
+  // Render checklist
+  criteriaList.innerHTML = rules.map(r => {
+    const ok   = r.test(pwd);
+    const icon = ok ? '✅' : '❌';
+    const msg  = currentLang === 'en' ? r.msgEn : r.msgAr;
+    return `<li>${icon} ${msg}</li>`;
+  }).join('');
+
+  // Enable / disable buttons
+  checkPasswordBtn.disabled = pwd.length === 0;
+  copyPasswordBtn.disabled  = percent < 60;
+
+  // Clear previous result
+  passwordResult.textContent = '';
+}
+
+// Reset modal state on open
+document.querySelector('[data-modal="password-checker-modal"]')
+  .addEventListener('click', () => {
+    passwordInput.value      = '';
+    strengthBar.style.width  = '0%';
+    criteriaList.innerHTML   = '';
+    checkPasswordBtn.disabled = true;
+    copyPasswordBtn.disabled = true;
+    passwordResult.textContent = '';
+    togglePasswordBtn.textContent = 'Show';
+    passwordInput.type = 'password';
+  });
+
+
+   // Terminal popup
+// Terminal popup
+const terminalBtn = document.getElementById('terminalBtn');
+const terminalPopup = document.getElementById('terminalPopup');
+const terminalInput = document.getElementById('terminal-input');
+const terminalBody = document.getElementById('terminal-body');
+const cursor = document.getElementById('cursor');
+const terminalCloseBtn = document.querySelector('.terminal-close-btn');
+const typeSound = document.getElementById('typeSound');
+
+let commandHistory = JSON.parse(localStorage.getItem('terminalHistory')) || [];
+let historyIndex = -1;
+const maxHistory = 10;
+
+function saveHistory() {
+    localStorage.setItem('terminalHistory', JSON.stringify(commandHistory));
+}
+
+function getWelcomeMessage() {
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    return currentLang === 'en'
+        ? `${greeting}! Welcome to my interactive terminal! Type 'help' to start.`
+        : `${greeting === 'Good morning' ? 'صباح الخير' : greeting === 'Good afternoon' ? 'مساء الخير' : 'مساء الخير'}! مرحبًا بك في طرفيتي التفاعلية! اكتب 'help' للبدء.`;
+}
+
+terminalBtn.addEventListener('click', () => {
+    terminalPopup.classList.toggle('active');
+    backdrop.classList.toggle('hidden');
+    terminalInput.focus();
+    terminalBody.innerHTML = `
+        <div class="output-line">${getWelcomeMessage()}</div>
+    `;
+});
+
+terminalCloseBtn.addEventListener('click', () => {
+    terminalPopup.classList.remove('active');
+    backdrop.classList.add('hidden');
+});
+
+backdrop.addEventListener('click', () => {
+    terminalPopup.classList.remove('active');
+    modals.forEach(modal => modal.classList.remove('active'));
+    backdrop.classList.add('hidden');
+});
+
+terminalInput.addEventListener('focus', () => cursor.style.display = 'inline-block');
+terminalInput.addEventListener('blur', () => cursor.style.display = 'none');
+terminalInput.addEventListener('input', () => {
+    cursor.style.visibility = 'hidden';
+    setTimeout(() => cursor.style.visibility = 'visible', 50);
+});
+
+terminalInput.addEventListener('keydown', e => {
+    if (e.key.length === 1 || e.key === 'Enter') {
+        typeSound.currentTime = 0;
+        typeSound.play().catch(() => {});
+    }
+    if (e.key === 'Enter') {
+        const command = terminalInput.value.trim();
+        if (command) {
+            e.preventDefault();
+            executeCommand(command);
+            commandHistory.unshift(command);
+            if (commandHistory.length > maxHistory) commandHistory.pop();
+            saveHistory();
+            historyIndex = -1;
+        }
+    } else if (e.key === 'ArrowUp') {
+        if (commandHistory.length > 0 && historyIndex < commandHistory.length - 1) {
+            historyIndex++;
+            terminalInput.value = commandHistory[historyIndex];
+            setTimeout(() => terminalInput.setSelectionRange(terminalInput.value.length, terminalInput.value.length), 0);
+        }
+    } else if (e.key === 'ArrowDown') {
+        if (historyIndex > 0) {
+            historyIndex--;
+            terminalInput.value = commandHistory[historyIndex];
+        } else if (historyIndex === 0) {
+            historyIndex = -1;
+            terminalInput.value = '';
+        }
+    } else if (e.key === 'Tab') {
+        e.preventDefault();
+        const input = terminalInput.value.trim().toLowerCase();
+        const availableCommands = ['whoami', 'list-projects', 'help', 'clear', 'open', 'theme', 'contact', 'download', 'ls', 'h', 'c'];
+        if (input.startsWith('theme ')) {
+            const themeInput = input.split(' ')[1] || '';
+            const themes = ['light', 'dark'];
+            const matches = themes.filter(theme => theme.startsWith(themeInput));
+            if (matches.length === 1) {
+                terminalInput.value = `theme ${matches[0]}`;
+                setTimeout(() => terminalInput.setSelectionRange(terminalInput.value.length, terminalInput.value.length), 0);
+            }
+        } else {
+            const matches = availableCommands.filter(cmd => cmd.startsWith(input));
+            if (matches.length === 1) {
+                terminalInput.value = matches[0];
+                setTimeout(() => terminalInput.setSelectionRange(terminalInput.value.length, terminalInput.value.length), 0);
+            }
+        }
+    }
+});
+
+function executeCommand(command) {
+    const commandLine = document.createElement('div');
+    commandLine.className = 'output-line';
+    commandLine.innerHTML = `<span class="prompt">user@portfolio:~ $</span> ${command}`;
+    terminalBody.appendChild(commandLine);
+
+    let output = '';
+    const parts = command.split(' ');
+    let mainCommand = parts[0].toLowerCase();
+    
+    const commandAliases = {
+        'ls': 'list-projects',
+        'h': 'help',
+        'c': 'clear'
+    };
+    mainCommand = commandAliases[mainCommand] || mainCommand;
+
+    switch (mainCommand) {
+        case 'whoami':
+            output = currentLang === 'en'
+                ? 'I am a software developer specializing in frontend & Backend development and cybersecurity.'
+                : 'أنا مطور برامج متخصص في تطوير البرمجيات والأمن السيبراني.';
+            break;
+        case 'list-projects':
+            output = currentLang === 'en'
+                ? 'Current projects:\n- URL Analysis\n- Warehouse Management System\n- Cybersecurity Dashboard\n- Secure E-commerce\n- Cybersecurity Tools\n- SQL Injection Scanner'
+                : 'المشاريع الحالية:\n- تحليل الروابط\n- نظام إدارة المستودعات\n- لوحة تحكم الأمن السيبراني\n- متجر إلكتروني آمن\n- أدوات الأمن السيبراني\n- فاحص حقن SQL';
+            break;
+        case 'help':
+            output = currentLang === 'en'
+                ? 'Available commands:\n- whoami: Brief info about me.\n- list-projects (ls): List my projects.\n- open <project>: Open a project modal.\n- theme <light/dark>: Change terminal theme.\n- contact: Show contact details.\n- download cv: Download my CV.\n- clear (c): Clear the screen.\n- help (h): Show this list.'
+                : 'الأوامر المتاحة:\n- whoami: معلومات موجزة عني.\n- list-projects (ls): عرض قائمة بمشاريعي.\n- open <project>: فتح نافذة مشروع.\n- theme <light/dark>: تغيير ثيم الطرفية.\n- contact: عرض تفاصيل الاتصال.\n- download cv: تحميل السيرة الذاتية.\n- clear (c): مسح الشاشة.\n- help (h): عرض هذه القائمة.';
+            break;
+        case 'open':
+            const project = parts[1]?.toLowerCase();
+            const projectModals = {
+                'sql-scanner': 'sql-injection-modal',
+                'url-analysis': 'url-analysis-modal',
+                'task-manager': 'task-manager-modal',
+                'password-checker': 'password-checker-modal',
+                'file-upload': 'file-upload-modal'
+            };
+            if (projectModals[project]) {
+                document.getElementById(projectModals[project]).classList.remove('hidden');
+                terminalPopup.classList.remove('active');
+                output = currentLang === 'en'
+                    ? `Opening ${project}...`
+                    : `فتح ${project}...`;
+            } else {
+                output = currentLang === 'en'
+                    ? `Error: Project "${project}" not found. Try "open sql-scanner" or "open url-analysis".`
+                    : `خطأ: المشروع "${project}" غير موجود. جرب "open sql-scanner" أو "open url-analysis".`;
+            }
+            break;
+        case 'theme':
+            const theme = parts[1]?.toLowerCase();
+            if (theme === 'light') {
+                terminalPopup.style.background = '#f8fafc';
+                terminalBody.style.color = '#1e293b';
+                terminalInput.style.color = '#1e293b';
+                output = currentLang === 'en' ? 'Switched to light theme.' : 'تم التبديل إلى الثيم الفاتح.';
+            } else if (theme === 'dark') {
+                terminalPopup.style.background = '#1e1e1e';
+                terminalBody.style.color = '#00ff00';
+                terminalInput.style.color = '#00ff00';
+                output = currentLang === 'en' ? 'Switched to dark theme.' : 'تم التبديل إلى الثيم الداكن.';
+            } else {
+                const currentTheme = terminalPopup.style.background === '#f8fafc' ? 'light' : 'dark';
+                output = currentLang === 'en'
+                    ? `Current theme: ${currentTheme}. Use "theme light" or "theme dark" to switch.`
+                    : `الثيم الحالي: ${currentTheme === 'light' ? 'فاتح' : 'داكن'}. استخدم "theme light" أو "theme dark" للتبديل.`;
+            }
+            break;
+        case 'contact':
+            output = currentLang === 'en'
+                ? 'Email: yazan@example.com\nLinkedIn: linkedin.com/in/yazan\nGitHub: github.com/yazan'
+                : 'البريد: yazan@example.com\nLinkedIn: linkedin.com/in/yazan\nGitHub: github.com/yazan';
+            break;
+        case 'download':
+            if (parts[1]?.toLowerCase() === 'cv') {
+                window.location.href = 'C:\\Users\\yazan.alkhawaldeh\\Desktop\\portfolio\\File\\Full-Stack.pdf';
+                output = currentLang === 'en' ? 'Downloading CV...' : 'جاري تحميل السيرة الذاتية...';
+            } else {
+                output = currentLang === 'en' ? 'Error: Use "download cv" to download CV.' : 'خطأ: استخدم "download cv" لتحميل السيرة الذاتية.';
+            }
+            break;
+        case 'clear':
+            terminalBody.innerHTML = '';
+            break;
+        default:
+            const availableCommands = ['whoami', 'list-projects', 'help', 'clear', 'open', 'theme', 'contact', 'download', 'ls', 'h', 'c'];
+            const closest = availableCommands.reduce((best, cmd) => {
+                const distance = Math.abs(cmd.length - command.length);
+                return distance < best.distance ? { cmd, distance } : best;
+            }, { cmd: '', distance: Infinity }).cmd;
+            output = currentLang === 'en'
+                ? `<span style="color: #ff6347;">Error: Command "${command}" not found. Did you mean "${closest}"? Try these:<br>- help: Show all commands<br>- theme light: Switch to light theme<br>- open sql-scanner: Open SQL Injection Scanner</span>`
+                : `<span style="color: #ff6347;">خطأ: الأمر "${command}" غير موجود. هل تقصد "${closest}"؟ جرب هذه:<br>- help: عرض جميع الأوامر<br>- theme light: التبديل إلى الثيم الفاتح<br>- open sql-scanner: فتح فاحص حقن SQL</span>`;
+            const outputLine = document.createElement('div');
+            outputLine.className = 'output-line error';
+            outputLine.innerHTML = output;
+            terminalBody.appendChild(outputLine);
+            terminalBody.scrollTop = terminalBody.scrollHeight;
+            return;
+    }
+
+    if (output) {
+        const outputLine = document.createElement('div');
+        outputLine.className = `output-line ${mainCommand === 'clear' ? '' : 'success'}`;
+        outputLine.innerHTML = output;
+        terminalBody.appendChild(outputLine);
+    }
+
+    terminalInput.value = '';
+    terminalBody.scrollTop = terminalBody.scrollHeight;
+}
+      
+       // Hero Typewriter Effect
+    const typewriterContainer = document.querySelector('.typewriter-container h2');
+    const textElement = typewriterContainer.querySelector('span');
+    const cursorElement = typewriterContainer.querySelector('.typewriter-cursor');
+    const textToType = typewriterContainer.getAttribute('data-text');
+
+    let charIndex = 0;
+    let isDeleting = false;
+    let typingSpeed = 100;
+
+    function typeWriter() {
+        const currentText = isDeleting ? textToType.substring(0, charIndex - 1) : textToType.substring(0, charIndex + 1);
+        textElement.textContent = currentText;
+
+        if (!isDeleting && charIndex < textToType.length) {
+            charIndex++;
+            setTimeout(typeWriter, typingSpeed);
+        } else if (isDeleting && charIndex > 0) {
+            charIndex--;
+            setTimeout(typeWriter, typingSpeed);
+        }
+    }
+    typeWriter();
+
+ particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#cccccc"
+                },
+                "shape": {
+                    "type": "circle"
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": false
+                    }
+                },
+                "size": {
+                    "value": 5,
+                    "random": true,
+                    "anim": {
+                        "enable": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#94a3b8", /* slate-400 */
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 6,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "repulse"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+      
+
+
+ // Constants for the scanner rules and suggestions
+      const VULNERABILITY_RULES = [
+          {
+              id: 'inline-event',
+              title: 'Inline Event Handler',
+              severity: 'high',
+              description: 'Using inline event handlers (like `onclick`) can be a security risk and is not a best practice. It may lead to Cross-Site Scripting (XSS) vulnerabilities if not properly sanitized.',
+              suggestion: 'Move event handlers to a separate JavaScript file. Use `addEventListener` to bind events dynamically.',
+              test: node =>
+                  node.nodeType === 1 &&
+                  node.getAttributeNames().some(name => name.toLowerCase().startsWith('on'))
+          },
+          {
+              id: 'script-tag',
+              title: 'Missing Nonce on Script Tag',
+              severity: 'high',
+              description: 'A `<script>` element without a `nonce` or `hash` attribute can be vulnerable to malicious script injection, especially if a Content Security Policy (CSP) is in place.',
+              suggestion: 'To mitigate, add a `nonce` attribute to all inline `<script>` tags and include the `nonce` in your Content Security Policy header.',
+              test: node =>
+                  node.nodeType === 1 &&
+                  node.tagName === 'SCRIPT' &&
+                  !node.hasAttribute('nonce') &&
+                  node.src === ''
+          },
+          {
+              id: 'javascript-uri',
+              title: 'JavaScript URI in Links/Sources',
+              severity: 'high',
+              description: 'A URL starting with "javascript:" can execute arbitrary JavaScript code when clicked or loaded, which is a common vector for Cross-Site Scripting (XSS) attacks.',
+              suggestion: 'Use a regular URL that points to a resource or a page. If JavaScript functionality is required, use `addEventListener` on the element.',
+              test: node =>
+                  node.nodeType === 1 &&
+                  ['href', 'src'].some(attr => {
+                      const v = node.getAttribute(attr);
+                      return v && v.trim().toLowerCase().startsWith('javascript:');
+                  })
+          },
+          {
+              id: 'csrf-token-missing',
+              title: 'Missing CSRF Token',
+              severity: 'medium',
+              description: 'A `<form>` element without a hidden input field for a CSRF token makes the form vulnerable to Cross-Site Request Forgery (CSRF) attacks.',
+              suggestion: 'Always include a dynamically generated hidden input field (e.g., `<input type="hidden" name="_csrf" value="some_token">`) within your forms to protect against CSRF attacks.',
+              test: node =>
+                  node.nodeType === 1 &&
+                  node.tagName === 'FORM' &&
+                  !node.querySelector('input[name="_csrf"]')
+          },
+          {
+              id: 'csp-missing',
+              title: 'No Content Security Policy',
+              severity: 'high',
+              description: 'The document is missing a `<meta http-equiv="Content-Security-Policy">` tag in its head, which is a critical security measure to prevent a wide range of attacks, including XSS.',
+              suggestion: 'Implement a strict Content Security Policy (CSP) to specify which resources (scripts, styles, etc.) the browser is allowed to load. A basic policy could be `<meta http-equiv="Content-Security-Policy" content="default-src \'self\';">`.',
+              test: doc =>
+                  !doc.querySelector('meta[http-equiv="Content-Security-Policy"]')
+          }
+      ];
+
+      // Helper function to find the code snippet and its location in the original HTML
+      function findSnippet(originalHtml, node) {
+          const outerHTML = node.outerHTML.trim();
+          let index = originalHtml.indexOf(outerHTML);
+
+          // Fallback to a less strict search if the first attempt fails
+          if (index === -1) {
+              const startTag = `<${node.tagName.toLowerCase()}`;
+              const attrs = node.getAttributeNames().map(name => `${name}="${node.getAttribute(name).replace(/"/g, '\\"')}"`).join(' ');
+              const regex = new RegExp(`${startTag}\\s*(?:${attrs})?`, 'i');
+              const match = originalHtml.match(regex);
+              if (match) {
+                  index = match.index;
+                  const endTagIndex = originalHtml.indexOf('>', index);
+                  const snippet = originalHtml.substring(index, endTagIndex + 1);
+                  const lines = originalHtml.substring(0, index).split('\n');
+                  const line = lines.length;
+                  const column = lines[lines.length - 1].length + 1;
+                  return { snippet, line, column };
+              }
+          }
+
+          // If a match is found, calculate line and column
+          if (index !== -1) {
+              const lines = originalHtml.substring(0, index).split('\n');
+              const line = lines.length;
+              const column = lines[lines.length - 1].length + 1;
+              return { snippet: outerHTML, line, column };
+          }
+          
+          return { snippet: 'N/A', line: 'N/A', column: 'N/A' };
+      }
+
+      // Scan function
+      function scanHTML(html) {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const issues = [];
+          
+          // Check for general document-level issues (like CSP)
+          VULNERABILITY_RULES.filter(r => r.id === 'csp-missing').forEach(rule => {
+              if (rule.test(doc)) {
+                  issues.push({ ...rule, snippet: 'This is a document-level issue, no specific code snippet.', line: 'N/A', column: 'N/A' });
+              }
+          });
+
+          // Traverse the DOM tree for other issues
+          const body = doc.body;
+          if (body) {
+              function walk(node) {
+                  VULNERABILITY_RULES.filter(r => r.id !== 'csp-missing').forEach(rule => {
+                      try {
+                          if (rule.test(node)) {
+                              const { snippet, line, column } = findSnippet(html, node);
+                              issues.push({
+                                  ...rule,
+                                  line: line,
+                                  column: column,
+                                  snippet: snippet
+                              });
+                          }
+                      } catch (e) {
+                          console.error('Error during scan:', e);
+                      }
+                  });
+                  node.childNodes.forEach(walk);
+              }
+              walk(body);
+          }
+          return issues;
+      }
+      
+      // Open and close modal
+      document.querySelectorAll('.demo-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+              document.getElementById(btn.dataset.modal).classList.remove('hidden');
+          });
+      });
+      document.querySelectorAll('.close-modal').forEach(btn => {
+          btn.addEventListener('click', () => {
+              btn.closest('.modal').classList.add('hidden');
+          });
+      });
+
+      // Handle scan button click
+      document.getElementById('scan-html-btn').addEventListener('click', () => {
+          const html = document.getElementById('html-scanner-input').value;
+          const resultsContainer = document.getElementById('results-container');
+          const scanBtn = document.getElementById('scan-html-btn');
+          const scanIcon = scanBtn.querySelector('#scan-icon');
+          const loadingSpinner = scanBtn.querySelector('#loading-spinner');
+          const scanBtnText = scanBtn.querySelector('span');
+          
+          if (!html.trim()) {
+              resultsContainer.innerHTML = `
+                  <div class="p-4 bg-gray-100 rounded-lg text-gray-600 text-center">
+                      Please paste some code to scan.
+                  </div>
+              `;
+              return;
+          }
+
+          // Show loading state
+          scanBtn.disabled = true;
+          scanBtn.classList.add('opacity-70', 'cursor-not-allowed');
+          if(scanIcon) scanIcon.classList.add('hidden');
+          if(loadingSpinner) loadingSpinner.classList.remove('hidden');
+          if(scanBtnText) scanBtnText.textContent = 'Scanning...';
+          
+          // Simulate a brief delay for a more professional feel
+          setTimeout(() => {
+              const issues = scanHTML(html);
+              displayResults(issues);
+              
+              // Reset button state
+              scanBtn.disabled = false;
+              scanBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+              if(scanIcon) scanIcon.classList.remove('hidden');
+              if(loadingSpinner) loadingSpinner.classList.add('hidden');
+              if(scanBtnText) scanBtnText.textContent = 'Check the Code';
+          }, 800);
+      });
+
+      // Handle clear button click
+      document.getElementById('clear-html-btn').addEventListener('click', () => {
+          document.getElementById('html-scanner-input').value = '';
+          document.getElementById('results-container').innerHTML = `
+              <p class="text-gray-500 text-center py-8">
+                  Start by pasting HTML code and clicking 'Check the Code'.
+              </p>
+          `;
+      });
+
+      // Function to display results
+      function displayResults(issues) {
+          let resultsHTML = '';
+          const resultsContainer = document.getElementById('results-container');
+          
+          if (issues.length === 0) {
+              resultsHTML = `
+                  <div class="p-6 rounded-lg bg-green-50 border-2 border-green-500 text-green-700 font-semibold text-center">
+                      <i class="ri-check-line text-2xl"></i>
+                      <p class="mt-2">✅ Clean Code. No major vulnerabilities found.</p>
+                  </div>
+              `;
+              resultsContainer.innerHTML = resultsHTML;
+              resultsContainer.classList.remove('bg-gray-50', 'border-red-200', 'text-red-700');
+              resultsContainer.classList.add('bg-white', 'border-gray-300', 'text-gray-700');
+              
+          } else {
+              resultsContainer.classList.remove('bg-white', 'border-gray-300', 'text-gray-700');
+              resultsContainer.classList.add('bg-gray-50', 'border-red-200', 'text-red-700');
+
+              issues.forEach(issue => {
+                  const icon = issue.severity === 'high' ? 'ri-bug-fill text-red-500' : 'ri-alert-fill text-orange-500';
+                  const severityClass = issue.severity;
+                  const lineInfo = (issue.line && issue.line !== 'N/A') ? `Line: ${issue.line}, Column: ${issue.column}` : 'N/A';
+                  
+
+                  resultsHTML += `
+                      <div class="issue-card ${severityClass}">
+                          <div class="flex items-center gap-2 mb-2">
+                              <i class="${icon}"></i>
+                              <h5 class="text-lg font-bold">${issue.title}</h5>
+                              <span class="ml-auto px-2 py-1 text-xs font-semibold uppercase rounded-full border ${severityClass === 'high' ? 'text-red-700 border-red-300' : 'text-orange-700 border-orange-300'}">
+                                  ${issue.severity}
+                              </span>
+                          </div>
+                          <p class="text-sm">${issue.description}</p>
+                          <div class="mt-3 bg-gray-100 p-2 rounded text-xs font-mono break-words">
+                              <span class="font-bold text-gray-700">Location:</span> ${lineInfo}
+                          </div>
+                          
+                          <div class="mt-3 p-3 bg-blue-50 text-blue-800 rounded-lg">
+                              <span class="font-bold">Suggestion:</span> ${issue.suggestion}
+                          </div>
+                      </div>
+                  `;
+              });
+              resultsContainer.innerHTML = resultsHTML;
+          }
+      }
+  
+  (function(){
+  const MODAL_ID = 'cybersecurity-dashboard-modal';
+  let chartsInitialized = false;
+
+  function initCharts(){
+    if (chartsInitialized) return;
+    const loginCanvas = document.getElementById('loginChart');
+    const filesCanvas = document.getElementById('filesChart');
+    const linksCanvas = document.getElementById('linksChart');
+    if (!loginCanvas || !filesCanvas || !linksCanvas) return;
+
+    chartsInitialized = true;
+    try {
+      new Chart(loginCanvas, {
+        type: 'line',
+        data: {
+          labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+          datasets: [{
+            label: 'Attempts',
+            data: [12, 19, 7, 15, 22, 18, 25],
+            borderColor: '#ff4c4c',
+            backgroundColor: 'rgba(255,76,76,0.2)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { labels: { color: '#e6edf3' } } },
+          scales: { x: { ticks: { color: '#e6edf3' } }, y: { ticks: { color: '#e6edf3' } } }
+        }
+      });
+
+      new Chart(filesCanvas, {
+        type: 'doughnut',
+        data: {
+          labels: ['Malware', 'Ransomware', 'Spyware', 'Others'],
+          datasets: [{
+            data: [45, 25, 15, 15],
+            backgroundColor: ['#03a9f4','#e91e63','#ff9800','#8bc34a'],
+            borderWidth: 1
+          }]
+        },
+        options: { responsive: true, plugins: { legend: { labels: { color: '#e6edf3' } } } }
+      });
+
+      new Chart(linksCanvas, {
+        type: 'bar',
+        data: {
+          labels: ['Phishing', 'Malicious Ads', 'Fake Login Pages', 'Spam'],
+          datasets: [{
+            label: 'Detected',
+            data: [18, 12, 22, 10],
+            backgroundColor: ['#f44336','#9c27b0','#2196f3','#4caf50']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { labels: { color: '#e6edf3' } } },
+          scales: {
+            x: { ticks: { color: '#e6edf3' } },
+            y: { ticks: { color: '#e6edf3' } }
+          }
+        }
+      });
+    } catch(e){
+      console.error('Chart init error:', e);
+      chartsInitialized = false;
+    }
+  }
+
+  // Hook into existing .demo-btn clicks
+  document.addEventListener('click', function(e){
+    const btn = e.target.closest('.demo-btn');
+    if (btn && btn.dataset && btn.dataset.modal === MODAL_ID) {
+      // Allow modal to render, then init charts
+      setTimeout(initCharts, 10);
+    }
+  });
+
+  // Optional: if modal already open by default for some reason
+  if (document.getElementById(MODAL_ID)?.classList.contains('active')) {
+    setTimeout(initCharts, 10);
+  }
+})();
+
+    </script>
+
+</body>
+</html>
