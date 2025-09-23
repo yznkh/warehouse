@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexShop - Premium E-commerce Experience</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                        neutral: '#1F2937',
+                        light: '#F9FAFB'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cairo:wght@400;700&display=swap');
+        
+        /* Set Inter as default font */
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        /* Use Cairo font when in Arabic */
+        html[lang="ar"] body {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .product-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background-color: #3B82F6;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563EB;
+            transform: translateY(-2px);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #EF4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold text-primary">NexShop</a>
+            
+            <div class="hidden md:flex space-x-8">
+                <a href="index.html" class="text-neutral-700 hover:text-primary font-medium" data-translate-key="nav_home">Home</a>
+                <a href="products.html" class="text-neutral-700 hover:text-primary font-medium" data-translate-key="nav_products">Products</a>
+                <a href="cart.html" class="text-neutral-700 hover:text-primary font-medium" data-translate-key="nav_cart">Cart</a>
+                <a href="profile.html" class="text-neutral-700 hover:text-primary font-medium" data-translate-key="nav_profile">Profile</a>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <a href="cart.html" class="text-neutral-700 hover:text-primary">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        <span id="cartCount" class="cart-badge">0</span>
+                    </a>
+                </div>
+                
+                <div class="relative">
+                    <a href="profile.html" class="text-neutral-700 hover:text-primary">
+                        <i class="fas fa-user-circle text-xl"></i>
+                    </a>
+                </div>
+                
+                <div class="relative">
+                    <a href="#" id="languageSwitch" class="text-neutral-700 hover:text-primary">
+                        <i class="fas fa-globe text-xl"></i>
+                    </a>
+                </div>
+                
+                <button id="mobileMenuButton" class="md:hidden text-neutral-700">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div id="mobileMenu" class="hidden md:hidden px-4 pt-2 pb-4 bg-white border-t">
+            <a href="index.html" class="block py-2 text-neutral-700 hover:text-primary" data-translate-key="nav_home_mobile">Home</a>
+            <a href="products.html" class="block py-2 text-neutral-700 hover:text-primary" data-translate-key="nav_products_mobile">Products</a>
+            <a href="cart.html" class="block py-2 text-neutral-700 hover:text-primary" data-translate-key="nav_cart_mobile">Cart</a>
+            <a href="profile.html" class="block py-2 text-neutral-700 hover:text-primary" data-translate-key="nav_profile_mobile">Profile</a>
+        </div>
+    </nav>
+
+    <section 
+        class="relative bg-cover bg-center text-white py-24 md:py-32" 
+        style="background-image: url('https://images.unsplash.com/photo-1556155092-490a1ba16284?auto=format&fit=crop&w=1470&q=80');">
+        
+        <div class="absolute inset-0 bg-black opacity-50"></div>
+
+        <div class="container mx-auto px-4 relative z-10 flex flex-col items-center text-center">
+            <div class="md:w-3/4 lg:w-2/3 fade-in">
+                <h1 class="text-4xl md:text-6xl font-bold mb-4" data-translate-key="hero_title">Premium Shopping Experience</h1>
+                <p class="text-lg md:text-xl mb-8" data-translate-key="hero_subtitle">Discover thousands of products with fast delivery and secure payment options.</p>
+                <div class="flex justify-center space-x-4">
+                    <a href="register.html" class="bg-white text-primary px-6 py-3 rounded-lg font-semibold shadow-lg hover:bg-gray-100 transition duration-300" data-translate-key="hero_join">Join Us</a>
+                    <a href="login.html" class="bg-transparent border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary transition duration-300" data-translate-key="hero_login">Login</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-light">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-neutral-800" data-translate-key="category_title">Shop by Category</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                <a href="#" class="group">
+                    <div class="overflow-hidden rounded-lg shadow-md border border-gray-200">
+                        <img src="images/Everyday_Wear.png" alt="Everyday Wear" class="w-full h-47 object-cover group-hover:scale-110 transition-transform duration-300">
+                    </div>
+                    <h3 class="mt-4 text-lg font-semibold text-neutral-700" data-translate-key="category_1">Everyday Wear</h3>
+                </a>
+                <a href="#" class="group">
+                    <div class="overflow-hidden rounded-lg shadow-md border border-gray-200">
+                        <img src="images/Occasions.png" alt="Occasions" class="w-full h-47 object-cover group-hover:scale-110 transition-transform duration-300">
+                    </div>
+                    <h3 class="mt-4 text-lg font-semibold text-neutral-700" data-translate-key="category_2">Occasions</h3>
+                </a>
+                <a href="#" class="group">
+                    <div class="overflow-hidden rounded-lg shadow-md border border-gray-200">
+                        <img src="images/Colored_Designs.png" alt="Colored Designs" class="w-full h-47 object-cover group-hover:scale-110 transition-transform duration-300">
+                    </div>
+                    <h3 class="mt-4 text-lg font-semibold text-neutral-700" data-translate-key="category_3">Colored Designs</h3>
+                </a>
+                <a href="#" class="group">
+                    <div class="overflow-hidden rounded-lg shadow-md border border-gray-200">
+                        <img src="images/Hijabs.png" alt="Hijabs & Scarfs" class="w-full h-47 object-cover group-hover:scale-110 transition-transform duration-300">
+                    </div>
+                    <h3 class="mt-4 text-lg font-semibold text-neutral-700" data-translate-key="category_4">Hijabs & Scarfs</h3>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-neutral-800" data-translate-key="featured_title">Featured Products</h2>
+            <div id="featuredProducts" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                </div>
+            <div class="text-center mt-10">
+                <a href="products.html" class="btn-primary text-white px-6 py-3 rounded-lg font-semibold inline-block" data-translate-key="view_all_products">View All Products</a>
+            </div>
+        </div>
+    </section>
+    
+    <section class="py-16 bg-light">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+                <div class="flex flex-col items-center">
+                    <div class="bg-white p-4 rounded-full mb-4 shadow-md"><i class="fas fa-gem text-3xl text-primary"></i></div>
+                    <h4 class="font-semibold text-lg" data-translate-key="why_1_title">Finest Fabrics</h4>
+                    <p class="text-gray-600" data-translate-key="why_1_desc">We carefully select our fabrics for your comfort.</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="bg-white p-4 rounded-full mb-4 shadow-md"><i class="fas fa-cut text-3xl text-primary"></i></div>
+                    <h4 class="font-semibold text-lg" data-translate-key="why_2_title">Exclusive Designs</h4>
+                    <p class="text-gray-600" data-translate-key="why_2_desc">Innovative designs that blend tradition and modernity.</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="bg-white p-4 rounded-full mb-4 shadow-md"><i class="fas fa-truck-fast text-3xl text-primary"></i></div>
+                    <h4 class="font-semibold text-lg" data-translate-key="why_3_title">Fast Shipping</h4>
+                    <p class="text-gray-600" data-translate-key="why_3_desc">Fast and reliable delivery to your doorstep.</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="bg-white p-4 rounded-full mb-4 shadow-md"><i class="fas fa-shield-alt text-3xl text-primary"></i></div>
+                    <h4 class="font-semibold text-lg" data-translate-key="why_4_title">Secure Payment</h4>
+                    <p class="text-gray-600" data-translate-key="why_4_desc">Safe and multiple payment options for you.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-neutral-800" data-translate-key="testimonials_title">What Our Customers Say</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-light p-6 rounded-lg shadow-md">
+                    <div class="text-accent text-2xl mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="text-gray-600 mb-4" data-translate-key="testimonial_1">"The shopping experience was seamless, and the delivery was faster than expected. Will definitely shop again!"</p>
+                    <div class="flex items-center"><div class="w-12 h-12 bg-gray-300 rounded-full mr-4"></div><div><h4 class="font-semibold">Sarah Johnson</h4><p class="text-gray-500" data-translate-key="verified_customer">Verified Customer</p></div></div>
+                </div>
+                 <div class="bg-light p-6 rounded-lg shadow-md">
+                    <div class="text-accent text-2xl mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="text-gray-600 mb-4" data-translate-key="testimonial_2">"Excellent product quality and customer service. The loyalty points system is a great bonus!"</p>
+                    <div class="flex items-center"><div class="w-12 h-12 bg-gray-300 rounded-full mr-4"></div><div><h4 class="font-semibold">Michael Chen</h4><p class="text-gray-500" data-translate-key="verified_customer">Verified Customer</p></div></div>
+                </div>
+                 <div class="bg-light p-6 rounded-lg shadow-md">
+                    <div class="text-accent text-2xl mb-4"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                    <p class="text-gray-600 mb-4" data-translate-key="testimonial_3">"The user interface is intuitive, and the filtering options made it easy to find exactly what I needed."</p>
+                    <div class="flex items-center"><div class="w-12 h-12 bg-gray-300 rounded-full mr-4"></div><div><h4 class="font-semibold">Emma Rodriguez</h4><p class="text-gray-500" data-translate-key="verified_customer">Verified Customer</p></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-12 bg-primary text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4" data-translate-key="newsletter_title">Stay Updated</h2>
+            <p class="mb-6 max-w-2xl mx-auto" data-translate-key="newsletter_subtitle">Subscribe to our newsletter for exclusive deals, new product announcements, and shopping tips.</p>
+            <form id="newsletterForm" class="max-w-md mx-auto flex">
+                <input id="newsletterEmail" type="email" placeholder="Your email address" class="flex-grow px-4 py-3 rounded-l-lg focus:outline-none text-gray-800" data-translate-key="newsletter_placeholder" required>
+                <button type="submit" class="bg-accent px-6 py-3 rounded-r-lg font-semibold" data-translate-key="newsletter_button">Subscribe</button>
+            </form>
+        </div>
+    </section>
+
+ <!-- Footer -->
+    <footer class="bg-neutral-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">NexShop</h3>
+                    <p class="text-gray-400">Premium e-commerce experience with focus on user satisfaction and quality products.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-400 hover:text-white">Home</a></li>
+                        <li><a href="products.html" class="text-gray-400 hover:text-white">Products</a></li>
+                        <li><a href="cart.html" class="text-gray-400 hover:text-white">Shopping Cart</a></li>
+                        <li><a href="profile.html" class="text-gray-400 hover:text-white">My Account</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Customer Service</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">FAQs</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Returns & Refunds</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Shipping Information</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Connect With Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-face-f fa-2x"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter fa-2x"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram fa-2x"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin fa-2x"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 NexShop. All rights reserved to yazan alkhwaldeh</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // --- 1. TRANSLATION LOGIC ---
+        const translations = {
+            en: {
+                nav_home: "Home", nav_products: "Products", nav_cart: "Cart", nav_profile: "Profile",
+                nav_home_mobile: "Home", nav_products_mobile: "Products", nav_cart_mobile: "Cart", nav_profile_mobile: "Profile",
+                hero_title: "Premium Shopping Experience",
+                hero_subtitle: "Discover thousands of products with fast delivery and secure payment options.",
+                hero_join: "Join Us", hero_login: "Login",
+                category_title: "Shop by Category", category_1: "Everyday Wear", category_2: "Occasions", category_3: "Colored Designs", category_4: "Hijabs & Scarfs",
+                featured_title: "Featured Products", view_all_products: "View All Products",
+                why_1_title: "Finest Fabrics", why_1_desc: "We carefully select our fabrics for your comfort.",
+                why_2_title: "Exclusive Designs", why_2_desc: "Innovative designs that blend tradition and modernity.",
+                why_3_title: "Fast Shipping", why_3_desc: "Fast and reliable delivery to your doorstep.",
+                why_4_title: "Secure Payment", why_4_desc: "Safe and multiple payment options for you.",
+                testimonials_title: "What Our Customers Say",
+                testimonial_1: `"The shopping experience was seamless, and the delivery was faster than expected. Will definitely shop again!"`,
+                testimonial_2: `"Excellent product quality and customer service. The loyalty points system is a great bonus!"`,
+                testimonial_3: `"The user interface is intuitive, and the filtering options made it easy to find exactly what I needed."`,
+                verified_customer: "Verified Customer",
+                newsletter_title: "Stay Updated",
+                newsletter_subtitle: "Subscribe to our newsletter for exclusive deals, new product announcements, and shopping tips.",
+                newsletter_placeholder: "Your email address",
+                newsletter_button: "Subscribe",
+            },
+            ar: {
+                nav_home: "الرئيسية", nav_products: "المنتجات", nav_cart: "السلة", nav_profile: "حسابي",
+                nav_home_mobile: "الرئيسية", nav_products_mobile: "المنتجات", nav_cart_mobile: "السلة", nav_profile_mobile: "حسابي",
+                hero_title: "تجربة تسوق مميزة",
+                hero_subtitle: "اكتشف آلاف المنتجات مع توصيل سريع وخيارات دفع آمنة.",
+                hero_join: "انضم إلينا", hero_login: "تسجيل الدخول",
+                category_title: "تسوق حسب الفئة", category_1: "ملابس يومية", category_2: "للمناسبات", category_3: "تصاميم ملونة", category_4: "حجاب وشالات",
+                featured_title: "منتجات مميزة", view_all_products: "عرض كل المنتجات",
+                why_1_title: "أجود الأقمشة", why_1_desc: "نختار أقمشتنا بعناية فائقة لراحتك.",
+                why_2_title: "تصاميم حصرية", why_2_desc: "تصاميم مبتكرة تجمع بين الأصالة والعصرية.",
+                why_3_title: "شحن سريع", why_3_desc: "توصيل سريع وموثوق إلى باب منزلك.",
+                why_4_title: "دفع آمن", why_4_desc: "خيارات دفع آمنة ومتعددة لراحتك.",
+                testimonials_title: "ماذا يقول عملاؤنا",
+                testimonial_1: `"تجربة التسوق كانت سلسة، والتوصيل أسرع من المتوقع. بالتأكيد سأتسوق مرة أخرى!"`,
+                testimonial_2: `"جودة منتج ممتازة وخدمة عملاء رائعة. نظام نقاط الولاء إضافة ممتازة!"`,
+                testimonial_3: `"واجهة المستخدم سهلة، وخيارات الفلترة جعلت العثور على ما أريده بالضبط أمرًا يسيرًا."`,
+                verified_customer: "عميل موثوق",
+                newsletter_title: "ابق على اطلاع",
+                newsletter_subtitle: "اشترك في نشرتنا البريدية للحصول على صفقات حصرية وإعلانات المنتجات الجديدة ونصائح التسوق.",
+                newsletter_placeholder: "بريدك الإلكتروني",
+                newsletter_button: "اشتراك",
+            }
+        };
+
+        const languageSwitch = document.getElementById('languageSwitch');
+        const htmlEl = document.documentElement;
+
+        function applyTranslations(lang) {
+            htmlEl.setAttribute('lang', lang);
+            htmlEl.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+            document.querySelectorAll('[data-translate-key]').forEach(el => {
+                const key = el.getAttribute('data-translate-key');
+                if (translations[lang][key]) {
+                    if (el.tagName === 'INPUT' && el.placeholder) {
+                        el.placeholder = translations[lang][key];
+                    } else {
+                        el.innerHTML = translations[lang][key];
+                    }
+                }
+            });
+        }
+
+        languageSwitch.addEventListener('click', (e) => {
+            e.preventDefault();
+            const currentLang = htmlEl.getAttribute('lang') || 'en';
+            const newLang = currentLang === 'en' ? 'ar' : 'en';
+            applyTranslations(newLang);
+        });
+
+        // --- 2. DYNAMIC PRODUCT & CART LOGIC ---
+        function initializeData() {
+            if (!localStorage.getItem('products')) {
+                const products = [ { id: 1, name: "Wireless Headphones", price: 79.99, image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" }, { id: 2, name: "Smart Watch", price: 129.99, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=799&q=80" }, { id: 3, name: "Running Shoes", price: 89.99, image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" }, { id: 4, name: "Coffee Maker", price: 49.99, image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" }];
+                localStorage.setItem('products', JSON.stringify(products));
+            }
+            if (!localStorage.getItem('cart')) {
+                localStorage.setItem('cart', JSON.stringify([]));
+            }
+        }
+
+        function loadFeaturedProducts() {
+            const products = JSON.parse(localStorage.getItem('products'));
+            const featuredContainer = document.getElementById('featuredProducts');
+            featuredContainer.innerHTML = '';
+            products.slice(0, 4).forEach(product => {
+                const productElement = document.createElement('div');
+                productElement.className = 'product-card bg-white rounded-lg overflow-hidden shadow-md';
+                productElement.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg mb-2">${product.name}</h3>
+                        <p class="text-primary font-bold">$${product.price.toFixed(2)}</p>
+                        <button onclick="addToCart(${product.id})" class="mt-4 w-full bg-primary text-white py-2 rounded hover:bg-blue-600 transition">Add to Cart</button>
+                    </div>`;
+                featuredContainer.appendChild(productElement);
+            });
+        }
+        
+        window.addToCart = function(productId) {
+            const cart = JSON.parse(localStorage.getItem('cart'));
+            const products = JSON.parse(localStorage.getItem('products'));
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                cart.push({...product, quantity: 1});
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                const notification = document.createElement('div');
+                notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                notification.textContent = `${product.name} added to cart!`;
+                document.body.appendChild(notification);
+                setTimeout(() => { notification.remove(); }, 3000);
+            }
+        }
+
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart'));
+            document.getElementById('cartCount').textContent = cart.length;
+        }
+
+        // --- 3. NEWSLETTER FORM ---
+        const newsletterForm = document.getElementById('newsletterForm');
+        newsletterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('newsletterEmail').value;
+            if (email) {
+                alert(`Thank you for subscribing, ${email}!`);
+                newsletterForm.reset();
+            }
+        });
+
+        // --- 4. MOBILE MENU ---
+        document.getElementById('mobileMenuButton').addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        });
+
+        // --- INITIALIZE APP ---
+        initializeData();
+        loadFeaturedProducts();
+        updateCartCount();
+    });
+    </script>
+
+</body>
+</html>
