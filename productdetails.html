@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaStore - High Potency Vitamin D3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+        /* تنسيق خاص لتأثير الزجاج/البلور المستخدم في الكروت الداكنة */
+        .glass-effect {
+            background-color: rgba(67, 56, 202, 0.3); /* indigo-700 with opacity */
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+    <header class="bg-white/90 backdrop-blur-md border-b border-gray-200 text-indigo-700 py-4 shadow-md sticky top-0 z-50">
+        <div class="flex justify-between items-center w-full px-6 md:px-8 lg:px-12">
+            
+            <a href="#" class="flex items-center group relative overflow-hidden transition-all duration-300">
+                <div class="p-1 rounded-full bg-emerald-500/10 mr-2 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-8 h-8 text-emerald-500 transform group-hover:rotate-12 transition-transform duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                        <line x1="12" y1="2" x2="12" y2="12"></line>
+                        <path d="M12 17a5 5 0 0 0 5-5V7a5 5 0 0 0-5-5z"></path>
+                        <path d="M12 17a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5z"></path>
+                        <rect x="7" y="5" width="10" height="14" rx="7" ry="7" transform="rotate(45 12 12)" fill="currentColor" class="text-emerald-500/20"></rect>
+                    </svg>
+                </div>
+                
+                <h1 class="text-3xl font-extrabold text-indigo-700 relative z-10 transition-colors duration-300">
+                    P<span class="text-emerald-500">h</span>arma<span class="text-emerald-500">S</span>tore
+                </h1>
+                
+                <span class="absolute bottom-0 left-0 w-full h-1 bg-emerald-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></span>
+            </a>
+            
+            <nav class="hidden lg:flex space-x-8 text-indigo-700">
+                <a href="#" class="font-bold text-lg hover:text-emerald-500 transition-colors">Home</a>
+                <a href="#" class="font-medium hover:text-emerald-500 transition-colors">Products</a>
+                <a href="#" class="font-medium hover:text-emerald-500 transition-colors">Prescriptions</a>
+                <a href="#" class="font-medium hover:text-emerald-500 transition-colors">Pharmacist Chat</a>
+                <a href="#" class="font-medium hover:text-emerald-500 transition-colors">About Us</a>
+            </nav>
+
+            <div class="flex items-center space-x-6">
+
+                <div class="hidden lg:block relative max-w-sm">
+                    <input type="search" placeholder="Search for products or categories..." class="w-full py-2 pl-4 pr-10 text-gray-900 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-gray-100 shadow-inner">
+                    <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+
+                <a href="#" class="flex items-center gap-2 hover:text-emerald-500 transition-colors font-medium">
+                    <svg class="w-7 h-7 text-indigo-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="text-indigo-700 font-bold">(0)</span>
+                </a>
+                
+                <a href="#" class="relative overflow-hidden inline-flex items-center justify-center h-10 px-6 bg-gradient-to-r from-emerald-500 to-indigo-500 text-white rounded-full font-semibold shadow-lg hover:from-emerald-600 hover:to-indigo-600 transition-all duration-300 flex-shrink-0">
+                    <span class="absolute inset-0 bg-white/10 rounded-full blur-sm"></span>
+                    <span class="relative z-10">Sign In</span>
+                </a>
+
+                <button id="menu-toggle" class="lg:hidden focus:outline-none text-indigo-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+            
+        </div>
+        
+        <nav id="mobile-menu" class="hidden lg:hidden bg-indigo-700 text-white px-6 py-4 shadow-inner">
+             <div class="relative mb-4">
+                 <input type="search" placeholder="Search for products or categories..." class="w-full py-2 pl-4 pr-10 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white">
+                 <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+             </div>
+             <a href="#" class="block py-2 hover:text-emerald-400 border-b border-white/10">Home</a>
+             <a href="#" class="block py-2 hover:text-emerald-400 border-b border-white/10">Products</a>
+             <a href="#" class="block py-2 hover:text-emerald-400 border-b border-white/10">Prescriptions</a>
+             <a href="#" class="block py-2 hover:text-emerald-400 border-b border-white/10">Pharmacist Chat</a>
+             <a href="#" class="block py-2 hover:text-emerald-400">About Us</a>
+        </nav>
+    </header>
+
+    <section class="py-16 md:py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 grid md:grid-cols-2 gap-12 items-start">
+            
+            <div class="relative p-8 rounded-2xl bg-gray-50/50 shadow-2xl transition-all duration-700 hover:shadow-emerald-300/50">
+                <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-indigo-500/10 blur-3xl rounded-2xl"></div>
+                
+                <img src="Image/VD3.png" alt="High Potency Vitamin D3" 
+                     class="relative w-full h-auto object-contain transform transition-transform duration-500 hover:scale-[1.03] drop-shadow-2xl z-10" />
+
+                <div class="absolute top-4 left-4 flex space-x-2 z-20">
+                    <span class="px-3 py-1 text-xs font-bold rounded-full bg-emerald-500 text-white shadow-lg">New Formula</span>
+                    <span class="px-3 py-1 text-xs font-bold rounded-full bg-indigo-600 text-white shadow-lg">Bestseller</span>
+                </div>
+            </div>
+
+            <div class="space-y-8">
+                <div class="space-y-3">
+                    <p class="text-sm font-semibold text-emerald-600 uppercase">PharmaStore Exclusive</p>
+                    <h1 class="text-5xl md:text-6xl font-extrabold text-indigo-900 leading-tight">
+                        High Potency <span class="text-emerald-500">Vitamin D3</span>
+                    </h1>
+                    <p class="text-xl text-gray-600">
+                        Maximum strength formula for immune support and bone health. Doctor-trusted and vegan certified.
+                    </p>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <div class="flex items-center gap-1 text-yellow-500">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27l6.18 3.73-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73-1.64 7.03z"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27l6.18 3.73-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73-1.64 7.03z"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27l6.18 3.73-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73-1.64 7.03z"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27l6.18 3.73-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73-1.64 7.03z"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27l6.18 3.73-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73-1.64 7.03z"/></svg>
+                    </div>
+                    <span class="text-lg font-medium text-gray-500">4.9 (1,245 Reviews)</span>
+                </div>
+
+                <div class="flex items-end justify-between border-t pt-6">
+                    <p class="text-4xl font-extrabold text-indigo-900">$29.<span class="text-3xl">99</span></p>
+                    
+                    <button class="relative overflow-hidden inline-flex items-center justify-center h-12 px-8 bg-gradient-to-r from-emerald-500 to-indigo-500 text-white rounded-full font-semibold shadow-lg shadow-emerald-500/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                        Add to Cart
+                    </button>
+                </div>
+
+                <div class="pt-6 border-t space-y-3">
+                    <p class="font-bold text-lg text-indigo-700">What makes it unique?</p>
+                    <ul class="grid grid-cols-2 gap-4 text-gray-700">
+                        <li class="flex items-center"><svg class="w-5 h-5 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> 5000 IU Per Serving</li>
+                        <li class="flex items-center"><svg class="w-5 h-5 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Non-GMO & Vegan</li>
+                        <li class="flex items-center"><svg class="w-5 h-5 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Max Absorption (MCT Oil)</li>
+                        <li class="flex items-center"><svg class="w-5 h-5 text-emerald-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> 90 Softgels (3 Months Supply)</li>
+                    </ul>
+                </div>
+                
+                <div class="p-4 rounded-lg bg-indigo-50 border-l-4 border-indigo-400 text-indigo-800">
+                     <p class="font-semibold flex items-center">
+                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                         Order within 2 hours to get Free Express Shipping!
+                     </p>
+                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-indigo-800 text-white">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12">
+            <h2 class="text-3xl font-bold mb-10 text-center">Product Transparency & Quality</h2>
+
+            <div x-data="{ tab: 'ingredients' }" class="max-w-4xl mx-auto">
+                
+                <div class="flex border-b border-emerald-400/50 mb-8 space-x-4">
+                    <button @click="tab = 'ingredients'" :class="{'border-emerald-400 text-emerald-400 font-bold': tab === 'ingredients', 'border-transparent text-white/70 hover:text-emerald-400': tab !== 'ingredients'}" class="py-3 px-4 transition-colors border-b-2">
+                        Ingredients
+                    </button>
+                    <button @click="tab = 'benefits'" :class="{'border-emerald-400 text-emerald-400 font-bold': tab === 'benefits', 'border-transparent text-white/70 hover:text-emerald-400': tab !== 'benefits'}" class="py-3 px-4 transition-colors border-b-2">
+                        Usage & Benefits
+                    </button>
+                    <button @click="tab = 'qa'" :class="{'border-emerald-400 text-emerald-400 font-bold': tab === 'qa', 'border-transparent text-white/70 hover:text-emerald-400': tab !== 'qa'}" class="py-3 px-4 transition-colors border-b-2">
+                        Quality & Certifications
+                    </button>
+                </div>
+
+                <div class="p-6 bg-indigo-900/50 rounded-lg shadow-xl">
+                    
+                    <div x-show="tab === 'ingredients'" class="space-y-6">
+                        <p class="text-white/80">Each softgel contains a precise, doctor-formulated dose...</p>
+                        <ul class="grid md:grid-cols-2 gap-4">
+                            <li class="bg-indigo-700 p-4 rounded-lg flex justify-between items-center">
+                                <span class="font-semibold">Vitamin D3 (Cholecalciferol)</span>
+                                <span class="text-emerald-400 font-bold">5000 IU</span>
+                            </li>
+                            <li class="bg-indigo-700 p-4 rounded-lg flex justify-between items-center">
+                                <span class="font-semibold">MCT Oil Base</span>
+                                <span class="text-emerald-400 font-bold">100mg</span>
+                            </li>
+                            <li class="bg-indigo-700 p-4 rounded-lg flex justify-between items-center">
+                                <span class="font-semibold">Allergens</span>
+                                <span class="text-yellow-400 font-bold">None</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div x-show="tab === 'benefits'" x-cloak class="space-y-4">
+                         <h4 class="text-xl font-semibold text-emerald-400">Key Benefits:</h4>
+                         <ul class="list-disc list-inside space-y-2 ml-4 text-white/80">
+                             <li>**Boosts Immune Function:** Proven to strengthen the body's natural defenses.</li>
+                             <li>**Supports Mood:** Helps regulate mood and improve feelings of well-being.</li>
+                             <li>**Optimizes Bone Density:** Essential for calcium absorption and strong bones.</li>
+                         </ul>
+                    </div>
+                    
+                     <div x-show="tab === 'qa'" x-cloak class="space-y-4">
+                        <div class="flex items-center space-x-4 p-4 bg-emerald-700/50 rounded-lg">
+                            <svg class="w-8 h-8 text-emerald-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <div>
+                                <p class="font-bold text-lg">GMP Certified Manufacturing</p>
+                                <p class="text-sm text-white/70">Produced in a facility that follows strict Good Manufacturing Practices.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12">
+            
+            <h2 class="text-3xl font-extrabold text-indigo-900 mb-8">Complementary Products</h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                <div class="bg-white rounded-xl shadow-lg p-4 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                    <img src="https://via.placeholder.com/200x150/f0f9ff/10b981?text=Omega+3" alt="Omega 3" class="w-full h-32 object-contain mb-3">
+                    <h3 class="font-semibold text-indigo-700 mb-1">Ultra Pure Omega 3</h3>
+                    <p class="text-sm text-gray-500 mb-3">For Heart & Brain Health</p>
+                    <button class="w-full py-2 text-sm rounded-full bg-emerald-500 text-white hover:bg-emerald-600 transition-colors">Add to Cart - $15.00</button>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-4 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                    <img src="https://via.placeholder.com/200x150/f0f9ff/4338ca?text=B+Complex" alt="B Complex" class="w-full h-32 object-contain mb-3">
+                    <h3 class="font-semibold text-indigo-700 mb-1">Active B Complex</h3>
+                    <p class="text-sm text-gray-500 mb-3">For Energy & Metabolism</p>
+                    <button class="w-full py-2 text-sm rounded-full bg-emerald-500 text-white hover:bg-emerald-600 transition-colors">Add to Cart - $19.99</button>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-4 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                    <img src="https://via.placeholder.com/200x150/f0f9ff/10b981?text=Magnesium" alt="Magnesium" class="w-full h-32 object-contain mb-3">
+                    <h3 class="font-semibold text-indigo-700 mb-1">Sleep Magnesium</h3>
+                    <p class="text-sm text-gray-500 mb-3">For Relaxation & Rest</p>
+                    <button class="w-full py-2 text-sm rounded-full bg-emerald-500 text-white hover:bg-emerald-600 transition-colors">Add to Cart - $12.50</button>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-4 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                    <img src="https://via.placeholder.com/200x150/f0f9ff/4338ca?text=Zinc" alt="Zinc" class="w-full h-32 object-contain mb-3">
+                    <h3 class="font-semibold text-indigo-700 mb-1">Immune Zinc</h3>
+                    <p class="text-sm text-gray-500 mb-3">For Seasonal Support</p>
+                    <button class="w-full py-2 text-sm rounded-full bg-emerald-500 text-white hover:bg-emerald-600 transition-colors">Add to Cart - $9.99</button>
+                </div>
+            </div>
+
+            <h2 class="text-3xl font-extrabold text-indigo-900 mb-8">What Our Customers Say</h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="p-8 rounded-2xl bg-indigo-700 text-white shadow-2xl glass-effect">
+                     <div class="flex items-center gap-1 mb-4 text-yellow-400">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27l6.18 3.73-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73-1.64 7.03z"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27l6.18 3.73-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73-1.64 7.03z"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27l6.18 3.73-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73-1.64 7.03z"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27l6.18 3.73-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73-1.64 7.03z"/></svg>
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27l6.18 3.73-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73-1.64 7.03z"/></svg>
+                    </div>
+                    <p class="text-xl font-medium mb-6 italic">"The best Vitamin D3 I have ever used. Noticed a huge difference in my energy levels within a week. Plus, the packaging is sleek and modern!"</p>
+                    <div class="flex items-center gap-4">
+                        <img src="https://via.placeholder.com/60/f0f9ff?text=RA" alt="Customer" class="w-14 h-14 rounded-full object-cover border-4 border-emerald-400">
+                        <div>
+                            <h4 class="font-bold text-white text-lg">Rami Al-Saleh</h4>
+                            <p class="text-sm text-white/70">Verified Purchase</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center p-8 bg-gray-200/50 rounded-2xl border-2 border-dashed border-gray-300 hover:border-emerald-500 transition-colors cursor-pointer">
+                    <a href="#" class="text-lg font-bold text-indigo-700 hover:text-emerald-600 transition-colors">Read All 1,245 Reviews →</a>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+ <footer class="bg-gray-900 text-white py-8">
+        <div class="container mx-auto text-center px-4">
+            <p>&copy; 2025 PharmaStore. All rights reserved.</p>
+            <div class="flex justify-center space-x-4 mt-4">
+                <a href="#" class="hover:text-emerald-400 transition-colors">Facebook</a>
+                <a href="#" class="hover:text-emerald-400 transition-colors">Twitter</a>
+                <a href="#" class="hover:text-emerald-400 transition-colors">Instagram</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>
