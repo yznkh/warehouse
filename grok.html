@@ -1,0 +1,3717 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>المركز الوطني للأمن السيبراني - National Cyber Security Center (Jordan)</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts: Changa + Inter + IBM Plex Mono (for HUD/terminal text) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Changa:wght@300;400;600;700&family=Inter:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Tailwind configuration (brand palette + some utilities) -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Changa", "system-ui", "sans-serif"],
+            inter: ["Inter", "system-ui"],
+            plexmono: ["IBM Plex Mono", "ui-monospace", "SFMono-Regular", "monospace"],
+          },
+          colors: {
+            "electric-blue": "#00BFFF",
+            "cyber-purple": "#8A2BE2",
+            "alert-red": "#FF3864",
+            "neon-green": "#39FF14",
+            "dark-cyan": "#008B9F",
+            "cyan-soft": "#22D3EE",
+            "magenta-soft": "#FF00FF",
+          },
+          boxShadow: {
+            "glow-blue": "0 0 15px rgba(0, 191, 255, 0.7), 0 0 4px rgba(0, 191, 255, 0.4)",
+            "glow-purple": "0 0 15px rgba(138, 43, 226, 0.7), 0 0 4px rgba(138, 43, 226, 0.4)",
+            "glow-red": "0 0 16px rgba(255, 56, 100, 0.8)",
+            "glow-green": "0 0 15px rgba(57, 255, 20, 0.7)",
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* =========================================================
+       GLOBAL THEME + BACKGROUND
+       ========================================================= */
+    :root {
+      --bg-primary: #f0f3f7;
+      --bg-secondary: #ffffff;
+      --text-color: #020617;
+      --glass-bg: rgba(255, 255, 255, 0.78);
+      --grid-color: rgba(0, 0, 0, 0.04);
+      --ambient-glow-color: rgba(0, 191, 255, 0.18);
+      --scanline-color: rgba(0, 0, 0, 0.05);
+      --accent-dark-cyan: #008b9f;
+      --primary-glow: #00bfff;
+      --secondary-glow: #8a2be2;
+      --spark-color-1: #00bfff;
+      --spark-color-2: #39ff14;
+      --spark-color-3: #ff3864;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-color);
+      font-family: "Changa", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    /* Dark mode variables (optional, for future) */
+    body.dark-mode {
+      --bg-primary: #020617;
+      --bg-secondary: #050816;
+      --text-color: #e5e7eb;
+      --glass-bg: rgba(15, 23, 42, 0.88);
+      --grid-color: rgba(148, 163, 184, 0.12);
+      --scanline-color: rgba(148, 163, 184, 0.12);
+      --ambient-glow-color: rgba(0, 191, 255, 0.2);
+    }
+
+    /* Subtle scanline texture (100x100) */
+    .global-scanlines {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: -20;
+      background-image: repeating-linear-gradient(
+          to bottom,
+          var(--scanline-color) 0,
+          var(--scanline-color) 1px,
+          transparent 1px,
+          transparent 4px
+        );
+      background-size: 100px 100px;
+      opacity: 0.5;
+      mix-blend-mode: multiply;
+    }
+
+    /* Very faint hex rain columns (1-2 only) */
+    .hex-column {
+      position: fixed;
+      top: -120%;
+      width: 80px;
+      font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+        "Courier New", monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      line-height: 1.4;
+      color: rgba(15, 23, 42, 0.25);
+      white-space: pre;
+      pointer-events: none;
+      z-index: -19;
+      animation: hexRain 18s linear infinite;
+    }
+
+    .hex-column-right {
+      right: 6%;
+      animation-delay: 4s;
+    }
+    .hex-column-left {
+      left: 8%;
+      animation-delay: 0s;
+    }
+
+    @keyframes hexRain {
+      0% {
+        transform: translateY(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.35;
+      }
+      90% {
+        opacity: 0.35;
+      }
+      100% {
+        transform: translateY(220%);
+        opacity: 0;
+      }
+    }
+
+    /* Ambient glow that shifts by section */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -18;
+      background: radial-gradient(circle at 50% 15%, var(--ambient-glow-color), transparent 60%);
+      transition: background 0.5s ease-out;
+    }
+
+    /* Cyber HUD glassmorphism */
+    .glass-morphic {
+      background: var(--glass-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(0, 191, 255, 0.18);
+    }
+
+    /* =========================================================
+       NAVBAR - COMMAND RIBBON
+       ========================================================= */
+    nav.command-ribbon {
+      background: transparent;
+    }
+
+    .command-ribbon-inner {
+      border-radius: 999px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow:
+        0 12px 25px rgba(15, 23, 42, 0.18),
+        0 0 0 1px rgba(148, 163, 184, 0.5);
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.9),
+        rgba(255, 255, 255, 0.96),
+        rgba(255, 255, 255, 0.9)
+      );
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Thin moving scanline in nav (radar sweep) */
+    .command-ribbon-inner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(
+        to right,
+        rgba(0, 191, 255, 0.0),
+        rgba(0, 191, 255, 0.18),
+        rgba(0, 191, 255, 0.0)
+      );
+      opacity: 0.35;
+      transform: translateX(-100%);
+      animation: navSweep 10s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes navSweep {
+      0% {
+        transform: translateX(-110%);
+      }
+      100% {
+        transform: translateX(110%);
+      }
+    }
+
+    /* Under-nav data ticker */
+    .nav-data-ticker {
+      position: relative;
+      margin-top: 0.4rem;
+      height: 22px;
+      overflow: hidden;
+    }
+
+    .nav-data-stream {
+      position: absolute;
+      white-space: nowrap;
+      display: inline-flex;
+      gap: 4rem;
+      font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+        "Courier New", monospace;
+      font-size: 11px;
+      color: rgba(15, 23, 42, 0.6);
+      animation: navMarquee 40s linear infinite;
+    }
+
+    @keyframes navMarquee {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Security status pill + micro sparkline */
+    .security-chip {
+      border-radius: 999px;
+      border: 1px solid rgba(57, 255, 20, 0.45);
+      background: radial-gradient(circle at top left, rgba(57, 255, 20, 0.16), transparent 60%);
+      padding-inline: 0.7rem;
+      padding-block: 0.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 11px;
+    }
+
+    .security-chip-dot {
+      position: relative;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #39ff14;
+      box-shadow: 0 0 8px rgba(57, 255, 20, 0.9);
+    }
+
+    .security-chip-dot::before {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      border-radius: inherit;
+      border: 1px solid rgba(57, 255, 20, 0.6);
+      animation: securityPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes securityPulse {
+      0% {
+        opacity: 0.2;
+        transform: scale(0.9);
+      }
+      50% {
+        opacity: 0.8;
+        transform: scale(1.15);
+      }
+      100% {
+        opacity: 0.2;
+        transform: scale(0.9);
+      }
+    }
+
+    .sparkline {
+      position: relative;
+      width: 52px;
+      height: 16px;
+      border-radius: 999px;
+      background: linear-gradient(to right, rgba(15, 23, 42, 0.06), rgba(15, 23, 42, 0.14));
+      overflow: hidden;
+    }
+
+    .sparkline::before {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border-radius: 999px;
+      background-image: linear-gradient(
+        to right,
+        rgba(57, 255, 20, 0.1) 0,
+        rgba(57, 255, 20, 0.8) 40%,
+        rgba(255, 56, 100, 0.7) 80%
+      );
+      clip-path: polygon(0 60%, 15% 10%, 30% 40%, 45% 20%, 60% 65%, 75% 30%, 100% 70%, 100% 100%, 0 100%);
+      opacity: 0.85;
+      animation: sparklineMove 4s ease-in-out infinite;
+    }
+
+    @keyframes sparklineMove {
+      0% {
+        transform: translateX(-15%);
+      }
+      50% {
+        transform: translateX(5%);
+      }
+      100% {
+        transform: translateX(-15%);
+      }
+    }
+
+    /* Matrix hover used for nav links */
+    .matrix-hover {
+      position: relative;
+      overflow: hidden;
+      transition: color 0.3s ease;
+    }
+
+    .matrix-hover:hover {
+      color: #008b9f;
+      text-shadow: 0 0 7px rgba(0, 139, 159, 0.7);
+    }
+
+    .matrix-hover::before {
+      content: "0110 1011 1101 0011 1010 1110";
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      font-size: 9px;
+      color: rgba(0, 191, 255, 0.5);
+      opacity: 0;
+      line-height: 1.1;
+      word-wrap: break-word;
+      transition: all 0.35s ease-out;
+    }
+
+    .matrix-hover:hover::before {
+      top: 35%;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Language toggle holographic switch */
+    .lang-toggle {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 11px;
+      color: #0f172a;
+    }
+
+    .lang-toggle-track {
+      width: 44px;
+      height: 20px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 20% 20%, rgba(0, 191, 255, 0.5), rgba(0, 191, 255, 0.05));
+      border: 1px solid rgba(0, 191, 255, 0.6);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0, 191, 255, 0.4);
+    }
+
+    .lang-toggle-thumb {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #ffffff, #00bfff);
+      box-shadow:
+        0 0 10px rgba(0, 191, 255, 0.9),
+        0 0 20px rgba(138, 43, 226, 0.5);
+      transition: transform 0.25s ease-out;
+    }
+
+    .lang-en-active .lang-toggle-thumb {
+      transform: translateX(-20px);
+    }
+
+    .lang-toggle-label {
+      font-family: "Inter", system-ui, sans-serif;
+      font-size: 10px;
+      color: rgba(15, 23, 42, 0.8);
+    }
+
+    /* CTA Neon Capsule button (nav) */
+    .neon-capsule {
+      position: relative;
+      border-radius: 999px;
+      padding-inline: 1.4rem;
+      padding-block: 0.45rem;
+      border: 1px solid rgba(0, 191, 255, 0.7);
+      background: radial-gradient(circle at 10% 0%, rgba(0, 191, 255, 0.35), rgba(0, 191, 255, 0.02));
+      color: #020617;
+      font-size: 12px;
+      font-weight: 700;
+      overflow: hidden;
+      box-shadow:
+        0 0 12px rgba(0, 191, 255, 0.6),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+    }
+
+    .neon-capsule-ring {
+      position: absolute;
+      inset: 3px;
+      border-radius: inherit;
+      border: 1px solid rgba(0, 191, 255, 0.7);
+      box-shadow: 0 0 10px rgba(0, 191, 255, 0.7);
+      mix-blend-mode: screen;
+      animation: neonRingRotate 6s linear infinite;
+      pointer-events: none;
+    }
+
+    .neon-capsule::before,
+    .neon-capsule::after {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: conic-gradient(
+        from 0deg,
+        rgba(0, 191, 255, 0.1),
+        rgba(138, 43, 226, 0.2),
+        rgba(34, 211, 238, 0.15),
+        rgba(255, 0, 255, 0.1),
+        rgba(0, 191, 255, 0.1)
+      );
+      opacity: 0;
+      transform: rotate(0deg);
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .neon-capsule::after {
+      filter: blur(22px);
+    }
+
+    .neon-capsule:hover::before,
+    .neon-capsule:hover::after {
+      opacity: 0.9;
+    }
+
+    .neon-capsule:hover {
+      color: #020617;
+    }
+
+    @keyframes neonRingRotate {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* =========================================================
+       HERO - "CYBER GATE"
+       ========================================================= */
+    #hero {
+      position: relative;
+      min-height: 700px;
+    }
+
+    /* Under-hero glow */
+    #hero::after {
+      content: "";
+      position: absolute;
+      bottom: 0.1px;
+      left: 0;
+      width: 100%;
+      height: 30px;
+      pointer-events: none;
+      box-shadow:
+        0 15px 40px rgba(0, 191, 255, 0.5),
+        0 0 80px rgba(0, 191, 255, 0.35);
+      background: linear-gradient(to bottom, transparent, var(--bg-primary));
+    }
+
+    .two-column-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: 3rem;
+      align-items: center;
+    }
+
+    @media (max-width: 1024px) {
+      .two-column-layout {
+        grid-template-columns: minmax(0, 1fr);
+        text-align: center;
+      }
+    }
+
+    /* Hero cyber background: noise + vector field */
+    #dynamic-hero-background {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 55%, rgba(0, 191, 255, 0.12), transparent 60%),
+        radial-gradient(circle at 50% 55%, rgba(0, 139, 159, 0.3), transparent 70%),
+        repeating-linear-gradient(
+          to bottom,
+          rgba(15, 23, 42, 0.12) 0,
+          rgba(15, 23, 42, 0.12) 1px,
+          transparent 1px,
+          transparent 3px
+        );
+      opacity: 0.9;
+      mix-blend-mode: multiply;
+      overflow: hidden;
+    }
+
+    /* Light vector field dots flowing to center */
+    .vector-field {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(0, 191, 255, 0.4) 1px, transparent 1px);
+      background-size: 80px 80px;
+      opacity: 0.3;
+      animation: vectorFlow 40s linear infinite;
+      transform-origin: center;
+    }
+
+    @keyframes vectorFlow {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+      50% {
+        transform: translate(-30px, -20px) scale(1.05);
+      }
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+    }
+
+    /* Pulse rings representing inbound threats being absorbed */
+    .pulse-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 191, 255, 0.38);
+      transform: translate(-50%, -50%);
+      opacity: 0;
+    }
+
+    .ring-1 {
+      width: 120px;
+      height: 120px;
+      animation: pulseRing 5s linear infinite;
+    }
+
+    .ring-2 {
+      width: 220px;
+      height: 220px;
+      animation: pulseRing 5s linear infinite 1.2s;
+    }
+
+    .ring-3 {
+      width: 330px;
+      height: 330px;
+      animation: pulseRing 5s linear infinite 2.4s;
+    }
+
+    @keyframes pulseRing {
+      0% {
+        opacity: 0.2;
+        transform: translate(-50%, -50%) scale(0.85);
+      }
+      40% {
+        opacity: 0.7;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.5);
+      }
+    }
+
+    /* Holographic companion materialization */
+    #hero-hologram {
+      position: relative;
+      max-width: 360px;
+      margin-inline: auto;
+      opacity: 0;
+      transform-origin: center;
+      filter:
+        drop-shadow(0 0 18px rgba(0, 191, 255, 0.8))
+        drop-shadow(0 0 36px rgba(138, 43, 226, 0.5));
+    }
+
+    .holo-materialized {
+      animation:
+        holoScanIn 1.4s ease-out forwards,
+        hologramFloat 8s ease-in-out infinite 1.4s,
+        hologramPulse 5s ease-in-out infinite 1.4s alternate;
+    }
+
+    @keyframes holoScanIn {
+      0% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.9);
+        clip-path: inset(50% 0 50% 0);
+        filter: brightness(2) hue-rotate(90deg);
+      }
+      40% {
+        clip-path: inset(0 0 0 0);
+        opacity: 0.7;
+        transform: translateY(-10px) scale(1.05);
+      }
+      100% {
+        opacity: 0.9;
+        transform: translateY(0) scale(1);
+        filter: brightness(1) hue-rotate(0deg);
+      }
+    }
+
+    @keyframes hologramFloat {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-18px);
+      }
+    }
+
+    @keyframes hologramPulse {
+      0% {
+        filter:
+          drop-shadow(0 0 14px rgba(0, 191, 255, 0.7))
+          drop-shadow(0 0 30px rgba(138, 43, 226, 0.45));
+      }
+      100% {
+        filter:
+          drop-shadow(0 0 28px rgba(0, 191, 255, 1))
+          drop-shadow(0 0 40px rgba(138, 43, 226, 0.8));
+      }
+    }
+
+    /* Cyber gate overlay */
+    .cybergate-overlay {
+      position: fixed;
+      inset: 0;
+      background: #000000;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 1;
+    }
+
+    .cybergate-overlay.cybergate-skip {
+      opacity: 0;
+      display: none;
+    }
+
+    .cybergate-center {
+      position: relative;
+      text-align: center;
+      color: #f9fafb;
+    }
+
+    .cybergate-logo-wrap {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      margin-inline: auto;
+    }
+
+    .cybergate-logo {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter:
+        drop-shadow(0 0 28px rgba(0, 191, 255, 0.85))
+        drop-shadow(0 0 40px rgba(255, 56, 100, 0.35));
+      z-index: 2;
+    }
+
+    .cybergate-iris {
+      position: absolute;
+      inset: -10%;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(0, 191, 255, 0.6), transparent 65%);
+      box-shadow:
+        0 0 50px rgba(0, 191, 255, 0.6),
+        0 0 80px rgba(255, 255, 255, 0.18);
+      z-index: 1;
+      transform: scale(0.1);
+      clip-path: circle(10% at 50% 50%);
+      opacity: 0;
+    }
+
+    .cybergate-caption {
+      margin-top: 1.2rem;
+      font-size: 14px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-family: "Inter", system-ui, sans-serif;
+      color: rgba(226, 232, 240, 0.8);
+    }
+
+    .cybergate-shockwave {
+      position: absolute;
+      width: 40vmax;
+      height: 40vmax;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 0 40px rgba(0, 191, 255, 0.8);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .cybergate-start .cybergate-iris {
+      animation: irisOpen 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    .cybergate-start .cybergate-shockwave {
+      animation: shockwaveExpand 1s ease-out 1.05s forwards;
+    }
+
+    .cybergate-overlay.cybergate-start {
+      animation: cybergateFadeOut 1.4s ease-out 1.2s forwards;
+    }
+
+    @keyframes irisOpen {
+      0% {
+        opacity: 1;
+        clip-path: circle(5% at 50% 50%);
+        transform: scale(0.2);
+      }
+      70% {
+        opacity: 1;
+        clip-path: circle(60% at 50% 50%);
+        transform: scale(1.1);
+      }
+      100% {
+        opacity: 0;
+        clip-path: circle(100% at 50% 50%);
+        transform: scale(1.5);
+      }
+    }
+
+    @keyframes shockwaveExpand {
+      0% {
+        opacity: 0.9;
+        transform: scale(0.1);
+        filter: blur(0);
+      }
+      60% {
+        opacity: 0.6;
+        transform: scale(1);
+        filter: blur(1px);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(1.6);
+        filter: blur(4px);
+      }
+    }
+
+    @keyframes cybergateFadeOut {
+      0% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
+    /* Hero content entrance & glitch */
+    .hero-element-hidden {
+      opacity: 0;
+      transform: translateY(24px);
+      filter: blur(6px);
+    }
+
+    .cyber-badge-entrance {
+      animation: cyberBadgeEntrance 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .cyber-title-entrance {
+      animation: cyberTitleEntrance 1.1s cubic-bezier(0.3, 0.8, 0.25, 1) forwards;
+    }
+
+    .cyber-desc-entrance {
+      animation: cyberDescEntrance 1s ease-out forwards;
+    }
+
+    .cyber-buttons-entrance {
+      animation: cyberButtonsEntrance 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .cyber-hologram-entrance {
+      /* we hand it to holo-materialized instead */
+    }
+
+    @keyframes cyberBadgeEntrance {
+      0% {
+        opacity: 0;
+        transform: translateY(-28px) scale(0.9);
+      }
+      70% {
+        transform: translateY(6px) scale(1.05);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes cyberTitleEntrance {
+      0% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+        filter: blur(14px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes cyberDescEntrance {
+      0% {
+        opacity: 0;
+        transform: translateX(-30px);
+        filter: blur(8px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes cyberButtonsEntrance {
+      0% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.9);
+      }
+      70% {
+        transform: translateY(-8px) scale(1.03);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Cyber corners framing main title */
+    .cyber-corners {
+      position: relative;
+      display: inline-block;
+    }
+
+    .cyber-corners::before,
+    .cyber-corners::after {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border: 2px solid #00bfff;
+      opacity: 0;
+      transition: all 0.4s ease;
+    }
+
+    .cyber-corners::before {
+      top: -10px;
+      right: -10px;
+      border-bottom: none;
+      border-left: none;
+    }
+
+    .cyber-corners::after {
+      bottom: -10px;
+      left: -10px;
+      border-top: none;
+      border-right: none;
+    }
+
+    .cyber-corners.active::before,
+    .cyber-corners.active::after {
+      opacity: 1;
+      width: 32px;
+      height: 32px;
+    }
+
+    /* Glitch title synced via class */
+    .cyber-glitch-text {
+      position: relative;
+    }
+
+    .cyber-glitch-text::before,
+    .cyber-glitch-text::after {
+      content: attr(data-glitch);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .cyber-glitch-text.glitch-active::before,
+    .cyber-glitch-text.glitch-active::after {
+      opacity: 1;
+    }
+
+    .cyber-glitch-text.glitch-active::before {
+      color: #00bfff;
+      mix-blend-mode: screen;
+      animation: glitchShift 2.2s infinite;
+    }
+
+    .cyber-glitch-text.glitch-active::after {
+      color: #8a2be2;
+      mix-blend-mode: screen;
+      animation: glitchShift 2.2s infinite reverse;
+    }
+
+    @keyframes glitchShift {
+      0% {
+        transform: translate(0, 0);
+      }
+      15% {
+        transform: translate(-2px, 1px);
+      }
+      30% {
+        transform: translate(1px, -2px);
+      }
+      45% {
+        transform: translate(-1px, 2px);
+      }
+      60% {
+        transform: translate(2px, 0);
+      }
+      100% {
+        transform: translate(0, 0);
+      }
+    }
+
+    /* Hero holographic primary / secondary CTA */
+    .holographic-btn {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .holographic-overlay {
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.34) 50%,
+        transparent 70%
+      );
+      transform: rotate(45deg);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .holographic-btn:hover .holographic-overlay {
+      opacity: 1;
+      animation: holographicScan 1.7s linear infinite;
+    }
+
+    @keyframes holographicScan {
+      0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+      }
+      100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+      }
+    }
+
+    /* =========================================================
+       NEWS - HOLO PANELS
+       ========================================================= */
+    .news-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1rem;
+      background: radial-gradient(circle at top, rgba(0, 191, 255, 0.1), rgba(255, 255, 255, 0.9));
+      border: 1px solid rgba(0, 191, 255, 0.28);
+      box-shadow:
+        0 12px 26px rgba(15, 23, 42, 0.12),
+        0 0 0 1px rgba(148, 163, 184, 0.35);
+      transform-origin: center bottom;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .news-card::before {
+      /* energy lift below card */
+      content: "";
+      position: absolute;
+      bottom: -18px;
+      left: 10%;
+      right: 10%;
+      height: 12px;
+      background: radial-gradient(circle, rgba(0, 191, 255, 0.5), transparent 70%);
+      opacity: 0.0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      pointer-events: none;
+    }
+
+    .news-card:hover {
+      transform: translateY(-10px);
+      box-shadow:
+        0 24px 40px rgba(15, 23, 42, 0.18),
+        0 0 40px rgba(0, 191, 255, 0.5);
+    }
+
+    .news-card:hover::before {
+      opacity: 0.8;
+      transform: translateY(4px);
+    }
+
+    .news-image-wrap {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .news-image-wrap img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      filter: saturate(1.05) contrast(1.05);
+      transition: transform 0.6s ease, filter 0.6s ease;
+    }
+
+    .news-card:hover .news-image-wrap img {
+      transform: scale(1.06);
+      filter: saturate(1.2) contrast(1.2);
+    }
+
+    /* subtle heat haze overlay */
+    .news-image-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.08) 0,
+        rgba(255, 255, 255, 0.08) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      mix-blend-mode: soft-light;
+      opacity: 0.0;
+      animation: heatHaze 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes heatHaze {
+      0%,
+      100% {
+        opacity: 0;
+        transform: translateY(0);
+      }
+      50% {
+        opacity: 0.4;
+        transform: translateY(-4px);
+      }
+    }
+
+    .news-tag {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.12rem 0.6rem;
+      border-radius: 999px;
+      font-size: 11px;
+      font-family: "IBM Plex Mono", ui-monospace;
+      background: radial-gradient(circle at 20% 0%, rgba(0, 191, 255, 0.4), rgba(255, 255, 255, 0.1));
+      color: #0f172a;
+      box-shadow: 0 0 10px rgba(0, 191, 255, 0.45);
+    }
+
+    .news-tag::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(0, 191, 255, 1);
+      box-shadow:
+        0 0 10px rgba(0, 191, 255, 0.8),
+        0 0 16px rgba(138, 43, 226, 0.4);
+    }
+
+    .news-tag::after {
+      content: "";
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 191, 255, 0.7);
+      border-top-color: transparent;
+      border-right-color: transparent;
+      animation: orbitParticle 2s linear infinite;
+    }
+
+    @keyframes orbitParticle {
+      0% {
+        transform: rotate(0deg) translateX(0);
+      }
+      100% {
+        transform: rotate(360deg) translateX(0);
+      }
+    }
+
+    /* =========================================================
+       VALUE SECTION - 3D CARDS + CONNECTING THREAD + THREATS
+       ========================================================= */
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+
+    .transform-style-3d {
+      transform-style: preserve-3d;
+    }
+
+    .backface-hidden {
+      backface-visibility: hidden;
+    }
+
+    .flipper {
+      transition: transform 0.7s ease;
+    }
+
+    .group:hover .flipper {
+      transform: rotateY(180deg);
+    }
+
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+
+    .value-front,
+    .value-back {
+      background: var(--glass-bg);
+      border-radius: 1.2rem;
+      border: 1px solid rgba(0, 191, 255, 0.32);
+      box-shadow:
+        0 14px 30px rgba(15, 23, 42, 0.14),
+        0 0 0 1px rgba(148, 163, 184, 0.4);
+    }
+
+    .value-back {
+      background: radial-gradient(circle at top left, rgba(0, 191, 255, 0.2), rgba(255, 255, 255, 0.92));
+    }
+
+    /* Connecting energy thread between the three cards */
+    .values-thread {
+      position: relative;
+      margin-top: 2.8rem;
+    }
+
+    .values-thread::before {
+      content: "";
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      top: 50%;
+      height: 2px;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(0, 191, 255, 0.7) 10%,
+        rgba(138, 43, 226, 0.8) 50%,
+        rgba(0, 191, 255, 0.7) 90%,
+        transparent 100%
+      );
+      opacity: 0;
+      transform-origin: left center;
+      transform: scaleX(0.3);
+    }
+
+    .values-thread.active::before {
+      opacity: 1;
+      animation: threadPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes threadPulse {
+      0% {
+        transform: scaleX(0.4);
+        box-shadow: 0 0 8px rgba(0, 191, 255, 0.4);
+      }
+      50% {
+        transform: scaleX(1);
+        box-shadow:
+          0 0 18px rgba(0, 191, 255, 0.7),
+          0 0 26px rgba(138, 43, 226, 0.6);
+      }
+      100% {
+        transform: scaleX(0.4);
+        box-shadow: 0 0 8px rgba(0, 191, 255, 0.4);
+      }
+    }
+
+    /* Data reconstruction effect for card backs */
+    .reconstruct {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .reconstruct span {
+      display: block;
+      opacity: 0;
+      transform: translateX(-12px);
+      filter: blur(6px);
+      animation: reconstructLine 0.6s ease-out forwards;
+    }
+
+    .reconstruct span:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+    .reconstruct span:nth-child(2) {
+      animation-delay: 0.25s;
+    }
+    .reconstruct span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    .reconstruct span:nth-child(4) {
+      animation-delay: 0.55s;
+    }
+
+    @keyframes reconstructLine {
+      0% {
+        opacity: 0;
+        transform: translateX(-12px);
+        filter: blur(6px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+        filter: blur(0);
+      }
+    }
+
+    /* Threat simulation bottom: polyhedrons + shield */
+    .threat-sim {
+      position: relative;
+      margin-top: 3rem;
+      border-radius: 1.5rem;
+      padding: 1.8rem;
+      background: radial-gradient(circle at top center, rgba(0, 191, 255, 0.14), rgba(255, 255, 255, 0.9));
+      overflow: hidden;
+    }
+
+    .threat-poly {
+      width: 60px;
+      height: 60px;
+      border-radius: 999px;
+      border: 1px dashed rgba(255, 56, 100, 0.7);
+      position: relative;
+      transform-style: preserve-3d;
+      animation: spinPoly 9s linear infinite;
+      box-shadow: 0 0 15px rgba(255, 56, 100, 0.5);
+    }
+
+    .threat-poly::before,
+    .threat-poly::after {
+      content: "";
+      position: absolute;
+      inset: 16%;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 56, 100, 0.8);
+      opacity: 0.8;
+    }
+
+    .threat-poly::after {
+      inset: 26%;
+      border-color: rgba(255, 56, 100, 0.5);
+      transform: rotateX(65deg);
+    }
+
+    @keyframes spinPoly {
+      0% {
+        transform: rotateX(18deg) rotateY(0deg);
+      }
+      100% {
+        transform: rotateX(18deg) rotateY(360deg);
+      }
+    }
+
+    .threat-poly.disintegrate {
+      animation: polyDisintegrate 1.1s ease-out forwards;
+    }
+
+    @keyframes polyDisintegrate {
+      0% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        filter: blur(0);
+      }
+      50% {
+        opacity: 0.8;
+        transform: scale(1.08) translateY(-8px);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(0.4) translateY(25px);
+        filter: blur(3px);
+      }
+    }
+
+    .threat-shield {
+      width: 90px;
+      height: 90px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 191, 255, 0.8);
+      background: radial-gradient(circle, rgba(0, 191, 255, 0.4), rgba(255, 255, 255, 0.9));
+      box-shadow:
+        0 0 20px rgba(0, 191, 255, 0.75),
+        0 0 40px rgba(0, 191, 255, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .threat-shield::before {
+      content: "";
+      position: absolute;
+      inset: 30%;
+      border-radius: inherit;
+      border: 1px solid rgba(0, 191, 255, 0.8);
+      animation: shieldPulse 2.6s ease-in-out infinite;
+    }
+
+    @keyframes shieldPulse {
+      0% {
+        transform: scale(1);
+        opacity: 0.5;
+      }
+      60% {
+        transform: scale(1.3);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1.3);
+        opacity: 0;
+      }
+    }
+
+    /* =========================================================
+       SERVICES - CIRCUIT COMPLETION
+       ========================================================= */
+    .wireframe-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1.2rem;
+      background: var(--glass-bg);
+      border: 1px solid rgba(0, 191, 255, 0.4);
+      box-shadow:
+        0 12px 26px rgba(15, 23, 42, 0.14),
+        0 0 0 1px rgba(148, 163, 184, 0.4);
+    }
+
+    .wireframe-card::before {
+      /* subtle grid inside */
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(to right, rgba(0, 191, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 191, 255, 0.08) 1px, transparent 1px);
+      background-size: 20px 20px;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+
+    .wireframe-card::after {
+      /* circuit completion border animation */
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      background:
+        conic-gradient(
+          from 0deg,
+          rgba(0, 191, 255, 0.9),
+          rgba(138, 43, 226, 0.9),
+          rgba(34, 211, 238, 0.9),
+          rgba(255, 0, 255, 0.9),
+          rgba(0, 191, 255, 0.9)
+        );
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: xor;
+      padding: 2px;
+      opacity: 0;
+      transform: rotate(0deg);
+      transition: opacity 0.2s ease;
+    }
+
+    .wireframe-card:hover::after {
+      opacity: 1;
+      animation: circuitSweep 1.4s linear infinite;
+    }
+
+    @keyframes circuitSweep {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .holographic-icon {
+      transition: transform 0.3s ease;
+    }
+
+    .wireframe-card:hover .holographic-icon {
+      transform: translateY(-6px) scale(1.05);
+    }
+
+    /* =========================================================
+       STATS - HUD STYLE + CIRCULAR PROGRESS
+       ========================================================= */
+    .hud-stat {
+      position: relative;
+      border-radius: 1.2rem;
+      background: radial-gradient(circle at top, rgba(0, 191, 255, 0.08), rgba(255, 255, 255, 0.95));
+      border: 1px solid rgba(0, 191, 255, 0.38);
+      box-shadow:
+        0 16px 32px rgba(15, 23, 42, 0.18),
+        0 0 0 1px rgba(148, 163, 184, 0.5);
+      overflow: hidden;
+    }
+
+    .hud-ring {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      border-radius: 999px;
+      margin-inline: auto;
+      margin-bottom: 1rem;
+      background:
+        radial-gradient(circle, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.8)),
+        conic-gradient(
+          from -90deg,
+          rgba(0, 191, 255, 0.9) calc(var(--progress, 0) * 1deg),
+          rgba(226, 232, 240, 0.16) 0deg
+        );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 0 12px rgba(0, 191, 255, 0.6),
+        inset 0 0 0 1px rgba(148, 163, 184, 0.5);
+    }
+
+    .hud-ring::before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border-radius: inherit;
+      background: radial-gradient(circle, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.7));
+    }
+
+    .hud-ring span {
+      position: relative;
+      z-index: 1;
+      font-family: "IBM Plex Mono", ui-monospace;
+      font-size: 26px;
+      color: #e5f2ff;
+      text-shadow: 0 0 8px rgba(0, 191, 255, 0.7);
+    }
+
+    /* HUD waveform background inside card */
+    .hud-stat::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline fill='none' stroke='rgba(0,191,255,0.35)' stroke-width='1' points='0,20 10,25 20,18 30,28 40,10 50,30 60,15 70,25 80,12 90,28 100,10 110,26 120,15 130,24 140,14 150,27 160,18 170,26 180,12 190,22 200,20'/%3E%3C/svg%3E");
+      background-size: 200px 40px;
+      background-repeat: repeat-x;
+      opacity: 0.35;
+      mix-blend-mode: screen;
+      animation: hudWave 8s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes hudWave {
+      0% {
+        background-position-x: 0;
+      }
+      100% {
+        background-position-x: -200px;
+      }
+    }
+
+    .hud-stat-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* =========================================================
+       ALERTS - TICKER + CARDS + HOVER VIGNETTE
+       ========================================================= */
+    .alert-ticker {
+      display: inline-flex;
+      white-space: nowrap;
+      animation: alertsMarquee 50s linear infinite;
+      font-family: "IBM Plex Mono", ui-monospace;
+    }
+
+    @keyframes alertsMarquee {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    .alert-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .alert-severity-bar {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      width: 6px;
+      background: linear-gradient(to top, #ff3864, #8a2be2);
+      box-shadow:
+        0 0 16px rgba(255, 56, 100, 0.8),
+        0 0 26px rgba(138, 43, 226, 0.6);
+      opacity: 0.9;
+    }
+
+    .alert-card:hover .alert-severity-bar {
+      animation: severityPulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes severityPulse {
+      0% {
+        transform: scaleX(1);
+        opacity: 0.9;
+      }
+      50% {
+        transform: scaleX(1.4);
+        opacity: 1;
+      }
+      100% {
+        transform: scaleX(1);
+        opacity: 0.9;
+      }
+    }
+
+    /* Hover particles + vignette around card */
+    .alert-card::before {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background: radial-gradient(circle at 50% 0%, rgba(255, 56, 100, 0.14), transparent 60%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .alert-card:hover::before {
+      opacity: 1;
+    }
+
+    .alert-card::after {
+      content: "";
+      position: absolute;
+      inset: -10%;
+      background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(127, 29, 29, 0.3) 100%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .alert-card:hover::after {
+      opacity: 1;
+    }
+
+    /* =========================================================
+       CYBER MAP - REUSE EXISTING STYLES (ADAPTED)
+       ========================================================= */
+    #cyber-map-section .map-layout-wrapper {
+      width: 100%;
+      max-width: 1200px;
+      margin-inline: auto;
+      position: relative;
+      display: flex;
+      justify-content: center;
+    }
+
+    #cyber-map-section .map-container {
+      max-width: 900px;
+      position: relative;
+      padding: 0 20px 20px;
+      border-radius: 16px;
+      box-shadow: 0 0 40px rgba(0, 191, 255, 0.12);
+      overflow: hidden;
+      background: var(--glass-bg);
+    }
+
+    #map-legend {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(0, 191, 255, 0.35);
+      border-right: 4px solid #00bfff;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 0.8rem;
+      z-index: 10;
+      box-shadow: 0 0 14px rgba(0, 191, 255, 0.35);
+    }
+
+    #map-legend .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      color: var(--text-color);
+    }
+
+    #map-legend .legend-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .legend-color {
+      width: 11px;
+      height: 11px;
+      border-radius: 999px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .legend-color.red {
+      background-color: #ff3864;
+      box-shadow: 0 0 10px #ff3864;
+    }
+
+    .legend-color.green {
+      background-color: #39ff14;
+      box-shadow: 0 0 10px #39ff14;
+    }
+
+    .legend-color.blue {
+      background-color: #00bfff;
+      box-shadow: 0 0 10px #00bfff;
+    }
+
+    #jordan-map-base {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 120%;
+      transform: translate(-50%, -50%);
+      opacity: 0.9;
+      filter: drop-shadow(0 0 16px rgba(0, 255, 127, 0.6));
+      z-index: 1;
+    }
+
+    .map-overlay-svg {
+      display: block;
+      width: 100%;
+      min-height: 480px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .city-node {
+      fill: #ff3864;
+      stroke: #ff3864;
+      stroke-width: 1;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .city-node:hover {
+      r: 11px;
+      filter: drop-shadow(0 0 10px #ff3864);
+    }
+
+    .city-label {
+      font-family: "Changa", system-ui;
+      font-size: 16px;
+      font-weight: 600;
+      fill: #111827;
+      text-anchor: middle;
+      pointer-events: none;
+      text-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+    }
+
+    .amman-node {
+      fill: #39ff14;
+      stroke: #ffffff;
+      stroke-width: 3;
+      animation: pulseGreen 2s infinite;
+    }
+
+    .amman-label {
+      fill: #39ff14;
+      font-size: 18px;
+      font-weight: 800;
+      text-shadow: 0 0 14px #39ff14;
+    }
+
+    .attack-node {
+      animation: pulseRed 1.5s infinite;
+    }
+
+    .attack-label {
+      fill: #ff3864;
+      text-shadow: 0 0 10px #ff3864;
+    }
+
+    .defense-beam {
+      stroke: #39ff14;
+      stroke-width: 5;
+      stroke-linecap: round;
+      fill: none;
+      opacity: 0;
+      filter:
+        drop-shadow(0 0 10px #39ff14)
+        drop-shadow(0 0 28px rgba(57, 255, 20, 0.7));
+      animation: cometBeam 2.4s linear infinite;
+    }
+
+    #beam-irbid {
+      animation-delay: 0.1s;
+    }
+    #beam-zarqa {
+      animation-delay: 0.5s;
+    }
+    #beam-mafraq {
+      animation-delay: 1.0s;
+    }
+    #beam-tafila {
+      animation-delay: 1.5s;
+    }
+    #beam-aqaba {
+      animation-delay: 2.0s;
+    }
+
+    @keyframes pulseGreen {
+      0% {
+        r: 10px;
+        opacity: 1;
+        filter: drop-shadow(0 0 8px #39ff14);
+      }
+      50% {
+        r: 14px;
+        opacity: 0.85;
+        filter: drop-shadow(0 0 22px #39ff14);
+      }
+      100% {
+        r: 10px;
+        opacity: 1;
+        filter: drop-shadow(0 0 8px #39ff14);
+      }
+    }
+
+    @keyframes pulseRed {
+      0% {
+        r: 8px;
+        opacity: 1;
+        filter: drop-shadow(0 0 6px #ff3864);
+      }
+      50% {
+        r: 12px;
+        opacity: 0.7;
+        filter: drop-shadow(0 0 16px #ff3864);
+      }
+      100% {
+        r: 8px;
+        opacity: 1;
+        filter: drop-shadow(0 0 6px #ff3864);
+      }
+    }
+
+    @keyframes cometBeam {
+      0% {
+        stroke-dasharray: 0 500;
+        stroke-dashoffset: 0;
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      70% {
+        stroke-dasharray: 500 0;
+        stroke-dashoffset: 0;
+        opacity: 1;
+      }
+      100% {
+        stroke-dasharray: 500 0;
+        stroke-dashoffset: -500;
+        opacity: 0;
+      }
+    }
+
+    /* Map stat cards */
+    #cyber-map-section .stat-card {
+      background: var(--glass-bg);
+      border-radius: 16px;
+      border: 1px solid rgba(0, 191, 255, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #cyber-map-section .stat-card.attacks {
+      border-color: rgba(255, 56, 100, 0.85);
+      box-shadow: 0 0 18px rgba(255, 56, 100, 0.4);
+    }
+
+    #cyber-map-section .stat-card.defenses {
+      border-color: rgba(57, 255, 20, 0.85);
+      box-shadow: 0 0 18px rgba(57, 255, 20, 0.4);
+    }
+
+    #cyber-map-section .stat-card.average {
+      border-color: rgba(0, 191, 255, 0.9);
+      box-shadow: 0 0 18px rgba(0, 191, 255, 0.45);
+    }
+
+    /* =========================================================
+       FOOTER - SYSTEM STATUS BAR + HEX STREAM
+       ========================================================= */
+    footer.system-footer {
+      border-top: 1px solid rgba(148, 163, 184, 0.6);
+      box-shadow: 0 -8px 25px rgba(0, 191, 255, 0.25);
+      background: linear-gradient(
+        to top,
+        rgba(0, 191, 255, 0.04),
+        rgba(255, 255, 255, 0.98)
+      );
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer-hex-stream {
+      position: absolute;
+      inset-inline: 0;
+      bottom: 0;
+      height: 18px;
+      font-family: "IBM Plex Mono", ui-monospace;
+      font-size: 10px;
+      color: rgba(15, 23, 42, 0.55);
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .footer-hex-stream-inner {
+      display: inline-flex;
+      gap: 2rem;
+      animation: footerHexMarquee 45s linear infinite;
+    }
+
+    @keyframes footerHexMarquee {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Footer orbs */
+    .footer-orb-toggle {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 191, 255, 0.8);
+      background: radial-gradient(circle at 30% 20%, #ffffff, #00bfff);
+      box-shadow:
+        0 0 10px rgba(0, 191, 255, 0.8),
+        0 0 16px rgba(138, 43, 226, 0.6);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer-orb-toggle::before {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border-radius: inherit;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-top-color: transparent;
+      border-right-color: transparent;
+      animation: orbSpin 5s linear infinite;
+    }
+
+    .footer-orb-toggle:hover::before {
+      animation-duration: 2.5s;
+    }
+
+    @keyframes orbSpin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* =========================================================
+       SCROLL REVEAL
+       ========================================================= */
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      filter: blur(3px);
+      transition:
+        opacity 0.7s ease-out,
+        transform 0.7s ease-out,
+        filter 0.7s ease-out;
+    }
+
+    .scroll-reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    /* =========================================================
+       GLOBAL CLICK PARTICLES
+       ========================================================= */
+    .click-particle {
+      position: fixed;
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--spark-color-1);
+      pointer-events: none;
+      z-index: 70;
+      opacity: 0;
+      animation: particleFly 480ms ease-out forwards;
+    }
+
+    @keyframes particleFly {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--dx, 0px), var(--dy, -18px)) scale(0.4);
+      }
+    }
+
+    /* =========================================================
+       ACCESSIBILITY FOCUS
+       ========================================================= */
+    a:focus-visible,
+    button:focus-visible,
+    [role="button"]:focus-visible {
+      outline: 2px solid #00bfff;
+      outline-offset: 3px;
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8);
+    }
+  </style>
+</head>
+
+<body class="antialiased bg-[var(--bg-primary)] text-[var(--text-color)]">
+  <!-- Background layers -->
+  <div class="global-scanlines" aria-hidden="true"></div>
+  <div class="hex-column hex-column-left" aria-hidden="true">
+    C1 A7 2F 9B E3 6D 7A 11 3C 8E 9F 22 7B
+  </div>
+  <div class="hex-column hex-column-right" aria-hidden="true">
+    4D 1A 6C FA 93 B2 08 7E 55 AF 0C 9D 3E
+  </div>
+
+  <!-- Cyber Gate overlay -->
+  <div id="cybergate-overlay" class="cybergate-overlay">
+    <div class="cybergate-center">
+      <div class="cybergate-logo-wrap">
+        <img src="NCSC_LOGO.png" alt="National Cyber Security Center – seven-pointed star logo" class="cybergate-logo" />
+        <div class="cybergate-iris"></div>
+      </div>
+      <p class="cybergate-caption">
+        NATIONAL CYBER SECURITY CENTER • JORDAN
+      </p>
+      <div class="cybergate-shockwave"></div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       NAVBAR - COMMAND RIBBON
+       ========================================================= -->
+  <nav class="command-ribbon fixed top-4 left-0 right-0 z-40">
+<div class="w-full px-6">
+      <div class="command-ribbon-inner px-4 py-2 flex items-center justify-between gap-4">
+        <!-- Logo & brand -->
+        <a href="#hero" class="flex items-center gap-2 group clickable" aria-label="الانتقال إلى بداية الصفحة">
+          <img
+            src="NCSC_LOGO.png"
+            alt="شعار المركز الوطني للأمن السيبراني"
+            class="w-8 h-8 object-contain drop-shadow-[0_0_12px_rgba(0,191,255,0.7)]"
+          />
+          <div class="flex flex-col">
+            <span class="text-xs text-slate-500 font-inter leading-none" data-i18n="brand_title_en">
+              National Cyber Security Center
+            </span>
+            <span class="text-sm font-bold text-slate-900 leading-tight" data-i18n="brand_title">
+              المركز الوطني للأمن السيبراني
+            </span>
+          </div>
+        </a>
+
+        <!-- Desktop nav -->
+        <div class="hidden md:flex items-center gap-5 text-[12px] text-slate-700">
+          <a href="#hero" class="matrix-hover clickable" data-i18n="nav_home">الرئيسية</a>
+          <a href="#hero" class="matrix-hover clickable" data-i18n="nav_about">عن المركز</a>
+          <a href="#value" class="matrix-hover clickable" data-i18n="nav_services">خدماتنا</a>
+          <a href="#stats" class="matrix-hover clickable" data-i18n="nav_stats">الإحصائيات</a>
+          <a href="#alerts" class="matrix-hover clickable" data-i18n="nav_alerts">التنبيهات</a>
+          <a href="#news" class="matrix-hover clickable" data-i18n="nav_news">الأخبار</a>
+          <a href="#cyber-map-section" class="matrix-hover clickable" data-i18n="nav_map">الخريطة</a>
+        </div>
+
+        <!-- Right controls -->
+        <div class="flex items-center gap-3">
+          <!-- Security status chip -->
+          <div class="hidden lg:flex items-center security-chip">
+            <span class="security-chip-dot" aria-hidden="true"></span>
+            <span class="text-[11px]" data-i18n="nav_security">الأمان:</span>
+            <span id="security-level" class="font-plexmono text-[11px]" aria-label="مستوى الأمان الحالي">99.8</span>
+            <span class="text-[11px]">%</span>
+            <div class="sparkline" aria-hidden="true"></div>
+          </div>
+
+          <!-- Language toggle -->
+          <button
+            id="language-toggle"
+            class="lang-toggle clickable"
+            type="button"
+            data-lang-toggle
+            aria-label="تبديل اللغة"
+          >
+            <div class="lang-toggle-track">
+              <div class="lang-toggle-thumb"></div>
+            </div>
+            <div class="lang-toggle-label">
+              <span data-lang-toggle-label>عربي</span> / <span class="font-inter">EN</span>
+            </div>
+          </button>
+
+          <!-- Theme toggle orb -->
+          <button
+            class="footer-orb-toggle clickable hidden sm:inline-flex items-center justify-center"
+            type="button"
+            data-theme-toggle
+            aria-label="تبديل النمط الفاتح/الداكن"
+          >
+            <!-- icon is visual only -->
+          </button>
+
+          <!-- CTA -->
+          <button class="neon-capsule clickable" type="button">
+            <div class="neon-capsule-ring"></div>
+            <span class="relative z-10" data-i18n="nav_contact">تواصل مع فريق الاستجابة</span>
+          </button>
+
+          <!-- Mobile menu button -->
+          <button
+            id="mobile-menu-btn"
+            class="md:hidden text-slate-700 clickable"
+            type="button"
+            aria-label="فتح قائمة التصفح"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Under-nav data ticker -->
+      <div class="nav-data-ticker" aria-hidden="true">
+        <div class="nav-data-stream font-plexmono">
+          <span>[JOD] GOV • FIN • ENERGY • HEALTH • REAL-TIME DEFENSE GRID SYNCHRONIZED</span>
+          <span>THREAT FEED: 324 ACTIVE PROBES • 99.3% BLOCK RATE • AVG RESPONSE 7s</span>
+          <span>JORDAN • NATIONAL CYBER SECURITY CENTER • عمّان - قلب الدفاع السيبراني</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden max-w-6xl mx-auto px-4 pt-3 pb-4 space-y-1 text-[13px]">
+      <a href="#hero" class="matrix-hover block clickable" data-i18n="nav_home">الرئيسية</a>
+      <a href="#hero" class="matrix-hover block clickable" data-i18n="nav_about">عن المركز</a>
+      <a href="#value" class="matrix-hover block clickable" data-i18n="nav_services">خدماتنا</a>
+      <a href="#stats" class="matrix-hover block clickable" data-i18n="nav_stats">الإحصائيات</a>
+      <a href="#alerts" class="matrix-hover block clickable" data-i18n="nav_alerts">التنبيهات</a>
+      <a href="#news" class="matrix-hover block clickable" data-i18n="nav_news">الأخبار</a>
+      <a href="#cyber-map-section" class="matrix-hover block clickable" data-i18n="nav_map">الخريطة</a>
+    </div>
+  </nav>
+
+  <!-- =========================================================
+       HERO SECTION
+       ========================================================= -->
+  <section
+    id="hero"
+    class="relative h-screen min-h-[720px] flex items-center justify-center overflow-hidden pt-28 pb-8"
+    aria-labelledby="hero-title"
+  >
+    <!-- Background -->
+    <div class="absolute inset-0">
+      <div id="dynamic-hero-background">
+        <div class="vector-field" aria-hidden="true"></div>
+      </div>
+      <div class="pulse-ring ring-1" aria-hidden="true"></div>
+      <div class="pulse-ring ring-2" aria-hidden="true"></div>
+      <div class="pulse-ring ring-3" aria-hidden="true"></div>
+    </div>
+
+    <!-- Content -->
+    <div class="relative z-10 max-w-6xl mx-auto px-4">
+      <div class="two-column-layout gap-y-10">
+        <!-- Text column -->
+        <div class="flex flex-col items-center lg:items-end">
+          <div
+            id="hero-pill"
+            class="hero-element-hidden inline-flex items-center gap-2 px-4 py-1 rounded-full text-[11px] bg-white/70 border border-emerald-500/50 shadow-glow-green"
+          >
+            <span class="w-2 h-2 rounded-full bg-neon-green shadow-glow-green inline-block" aria-hidden="true"></span>
+            <span data-i18n="hero_pill_secure"
+              >منصة وطنية متقدمة لرصد التهديدات السيبرانية لحظةً بلحظة</span
+            >
+          </div>
+
+          <div class="mt-4 cyber-corners hero-element-hidden" id="hero-title-wrapper">
+            <h1
+              id="hero-title"
+              class="cyber-glitch-text text-3xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-tight max-w-3xl lg:text-right"
+            
+            >
+              درع المملكة الرقمي لمواجهة تهديدات الفضاء السيبراني
+            </h1>
+          </div>
+
+          <p
+            id="hero-description"
+            class="hero-element-hidden mt-5 text-sm md:text-lg text-slate-700 max-w-2xl lg:text-right"
+            data-i18n="hero_desc"
+          >
+            المركز الوطني للأمن السيبراني في الأردن يقود منظومة حماية وطنية متكاملة، ترصد التهديدات السيبرانية
+            وتستجيب لها لحماية مؤسسات الدولة وقطاع الأعمال والمواطنين.
+          </p>
+
+          <div
+            id="hero-buttons"
+            class="hero-element-hidden mt-9 flex flex-col sm:flex-row justify-center lg:justify-end items-center gap-4"
+          >
+            <button
+              class="holographic-btn clickable relative inline-flex items-center justify-center px-7 py-3 font-bold rounded-lg bg-electric-blue text-slate-900 text-sm shadow-glow-blue"
+              type="button"
+            >
+              <span class="holographic-overlay"></span>
+              <span class="relative" data-i18n="hero_cta_primary">ابدأ الحماية الآن</span>
+            </button>
+
+            <button
+              class="holographic-btn clickable relative inline-flex items-center justify-center px-7 py-3 font-semibold rounded-lg border border-slate-400/70 text-slate-800 text-sm bg-white/70"
+              type="button"
+            >
+              <span class="holographic-overlay"></span>
+              <span class="relative" data-i18n="hero_cta_secondary">اختبر مستوى أمانك (مجاناً)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Hologram column -->
+        <div class="hidden lg:block">
+          <img
+            id="hero-hologram"
+            src="Hol.png"
+            alt="مساعد سيبراني هولوجرافي"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       NEWS SECTION
+       ========================================================= -->
+  <section id="news" class="py-20 scroll-reveal" aria-labelledby="news-title">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2
+        id="news-title"
+        class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4"
+        data-i18n="news_title"
+      >
+        أحدث الأخبار والمستجدات
+      </h2>
+      <p
+        class="text-center text-slate-600 mb-14 max-w-2xl mx-auto text-sm md:text-base"
+        data-i18n="news_subtitle"
+      >
+        مبادرات وطنية، شراكات دولية، وتشريعات جديدة تعزّز مناعة الفضاء السيبراني في المملكة.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Card 1 -->
+        <article class="news-card scroll-reveal clickable">
+          <div class="news-image-wrap">
+            <img src="SLIDE3.png" alt="مبادرات تدريبية في الأمن السيبراني" />
+          </div>
+          <div class="p-5 flex flex-col gap-3">
+            <span class="news-tag" data-i18n="news_card3_tag">مبادرات</span>
+            <h3 class="text-lg font-bold text-slate-900" data-i18n="news_card3_title">
+              برنامج وطني لتأهيل الكفاءات الشابة في الأمن السيبراني
+            </h3>
+            <p class="text-sm text-slate-700 flex-1" data-i18n="news_card3_body">
+              دورات مكثّفة ومسابقات Capture The Flag لبناء جيل جديد من خبراء الأمن السيبراني في الأردن.
+            </p>
+            <a
+              href="#"
+              class="text-electric-blue text-sm font-semibold mt-1 hover:text-dark-cyan transition-colors"
+              data-i18n="news_read_more"
+            >
+              اقرأ المزيد ←
+            </a>
+          </div>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="news-card scroll-reveal clickable">
+          <div class="news-image-wrap">
+            <img src="SLIDE1.png" alt="شراكات عالمية في الأمن السيبراني" />
+          </div>
+          <div class="p-5 flex flex-col gap-3">
+            <span class="news-tag" data-i18n="news_card2_tag">شراكات</span>
+            <h3 class="text-lg font-bold text-slate-900" data-i18n="news_card2_title">
+              توقيع اتفاقيات تعاون مع مراكز أمن سيبراني عالمية
+            </h3>
+            <p class="text-sm text-slate-700 flex-1" data-i18n="news_card2_body">
+              تعزيز تبادل المعلومات حول التهديدات وبناء قدرات وطنية متقدمة بالتعاون مع شركاء دوليين.
+            </p>
+            <a
+              href="#"
+              class="text-electric-blue text-sm font-semibold mt-1 hover:text-dark-cyan transition-colors"
+              data-i18n="news_read_more"
+            >
+              اقرأ المزيد ←
+            </a>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="news-card scroll-reveal clickable">
+          <div class="news-image-wrap">
+            <img src="SLIDE2.png" alt="تشريعات وحوكمة الأمن السيبراني" />
+          </div>
+          <div class="p-5 flex flex-col gap-3">
+            <span class="news-tag" data-i18n="news_card1_tag">تشريعات</span>
+            <h3 class="text-lg font-bold text-slate-900" data-i18n="news_card1_title">
+              إطار وطني محدث لحوكمة الأمن السيبراني في الأردن
+            </h3>
+            <p class="text-sm text-slate-700 flex-1" data-i18n="news_card1_body">
+              ضوابط ومعايير جديدة للجهات الحيوية لرفع مستوى النضج السيبراني وتحسين إدارة المخاطر.
+            </p>
+            <a
+              href="#"
+              class="text-electric-blue text-sm font-semibold mt-1 hover:text-dark-cyan transition-colors"
+              data-i18n="news_read_more"
+            >
+              اقرأ المزيد ←
+            </a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       VALUE SECTION
+       ========================================================= -->
+  <section id="value" class="py-20 scroll-reveal" aria-labelledby="values-title">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2
+        id="values-title"
+        class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4"
+        data-i18n="values_title"
+      >
+        قيمنا الأساسية: <span class="text-electric-blue">درعك الرقمي</span>
+      </h2>
+      <p
+        class="text-center text-slate-600 mb-14 max-w-2xl mx-auto text-sm md:text-base"
+        data-i18n="values_subtitle"
+      >
+        ندمج بين التكنولوجيا المتقدمة والجاهزية الوطنية لنمنحك طبقات حماية متكاملة ضد التهديدات السيبرانية.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Card 1 -->
+        <div class="group perspective-1000 scroll-reveal">
+          <div class="relative h-72 flipper transform-style-3d rounded-2xl">
+            <div class="absolute inset-0 backface-hidden value-front p-6 flex flex-col items-center justify-center text-center">
+              <svg
+                class="w-12 h-12 text-electric-blue mb-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+              <h3 class="text-lg font-bold text-slate-900 mb-2" data-i18n="values_card1_title">
+                استجابة فورية للهجمات
+              </h3>
+              <p class="text-sm text-slate-700" data-i18n="values_card1_body">
+                فريق عمليات أمنية متكامل (SOC) متوفر على مدار الساعة لرصد وصد أي هجوم لحظة وقوعه.
+              </p>
+              <span class="mt-4 text-[11px] text-electric-blue/70" data-i18n="values_flip_hint">
+                (انقر أو مرّر للمزيد)
+              </span>
+            </div>
+            <div
+              class="absolute inset-0 backface-hidden rotate-y-180 value-back p-6 flex flex-col items-center justify-center text-center"
+            >
+              <h4 class="text-lg font-bold text-electric-blue mb-3" data-i18n="values_card1_back_title">
+                منصة استجابة وطنية
+              </h4>
+              <p class="text-sm text-slate-800 reconstruct" data-i18n="values_card1_back_body">
+                <span>محركات تحليل آنية تربط بين مصادر السجلات المختلفة.</span>
+                <span>تشغيل إجراءات استجابة شبه فورية للحوادث.</span>
+                <span>تصعيد منظم للفِرق المتخصصة عند الحالات الحرجة.</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="group perspective-1000 scroll-reveal">
+          <div class="relative h-72 flipper transform-style-3d rounded-2xl">
+            <div class="absolute inset-0 backface-hidden value-front p-6 flex flex-col items-center justify-center text-center">
+              <svg
+                class="w-12 h-12 text-electric-blue mb-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
+              <h3 class="text-lg font-bold text-slate-900 mb-2" data-i18n="values_card2_title">
+                ذكاء اصطناعي متقدم
+              </h3>
+              <p class="text-sm text-slate-700" data-i18n="values_card2_body">
+                نماذج تعلم عميق تتنبأ بالهجمات الجديدة قبل وقوعها بالاعتماد على مليارات الأحداث اليومية.
+              </p>
+              <span class="mt-4 text-[11px] text-electric-blue/70" data-i18n="values_flip_hint">
+                (انقر أو مرّر للمزيد)
+              </span>
+            </div>
+            <div
+              class="absolute inset-0 backface-hidden rotate-y-180 value-back p-6 flex flex-col items-center justify-center text-center"
+            >
+              <h4 class="text-lg font-bold text-electric-blue mb-3" data-i18n="values_card2_back_title">
+                استخبارات تهديدات متطورة
+              </h4>
+              <p class="text-sm text-slate-800 reconstruct" data-i18n="values_card2_back_body">
+                <span>دمج مؤشرات الاختراق مع حملات الهجوم العالمية.</span>
+                <span>توفير سياق كامل لصناع القرار في الجهات الوطنية.</span>
+                <span>تغذية مستمرة لفرق الاستجابة بالأنماط الناشئة.</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="group perspective-1000 scroll-reveal">
+          <div class="relative h-72 flipper transform-style-3d rounded-2xl">
+            <div class="absolute inset-0 backface-hidden value-front p-6 flex flex-col items-center justify-center text-center">
+              <svg
+                class="w-12 h-12 text-electric-blue mb-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
+              </svg>
+              <h3 class="text-lg font-bold text-slate-900 mb-2" data-i18n="values_card3_title">
+                تشفير عسكري للبيانات
+              </h3>
+              <p class="text-sm text-slate-700" data-i18n="values_card3_body">
+                حماية البيانات وفق أقوى البروتوكولات العالمية مع الاستعداد لمستقبل ما بعد الحوسبة الكميّة.
+              </p>
+              <span class="mt-4 text-[11px] text-electric-blue/70" data-i18n="values_flip_hint">
+                (انقر أو مرّر للمزيد)
+              </span>
+            </div>
+            <div
+              class="absolute inset-0 backface-hidden rotate-y-180 value-back p-6 flex flex-col items-center justify-center text-center"
+            >
+              <h4 class="text-lg font-bold text-electric-blue mb-3" data-i18n="values_card3_back_title">
+                بنية تشفير متكاملة
+              </h4>
+              <p class="text-sm text-slate-800 reconstruct" data-i18n="values_card3_back_body">
+                <span>تشفير AES-256 للبيانات في الحركة والسكون.</span>
+                <span>مصادقات قوية وتقسيم للصلاحيات في الأنظمة الحساسة.</span>
+                <span>استعداد مبكر لبروتوكولات تشفير جاهزة للعصر الكمي.</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Connecting energy thread + threat simulation -->
+      <div class="values-thread mt-10">
+        <div class="threat-sim grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-6 items-center">
+          <div class="flex justify-center gap-6">
+            <div class="threat-poly" id="threat-poly-1"></div>
+            <div class="threat-poly" id="threat-poly-2"></div>
+          </div>
+          <div class="flex justify-center">
+            <div class="threat-shield">
+              <svg
+                class="w-8 h-8 text-electric-blue relative z-10"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                />
+              </svg>
+            </div>
+          </div>
+          <div class="flex justify-center gap-6">
+            <div class="threat-poly" id="threat-poly-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       SERVICES SECTION
+       ========================================================= -->
+  <section id="services" class="py-20 bg-white scroll-reveal" aria-labelledby="services-title">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2
+        id="services-title"
+        class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4"
+        data-i18n="services_title"
+      >
+        حلولنا المتكاملة للأمن السيبراني
+      </h2>
+      <p
+        class="text-center text-slate-600 mb-14 max-w-2xl mx-auto text-sm md:text-base"
+        data-i18n="services_subtitle"
+      >
+        من السياسات والتشريعات إلى إدارة الحوادث والاستجابة للأزمات، نرافق رحلتك في كل طبقات الحماية.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-7">
+        <!-- Service 1 -->
+        <div class="wireframe-card p-6 text-center clickable scroll-reveal">
+          <div
+            class="w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4 holographic-icon bg-electric-blue/10 border border-electric-blue/40"
+          >
+            <svg class="w-9 h-9 text-electric-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2" data-i18n="services_card1_title">
+            إدارة العمليات السيبرانية
+          </h3>
+          <p class="text-sm text-slate-700 mb-4" data-i18n="services_card1_body">
+            مركز عمليات أمنية (SOC) لرصد الأحداث والاستجابة للحوادث وتحليل الهجمات على مدار الساعة.
+          </p>
+          <a
+            href="#"
+            class="text-electric-blue font-semibold text-sm opacity-0 group-hover:opacity-100 transition-opacity"
+            data-i18n="services_cta"
+          >
+            اطلب الخدمة ←
+          </a>
+        </div>
+
+        <!-- Service 2 -->
+        <div class="wireframe-card p-6 text-center clickable scroll-reveal">
+          <div
+            class="w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4 holographic-icon bg-electric-blue/10 border border-electric-blue/40"
+          >
+            <svg class="w-9 h-9 text-electric-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2" data-i18n="services_card2_title">
+            الاستخبارات السيبرانية
+          </h3>
+          <p class="text-sm text-slate-700 mb-4" data-i18n="services_card2_body">
+            تحليلات استباقية وفهم عميق لسلوك المهاجمين والبنى التحتية المستخدمة في الهجمات.
+          </p>
+          <a
+            href="#"
+            class="text-electric-blue font-semibold text-sm opacity-0 group-hover:opacity-100 transition-opacity"
+            data-i18n="services_cta"
+          >
+            اطلب الخدمة ←
+          </a>
+        </div>
+
+        <!-- Service 3 -->
+        <div class="wireframe-card p-6 text-center clickable scroll-reveal">
+          <div
+            class="w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4 holographic-icon bg-electric-blue/10 border border-electric-blue/40"
+          >
+            <svg class="w-9 h-9 text-electric-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6H8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2" data-i18n="services_card3_title">
+            بناء القدرات الوطنية
+          </h3>
+          <p class="text-sm text-slate-700 mb-4" data-i18n="services_card3_body">
+            برامج تدريبية ومحاكاة للهجمات وبناء كوادر قادرة على تشغيل مراكز أمن سيبراني وطنية.
+          </p>
+          <a
+            href="#"
+            class="text-electric-blue font-semibold text-sm opacity-0 group-hover:opacity-100 transition-opacity"
+            data-i18n="services_cta"
+          >
+            اطلب الخدمة ←
+          </a>
+        </div>
+
+        <!-- Service 4 -->
+        <div class="wireframe-card p-6 text-center clickable scroll-reveal">
+          <div
+            class="w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4 holographic-icon bg-electric-blue/10 border border-electric-blue/40"
+          >
+            <svg class="w-9 h-9 text-electric-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2" data-i18n="services_card4_title">
+            حوكمة الأمن السيبراني
+          </h3>
+          <p class="text-sm text-slate-700 mb-4" data-i18n="services_card4_body">
+            تطوير الأطر والسياسات الوطنية ومواءمتها مع المعايير الدولية مثل ISO و NIST.
+          </p>
+          <a
+            href="#"
+            class="text-electric-blue font-semibold text-sm opacity-0 group-hover:opacity-100 transition-opacity"
+            data-i18n="services_cta"
+          >
+            اطلب الخدمة ←
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       STATS SECTION
+       ========================================================= -->
+  <section id="stats" class="py-20 scroll-reveal" aria-labelledby="stats-title">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2
+        id="stats-title"
+        class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4"
+        data-i18n="stats_title"
+      >
+        إنجازاتنا بالأرقام
+      </h2>
+      <p
+        class="text-center text-slate-600 mb-14 max-w-2xl mx-auto text-sm md:text-base"
+        data-i18n="stats_subtitle"
+      >
+        مؤشرات حية تعكس حجم الحماية التي نوفرها لقطاعات الحكومة والقطاع الخاص داخل المملكة وخارجها.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-7 text-center">
+        <!-- Stat 1 -->
+        <div class="hud-stat scroll-reveal">
+          <div class="hud-stat-content p-7">
+            <div class="hud-ring" data-progress-color="rgba(0,191,255,0.9)">
+              <span class="live-counter" data-target="14830921">0</span>
+            </div>
+            <h4 class="text-lg text-slate-900 font-bold mt-2" data-i18n="stats_card1_title">
+              هجمة تم إيقافها
+            </h4>
+          </div>
+        </div>
+
+        <!-- Stat 2 -->
+        <div class="hud-stat scroll-reveal">
+          <div class="hud-stat-content p-7">
+            <div class="hud-ring" data-progress-color="rgba(0,191,255,0.9)">
+              <span class="live-counter" data-target="95402">0</span>
+            </div>
+            <h4 class="text-lg text-slate-900 font-bold mt-2" data-i18n="stats_card2_title">
+              تهديد جديد مكتشف (شهرياً)
+            </h4>
+          </div>
+        </div>
+
+        <!-- Stat 3 -->
+        <div class="hud-stat scroll-reveal">
+          <div class="hud-stat-content p-7">
+            <div class="hud-ring" data-progress-color="rgba(0,191,255,0.9)">
+              <span class="live-counter" data-target="42">0</span>
+            </div>
+            <h4 class="text-lg text-slate-900 font-bold mt-2" data-i18n="stats_card3_title">
+              دولة مغطاة بالخدمة
+            </h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       ALERTS SECTION
+       ========================================================= -->
+  <section id="alerts" class="py-20 bg-white scroll-reveal" aria-labelledby="alerts-title">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2
+        id="alerts-title"
+        class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4"
+        data-i18n="alerts_title"
+      >
+        أحدث التنبيهات الأمنية
+      </h2>
+      <p
+        class="text-center text-slate-600 mb-10 max-w-2xl mx-auto text-sm md:text-base"
+        data-i18n="alerts_subtitle"
+      >
+        مراقبة حية لأخطر الثغرات والهجمات، مع توصيات استجابة فورية وقابلة للتطبيق في بيئة عملك.
+      </p>
+
+      <!-- Ticker -->
+      <div class="mb-8 glass-morphic rounded-xl px-4 py-3 flex items-center gap-4">
+        <span
+          class="text-alert-red font-bold px-3 py-1 rounded-full text-[11px] bg-red-100 shadow-glow-red"
+          data-i18n="alerts_urgent"
+        >
+          عاجل
+        </span>
+        <div class="flex-1 overflow-hidden">
+          <div class="alert-ticker">
+            <span class="mx-8"
+              >CVE-2025-1123: Critical TLS auth-bypass affecting multiple vendors – patch immediately.</span
+            >
+            <span class="mx-8"
+              >ShadowWorm: New malware targeting unpatched Windows mail gateways across the region.</span
+            >
+            <span class="mx-8"
+              >Coordinated DDoS campaigns observed against regional infrastructure – mitigation active.</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary + filters -->
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+        <div class="glass-morphic rounded-xl px-5 py-3 flex items-center gap-3">
+          <span class="text-sm font-semibold text-slate-900" data-i18n="alerts_last24">
+            التنبيهات (آخر 24 ساعة):
+          </span>
+          <span class="text-alert-red text-2xl font-bold font-plexmono">12</span>
+        </div>
+        <div class="flex gap-3 w-full md:w-auto">
+          <select
+            class="flex-1 md:flex-none bg-white border border-slate-300 text-slate-800 text-xs rounded-lg px-2 py-2"
+          >
+            <option data-i18n="alerts_filter_all">فلتر حسب النوع</option>
+            <option data-i18n="alerts_filter_vuln">ثغرات</option>
+            <option data-i18n="alerts_filter_malware">فيروسات</option>
+            <option data-i18n="alerts_filter_ddos">هجمات DDoS</option>
+          </select>
+          <button
+            class="px-4 py-2 bg-electric-blue text-slate-900 font-bold text-xs rounded-lg shadow-glow-blue clickable"
+            type="button"
+            data-i18n="alerts_subscribe"
+          >
+            اشترك في التنبيهات
+          </button>
+        </div>
+      </div>
+
+      <!-- Alert cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Card 1 -->
+        <article class="alert-card glass-morphic rounded-2xl shadow-lg scroll-reveal clickable">
+          <div class="alert-severity-bar" aria-hidden="true"></div>
+          <div class="px-5 py-2 bg-red-50 border-b border-alert-red/50 flex justify-between items-center">
+            <span class="font-plexmono text-alert-red text-[11px]">13 نوفمبر 2025</span>
+            <span
+              class="text-[11px] text-white px-2 py-0.5 rounded-full bg-alert-red shadow-glow-red"
+              data-i18n="alerts_high"
+            >
+              عالي الخطورة
+            </span>
+          </div>
+          <div class="p-5">
+            <div class="flex items-center gap-3 mb-2">
+              <svg class="w-8 h-8 text-alert-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01M4.938 19h14.124c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.206 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <h3 class="text-sm font-bold text-slate-900" data-i18n="alerts_card1_title">
+                ثغرة حرجة – CVE-2025-1123
+              </h3>
+            </div>
+            <p class="text-xs text-slate-700 mb-3" data-i18n="alerts_card1_body">
+              ثغرة في بروتوكولات TLS قد تسمح بتجاوز المصادقة في بعض منصات الخوادم إذا لم يتم تحديثها فوراً.
+            </p>
+            <div class="flex justify-between items-center">
+              <span class="text-[11px] text-slate-500 flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span data-i18n="alerts_scope_global">النطاق: عالمي</span>
+              </span>
+              <a
+                href="#"
+                class="text-alert-red text-[11px] font-semibold hover:text-slate-900"
+                data-i18n="alerts_details"
+              >
+                تفاصيل ←
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="alert-card glass-morphic rounded-2xl shadow-lg scroll-reveal clickable">
+          <div class="alert-severity-bar" aria-hidden="true"></div>
+          <div class="px-5 py-2 bg-red-50 border-b border-alert-red/50 flex justify-between items-center">
+            <span class="font-plexmono text-alert-red text-[11px]">12 نوفمبر 2025</span>
+            <span
+              class="text-[11px] text-white px-2 py-0.5 rounded-full bg-alert-red shadow-glow-red"
+              data-i18n="alerts_high"
+            >
+              عالي الخطورة
+            </span>
+          </div>
+          <div class="p-5">
+            <div class="flex items-center gap-3 mb-2">
+              <svg class="w-8 h-8 text-alert-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <h3 class="text-sm font-bold text-slate-900" data-i18n="alerts_card2_title">
+                فيروس جديد – ShadowWorm
+              </h3>
+            </div>
+            <p class="text-xs text-slate-700 mb-3" data-i18n="alerts_card2_body">
+              برمجية خبيثة تنتشر عبر البريد الإلكتروني وتستهدف بوابات البريد غير المحدثة بأنظمة ويندوز.
+            </p>
+            <div class="flex justify-between items-center">
+              <span class="text-[11px] text-slate-500 flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span data-i18n="alerts_scope_global">النطاق: عالمي</span>
+              </span>
+              <a
+                href="#"
+                class="text-alert-red text-[11px] font-semibold hover:text-slate-900"
+                data-i18n="alerts_details"
+              >
+                تفاصيل ←
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="alert-card glass-morphic rounded-2xl shadow-lg scroll-reveal clickable">
+          <div class="alert-severity-bar" aria-hidden="true"></div>
+          <div class="px-5 py-2 bg-red-50 border-b border-alert-red/50 flex justify-between items-center">
+            <span class="font-plexmono text-alert-red text-[11px]">11 نوفمبر 2025</span>
+            <span
+              class="text-[11px] text-white px-2 py-0.5 rounded-full bg-alert-red shadow-glow-red"
+              data-i18n="alerts_medium"
+            >
+              متوسط الخطورة
+            </span>
+          </div>
+          <div class="p-5">
+            <div class="flex items-center gap-3 mb-2">
+              <svg class="w-8 h-8 text-alert-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 4h16v4H4zm0 6h16v4H4zm0 6h10v4H4z"
+                />
+              </svg>
+              <h3 class="text-sm font-bold text-slate-900" data-i18n="alerts_card3_title">
+                هجمات DDoS منسّقة
+              </h3>
+            </div>
+            <p class="text-xs text-slate-700 mb-3" data-i18n="alerts_card3_body">
+              استهداف مراكز بيانات رئيسية في المنطقة بهجمات حجب خدمة واسعة النطاق تم صدّها بنجاح.
+            </p>
+            <div class="flex justify-between items-center">
+              <span class="text-[11px] text-slate-500 flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"
+                  />
+                </svg>
+                <span data-i18n="alerts_scope_region">النطاق: أوروبا</span>
+              </span>
+              <a
+                href="#"
+                class="text-alert-red text-[11px] font-semibold hover:text-slate-900"
+                data-i18n="alerts_details"
+              >
+                تفاصيل ←
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       CYBER THREAT MAP – JORDAN
+       ========================================================= -->
+  <section
+    id="cyber-map-section"
+    class="py-20 scroll-reveal"
+    aria-labelledby="map-title"
+  >
+    <div class="max-w-6xl mx-auto px-4">
+      <h2
+        id="map-title"
+        class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4"
+        data-i18n="map_title"
+      >
+        خريطة التهديدات السيبرانية في الأردن (شبه لحظية)
+      </h2>
+      <p
+        class="text-center text-slate-600 mb-12 max-w-2xl mx-auto text-sm md:text-base"
+        data-i18n="map_subtitle"
+      >
+        متابعة آنية لمحاولات الهجوم وأصولها وأنماطها حول العالم مع إبراز ما يستهدف المملكة وقطاعاتها الحيوية
+        (الحكومة، المالية، الطاقة، الصحة).
+      </p>
+    </div>
+
+    <div class="map-layout-wrapper px-4">
+      <!-- Map container -->
+      <div class="map-container glass-morphic">
+        <!-- Legend -->
+        <div id="map-legend">
+          <div class="legend-item">
+            <span class="legend-color red"></span>
+            <span class="text-xs" data-i18n="map_legend_attacks">محاولات هجوم نشطة</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color green"></span>
+            <span class="text-xs" data-i18n="map_legend_defended">هجمات تم صدّها</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color blue"></span>
+            <span class="text-xs" data-i18n="map_legend_flows">حركة مرور مراقَبة</span>
+          </div>
+        </div>
+
+        <!-- Base stylized Jordan map image -->
+        <img
+          id="jordan-map-base"
+          src="Jormap2.png"
+          alt="خريطة الأردن - تمثيل أسلوبي للقطاعات الحيوية"
+        />
+
+        <!-- SVG overlay with pulses & beams -->
+        <svg
+          class="map-overlay-svg"
+          viewBox="0 0 800 480"
+          aria-hidden="true"
+        >
+          <!-- Sector micro-labels -->
+          <text x="400" y="90" class="city-label" font-size="12">
+            Gov
+          </text>
+          <text x="520" y="190" class="city-label" font-size="12">
+            Finance
+          </text>
+          <text x="320" y="230" class="city-label" font-size="12">
+            Energy
+          </text>
+          <text x="440" y="310" class="city-label" font-size="12">
+            Health
+          </text>
+
+          <!-- Amman (defense hub) -->
+          <circle
+            cx="410"
+            cy="210"
+            r="10"
+            class="city-node amman-node"
+          ></circle>
+          <text
+            x="410"
+            y="240"
+            class="city-label amman-label"
+          >
+            عمّان
+          </text>
+
+          <!-- Attack nodes (stylized, no real geography) -->
+          <circle
+            cx="260"
+            cy="120"
+            r="8"
+            class="city-node attack-node"
+          ></circle>
+          <text x="260" y="145" class="city-label attack-label" font-size="12">
+            تهديد شمالي
+          </text>
+
+          <circle
+            cx="560"
+            cy="260"
+            r="8"
+            class="city-node attack-node"
+          ></circle>
+          <text x="560" y="285" class="city-label attack-label" font-size="12">
+            تهديد إقليمي
+          </text>
+
+          <circle
+            cx="300"
+            cy="340"
+            r="8"
+            class="city-node attack-node"
+          ></circle>
+          <text x="300" y="365" class="city-label attack-label" font-size="12">
+            تهديد جنوبي
+          </text>
+
+          <!-- Defense beams towards Amman -->
+          <path
+            id="beam-irbid"
+            class="defense-beam"
+            d="M260 120 Q330 165 410 210"
+          />
+          <path
+            id="beam-zarqa"
+            class="defense-beam"
+            d="M560 260 Q490 230 410 210"
+          />
+          <path
+            id="beam-aqaba"
+            class="defense-beam"
+            d="M300 340 Q355 280 410 210"
+          />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Map stats -->
+    <div class="max-w-6xl mx-auto px-4 mt-10">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="stat-card attacks p-5">
+          <p class="stat-value font-plexmono text-alert-red mb-1">324</p>
+          <p class="stat-label text-xs text-slate-700" data-i18n="map_metric1">
+            محاولات هجوم نشطة الآن
+          </p>
+        </div>
+        <div class="stat-card defenses p-5">
+          <p class="stat-value font-plexmono text-neon-green mb-1">99.3%</p>
+          <p class="stat-label text-xs text-slate-700" data-i18n="map_metric2">
+            نسبة الهجمات المستهدِفة للمملكة التي تم صدّها
+          </p>
+        </div>
+        <div class="stat-card average p-5">
+          <p class="stat-value font-plexmono text-electric-blue mb-1">7 ثوانٍ</p>
+          <p class="stat-label text-xs text-slate-700" data-i18n="map_metric3">
+            متوسط زمن الاستجابة للحوادث الحرجة
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p
+          class="text-xs md:text-sm text-slate-600 max-w-xl"
+          data-i18n="map_panel_body"
+        >
+          يتم تحديث هذه الخريطة بأسلوب شبه لحظي بالاعتماد على بيانات حقيقية من الجهات الوطنية والشركاء الدوليين،
+          مع الحفاظ على خصوصية المؤسسات والجهات المشمولة في منظومة الدفاع السيبراني.
+        </p>
+        <button
+          class="holographic-btn clickable relative inline-flex items-center justify-center px-6 py-3 font-bold rounded-lg bg-dark-cyan text-white text-xs shadow-glow-blue"
+          type="button"
+        >
+          <span class="holographic-overlay"></span>
+          <span class="relative" data-i18n="map_cta">عرض لوحة التهديدات المتقدمة</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       FOOTER – SYSTEM STATUS BAR
+       ========================================================= -->
+  <footer class="system-footer mt-10 pt-4 pb-6">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex flex-col md:flex-row items-center gap-2 text-xs text-slate-600">
+        <span class="font-plexmono text-[11px]">
+          STATUS: <span class="text-neon-green">ONLINE</span> • LATENCY &lt; 40ms
+        </span>
+        <span class="hidden md:inline text-slate-400">|</span>
+        <span data-i18n="footer_copy">
+          © 2025 المركز الوطني للأمن السيبراني - جميع الحقوق محفوظة.
+        </span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Theme orb -->
+        <button
+          class="footer-orb-toggle clickable flex items-center justify-center"
+          type="button"
+          data-theme-toggle
+          aria-label="تبديل النمط الفاتح/الداكن"
+        ></button>
+        <!-- Language orb shortcut (same as header toggle in spirit) -->
+        <button
+          class="footer-orb-toggle clickable flex items-center justify-center"
+          type="button"
+          data-lang-toggle
+          aria-label="تبديل اللغة"
+        ></button>
+      </div>
+    </div>
+
+    <!-- Hex stream -->
+    <div class="footer-hex-stream" aria-hidden="true">
+      <div class="footer-hex-stream-inner">
+        <span>AF 3C 9E 12 7B D4 88 01 F0 6A C3 2D 9B 44 10 7E</span>
+        <span>91 2A 6C FE 03 5D B8 72 19 EF 40 AA 5C 0D 3F 88</span>
+        <span>00 1F A7 3D 54 92 C1 6E 77 8B D2 09 4A 6C E1 3B</span>
+        <span>F4 0C 7D 21 89 B6 3E 5A 9C 04 6F D8 2B 11 73 AF</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =========================================================
+       INTERACTION SCRIPT
+       ========================================================= -->
+  <script>
+    // =========================================================
+    // CONSTANTS
+    // =========================================================
+    const THEME_KEY = "ncsc-theme";
+    const LANG_KEY = "ncsc-lang";
+
+    // =========================================================
+    // UTILITIES
+    // =========================================================
+    function prefersReducedMotion() {
+      return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    }
+
+    // Small helper to animate numeric values
+    function animateNumber(el, target, duration, reduced) {
+      if (!el) return;
+      if (reduced) {
+        el.textContent = Number(target).toLocaleString("en-US");
+        return;
+      }
+      const startTime = performance.now();
+      const startVal = 0;
+      const endVal = Number(target);
+
+      function frame(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const value = Math.floor(startVal + (endVal - startVal) * progress);
+        el.textContent = value.toLocaleString("en-US");
+        if (progress < 1) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    // =========================================================
+    // HERO GATE + HERO SEQUENCE
+    // =========================================================
+    function startHeroSequence() {
+      const pill = document.getElementById("hero-pill");
+      const titleWrapper = document.getElementById("hero-title-wrapper");
+      const title = document.getElementById("hero-title");
+      const desc = document.getElementById("hero-description");
+      const buttons = document.getElementById("hero-buttons");
+      const hologram = document.getElementById("hero-hologram");
+
+      if (pill) pill.classList.add("cyber-badge-entrance");
+      if (titleWrapper) titleWrapper.classList.add("cyber-title-entrance", "cyber-corners", "active");
+      if (title) title.classList.add("cyber-glitch-text", "glitch-active");
+      if (desc) desc.classList.add("cyber-desc-entrance");
+      if (buttons) buttons.classList.add("cyber-buttons-entrance");
+      if (hologram) hologram.classList.add("holo-materialized");
+    }
+
+    function initCybergate(reducedMotion) {
+      const overlay = document.getElementById("cybergate-overlay");
+      if (!overlay) {
+        startHeroSequence();
+        return;
+      }
+
+      if (reducedMotion) {
+        overlay.classList.add("cybergate-skip");
+        startHeroSequence();
+        return;
+      }
+
+      // Trigger iris + shockwave + fade-out via CSS classes
+      requestAnimationFrame(() => {
+        overlay.classList.add("cybergate-start");
+      });
+
+      // After animation finishes, hide overlay and start hero
+      setTimeout(() => {
+        overlay.style.display = "none";
+        startHeroSequence();
+      }, 2600);
+    }
+
+    // =========================================================
+    // STATS COUNTERS + HUD RINGS
+    // =========================================================
+    function initStats(reducedMotion) {
+      const section = document.getElementById("stats");
+      if (!section) return;
+
+      const observer = new IntersectionObserver(
+        (entries, obs) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              obs.unobserve(entry.target);
+              // Counters
+              document.querySelectorAll(".live-counter").forEach((counter) => {
+                const target = counter.getAttribute("data-target") || "0";
+                animateNumber(counter, target, 1500, reducedMotion);
+              });
+              // Rings
+              document.querySelectorAll(".hud-ring").forEach((ring) => {
+                animateHudRing(ring, reducedMotion);
+              });
+            }
+          });
+        },
+        { threshold: 0.4 }
+      );
+
+      observer.observe(section);
+    }
+
+    function animateHudRing(ring, reducedMotion) {
+      if (!ring) return;
+      const duration = reducedMotion ? 0 : 1500;
+      if (duration === 0) {
+        ring.style.setProperty("--progress", "360");
+        return;
+      }
+      const start = performance.now();
+
+      function step(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        ring.style.setProperty("--progress", String(360 * progress));
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    // =========================================================
+    // ALERTS TICKER
+    // =========================================================
+    function initAlertTicker(reducedMotion) {
+      const ticker = document.querySelector(".alert-ticker");
+      if (!ticker) return;
+
+      // Duplicate content for seamless loop
+      if (!ticker.dataset.duplicated) {
+        ticker.innerHTML = ticker.innerHTML + ticker.innerHTML;
+        ticker.dataset.duplicated = "true";
+      }
+
+      if (reducedMotion) {
+        ticker.style.animationPlayState = "paused";
+      }
+    }
+
+    // =========================================================
+    // MOBILE MENU
+    // =========================================================
+    function initMobileMenu() {
+      const btn = document.getElementById("mobile-menu-btn");
+      const menu = document.getElementById("mobile-menu");
+      if (!btn || !menu) return;
+
+      btn.addEventListener("click", () => {
+        menu.classList.toggle("hidden");
+      });
+    }
+
+    // =========================================================
+    // THEME TOGGLE (LIGHT / DARK, OPTIONAL)
+    // =========================================================
+    function applyTheme(theme) {
+      const body = document.body;
+      const isDark = theme === "dark";
+      body.classList.toggle("dark-mode", isDark);
+      localStorage.setItem(THEME_KEY, theme);
+    }
+
+    function initThemeToggle() {
+      const buttons = document.querySelectorAll("[data-theme-toggle]");
+      if (!buttons.length) return;
+
+      const saved = localStorage.getItem(THEME_KEY) || "light";
+      applyTheme(saved);
+
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const current = localStorage.getItem(THEME_KEY) || "light";
+          const next = current === "light" ? "dark" : "light";
+          applyTheme(next);
+        });
+      });
+    }
+
+    // =========================================================
+    // I18N / LANGUAGE TOGGLE
+    // =========================================================
+    const translations = {
+      ar: {
+        brand_title_en: "National Cyber Security Center",
+        brand_title: "المركز الوطني للأمن السيبراني",
+        nav_home: "الرئيسية",
+        nav_about: "عن المركز",
+        nav_services: "خدماتنا",
+        nav_stats: "الإحصائيات",
+        nav_alerts: "التنبيهات",
+        nav_news: "الأخبار",
+        nav_map: "الخريطة",
+        nav_security: "الأمان:",
+        nav_contact: "تواصل مع فريق الاستجابة",
+        hero_pill_secure: "منصة وطنية متقدمة لرصد التهديدات السيبرانية لحظةً بلحظة",
+        hero_title: "درع المملكة الرقمي لمواجهة تهديدات الفضاء السيبراني",
+        hero_desc:
+          "المركز الوطني للأمن السيبراني في الأردن يقود منظومة حماية وطنية متكاملة، ترصد التهديدات السيبرانية وتستجيب لها لحماية مؤسسات الدولة وقطاع الأعمال والمواطنين.",
+        hero_cta_primary: "ابدأ الحماية الآن",
+        hero_cta_secondary: "اختبر مستوى أمانك (مجاناً)",
+        news_title: "أحدث الأخبار والمستجدات",
+        news_subtitle:
+          "مبادرات وطنية، شراكات دولية، وتشريعات جديدة تعزّز مناعة الفضاء السيبراني في المملكة.",
+        news_card1_tag: "تشريعات",
+        news_card1_title: "إطار وطني محدث لحوكمة الأمن السيبراني في الأردن",
+        news_card1_body:
+          "ضوابط ومعايير جديدة للجهات الحيوية لرفع مستوى النضج السيبراني وتحسين إدارة المخاطر.",
+        news_card2_tag: "شراكات",
+        news_card2_title: "توقيع اتفاقيات تعاون مع مراكز أمن سيبراني عالمية",
+        news_card2_body:
+          "تعزيز تبادل المعلومات حول التهديدات وبناء قدرات وطنية متقدمة بالتعاون مع شركاء دوليين.",
+        news_card3_tag: "مبادرات",
+        news_card3_title: "برنامج وطني لتأهيل الكفاءات الشابة في الأمن السيبراني",
+        news_card3_body:
+          "دورات مكثّفة ومسابقات Capture The Flag لبناء جيل جديد من خبراء الأمن السيبراني في الأردن.",
+        news_read_more: "اقرأ المزيد ←",
+        values_title: "قيمنا الأساسية: <span class='text-electric-blue'>درعك الرقمي</span>",
+        values_subtitle:
+          "ندمج بين التكنولوجيا المتقدمة والجاهزية الوطنية لنمنحك طبقات حماية متكاملة ضد التهديدات السيبرانية.",
+        values_card1_title: "استجابة فورية للهجمات",
+        values_card1_body:
+          "فريق عمليات أمنية متكامل (SOC) متوفر على مدار الساعة لرصد وصد أي هجوم لحظة وقوعه.",
+        values_card1_back_title: "منصة استجابة وطنية",
+        values_card1_back_body:
+          "محركات تحليل آنية تربط بين مصادر السجلات المختلفة.<br>تشغيل إجراءات استجابة شبه فورية للحوادث.<br>تصعيد منظم للفِرق المتخصصة عند الحالات الحرجة.",
+        values_card2_title: "ذكاء اصطناعي متقدم",
+        values_card2_body:
+          "نماذج تعلم عميق تتنبأ بالهجمات الجديدة قبل وقوعها بالاعتماد على مليارات الأحداث اليومية.",
+        values_card2_back_title: "استخبارات تهديدات متطورة",
+        values_card2_back_body:
+          "دمج مؤشرات الاختراق مع حملات الهجوم العالمية.<br>توفير سياق كامل لصناع القرار في الجهات الوطنية.<br>تغذية مستمرة لفرق الاستجابة بالأنماط الناشئة.",
+        values_card3_title: "تشفير عسكري للبيانات",
+        values_card3_body:
+          "حماية البيانات وفق أقوى البروتوكولات العالمية مع الاستعداد لمستقبل ما بعد الحوسبة الكميّة.",
+        values_card3_back_title: "بنية تشفير متكاملة",
+        values_card3_back_body:
+          "تشفير AES-256 للبيانات في الحركة والسكون.<br>مصادقات قوية وتقسيم للصلاحيات في الأنظمة الحساسة.<br>استعداد مبكر لبروتوكولات تشفير جاهزة للعصر الكمي.",
+        values_flip_hint: "(انقر أو مرّر للمزيد)",
+        services_title: "حلولنا المتكاملة للأمن السيبراني",
+        services_subtitle:
+          "من السياسات والتشريعات إلى إدارة الحوادث والاستجابة للأزمات، نرافق رحلتك في كل طبقات الحماية.",
+        services_card1_title: "إدارة العمليات السيبرانية",
+        services_card1_body:
+          "مركز عمليات أمنية (SOC) لرصد الأحداث والاستجابة للحوادث وتحليل الهجمات على مدار الساعة.",
+        services_card2_title: "الاستخبارات السيبرانية",
+        services_card2_body:
+          "تحليلات استباقية وفهم عميق لسلوك المهاجمين والبنى التحتية المستخدمة في الهجمات.",
+        services_card3_title: "بناء القدرات الوطنية",
+        services_card3_body:
+          "برامج تدريبية ومحاكاة للهجمات وبناء كوادر قادرة على تشغيل مراكز أمن سيبراني وطنية.",
+        services_card4_title: "حوكمة الأمن السيبراني",
+        services_card4_body:
+          "تطوير الأطر والسياسات الوطنية ومواءمتها مع المعايير الدولية مثل ISO و NIST.",
+        services_cta: "اطلب الخدمة ←",
+        stats_title: "إنجازاتنا بالأرقام",
+        stats_subtitle:
+          "مؤشرات حية تعكس حجم الحماية التي نوفرها لقطاعات الحكومة والقطاع الخاص داخل المملكة وخارجها.",
+        stats_card1_title: "هجمة تم إيقافها",
+        stats_card2_title: "تهديد جديد مكتشف (شهرياً)",
+        stats_card3_title: "دولة مغطاة بالخدمة",
+        alerts_title: "أحدث التنبيهات الأمنية",
+        alerts_subtitle:
+          "مراقبة حية لأخطر الثغرات والهجمات، مع توصيات استجابة فورية وقابلة للتطبيق في بيئة عملك.",
+        alerts_urgent: "عاجل",
+        alerts_last24: "التنبيهات (آخر 24 ساعة):",
+        alerts_filter_all: "فلتر حسب النوع",
+        alerts_filter_vuln: "ثغرات",
+        alerts_filter_malware: "فيروسات",
+        alerts_filter_ddos: "هجمات DDoS",
+        alerts_subscribe: "اشترك في التنبيهات",
+        alerts_high: "عالي الخطورة",
+        alerts_medium: "متوسط الخطورة",
+        alerts_card1_title: "ثغرة حرجة – CVE-2025-1123",
+        alerts_card1_body:
+          "ثغرة في بروتوكولات TLS قد تسمح بتجاوز المصادقة في بعض منصات الخوادم إذا لم يتم تحديثها فوراً.",
+        alerts_card2_title: "فيروس جديد – ShadowWorm",
+        alerts_card2_body:
+          "برمجية خبيثة تنتشر عبر البريد الإلكتروني وتستهدف بوابات البريد غير المحدثة بأنظمة ويندوز.",
+        alerts_card3_title: "هجمات DDoS منسّقة",
+        alerts_card3_body:
+          "استهداف مراكز بيانات رئيسية في المنطقة بهجمات حجب خدمة واسعة النطاق تم صدّها بنجاح.",
+        alerts_scope_global: "النطاق: عالمي",
+        alerts_scope_region: "النطاق: أوروبا",
+        alerts_details: "تفاصيل ←",
+        map_title: "خريطة التهديدات السيبرانية في الأردن (شبه لحظية)",
+        map_subtitle:
+          "متابعة آنية لمحاولات الهجوم وأصولها وأنماطها حول العالم مع إبراز ما يستهدف المملكة وقطاعاتها الحيوية.",
+        map_legend_attacks: "محاولات هجوم نشطة",
+        map_legend_defended: "هجمات تم صدّها",
+        map_legend_flows: "حركة مرور مراقَبة",
+        map_metric1: "محاولات هجوم نشطة الآن",
+        map_metric2: "نسبة الهجمات المستهدِفة للمملكة التي تم صدّها",
+        map_metric3: "متوسط زمن الاستجابة للحوادث الحرجة",
+        map_panel_body:
+          "يتم تحديث هذه الخريطة بأسلوب شبه لحظي بالاعتماد على بيانات حقيقية من الجهات الوطنية والشركاء الدوليين، مع الحفاظ على الخصوصية.",
+        map_cta: "عرض لوحة التهديدات المتقدمة",
+        footer_copy: "© 2025 المركز الوطني للأمن السيبراني - جميع الحقوق محفوظة.",
+      },
+      en: {
+        brand_title_en: "National Cyber Security Center",
+        brand_title: "National Cyber Security Center",
+        nav_home: "Home",
+        nav_about: "About",
+        nav_services: "Services",
+        nav_stats: "Statistics",
+        nav_alerts: "Alerts",
+        nav_news: "News",
+        nav_map: "Threat Map",
+        nav_security: "Security:",
+        nav_contact: "Contact the Response Team",
+        hero_pill_secure: "National platform for real-time cyber threat monitoring",
+        hero_title: "The digital shield protecting the Kingdom from cyber threats",
+        hero_desc:
+          "The National Cyber Security Center leads an integrated national defense grid to detect and respond to cyber threats targeting government, businesses, and citizens.",
+        hero_cta_primary: "Start protection now",
+        hero_cta_secondary: "Test your security (Free)",
+        news_title: "Latest news and updates",
+        news_subtitle:
+          "National initiatives, international partnerships, and updated regulations strengthening Jordan’s cyber resilience.",
+        news_card1_tag: "Regulation",
+        news_card1_title: "Updated national cyber security governance framework",
+        news_card1_body:
+          "New controls for critical sectors to increase cyber maturity and enhance risk management.",
+        news_card2_tag: "Partnerships",
+        news_card2_title: "Signing cooperation agreements with global cyber centers",
+        news_card2_body:
+          "Enhancing threat intelligence sharing and building advanced national capabilities.",
+        news_card3_tag: "Initiatives",
+        news_card3_title: "National program to empower youth in cyber security",
+        news_card3_body:
+          "Intensive training and Capture The Flag competitions to build the next generation of experts.",
+        news_read_more: "Read more →",
+        values_title: "Our Core Values: <span class='text-electric-blue'>Your Digital Shield</span>",
+        values_subtitle:
+          "We combine cutting-edge technology and national readiness to deliver multi-layer protection against cyber threats.",
+        values_card1_title: "Instant incident response",
+        values_card1_body:
+          "A dedicated Security Operations Center (SOC) available 24/7 to detect and stop attacks in real time.",
+        values_card1_back_title: "National response platform",
+        values_card1_back_body:
+          "Real-time analytics engines federate multiple log sources.<br>Automated response playbooks for common incidents.<br>Structured escalation for critical situations.",
+        values_card2_title: "Advanced AI analytics",
+        values_card2_body:
+          "Deep-learning models that anticipate new attack patterns based on billions of daily events.",
+        values_card2_back_title: "Threat intelligence at scale",
+        values_card2_back_body:
+          "We correlate indicators of compromise with global campaigns.<br>Provide rich context for decision makers.<br>Continuously feed responders with emerging patterns.",
+        values_card3_title: "Military-grade encryption",
+        values_card3_body:
+          "Protecting data with world-class cryptographic standards and post-quantum readiness.",
+        values_card3_back_title: "End-to-end crypto architecture",
+        values_card3_back_body:
+          "AES-256 for data at rest and in transit.<br>Strong authentication and least-privilege access.<br>Early adoption of quantum-safe protocols.",
+        values_flip_hint: "(click or hover for more)",
+        services_title: "Our end-to-end cyber security solutions",
+        services_subtitle:
+          "From policies and governance to incident response and crisis management – we protect every layer.",
+        services_card1_title: "Security Operations Management",
+        services_card1_body:
+          "Central SOC for monitoring events, handling incidents, and analyzing attacks 24/7.",
+        services_card2_title: "Cyber Threat Intelligence",
+        services_card2_body:
+          "Proactive threat analysis and deep understanding of attacker behavior and infrastructure.",
+        services_card3_title: "National Capacity Building",
+        services_card3_body:
+          "Advanced training programs, simulations, and national cyber operations centers.",
+        services_card4_title: "Cyber Security Governance",
+        services_card4_body:
+          "Developing national policies and frameworks aligned with ISO, NIST, and global standards.",
+        services_cta: "Request service →",
+        stats_title: "Our impact in numbers",
+        stats_subtitle:
+          "Live indicators showing the protection we provide to public and private sectors locally and globally.",
+        stats_card1_title: "Attacks blocked",
+        stats_card2_title: "New threats detected (monthly)",
+        stats_card3_title: "Countries covered by our services",
+        alerts_title: "Latest security alerts",
+        alerts_subtitle:
+          "Real-time monitoring of critical vulnerabilities and attacks with actionable response guidance.",
+        alerts_urgent: "URGENT",
+        alerts_last24: "Alerts (last 24 hours):",
+        alerts_filter_all: "Filter by type",
+        alerts_filter_vuln: "Vulnerabilities",
+        alerts_filter_malware: "Malware",
+        alerts_filter_ddos: "DDoS attacks",
+        alerts_subscribe: "Subscribe to alerts",
+        alerts_high: "High risk",
+        alerts_medium: "Medium risk",
+        alerts_card1_title: "Critical vulnerability – CVE-2025-1123",
+        alerts_card1_body:
+          "A TLS weakness that may allow authentication bypass on unpatched server platforms.",
+        alerts_card2_title: "New malware – ShadowWorm",
+        alerts_card2_body:
+          "A malicious family spreading via email and targeting unpatched Windows mail gateways.",
+        alerts_card3_title: "Coordinated DDoS campaigns",
+        alerts_card3_body:
+          "Wide-scale denial-of-service attacks against regional data centers successfully mitigated.",
+        alerts_scope_global: "Scope: Global",
+        alerts_scope_region: "Scope: Europe",
+        alerts_details: "Details →",
+        map_title: "Cyber Threat Map – Jordan (near real-time)",
+        map_subtitle:
+          "Live visibility into attack attempts, origins, and patterns worldwide – highlighting activity targeting Jordan and key sectors.",
+        map_legend_attacks: "Active attack attempts",
+        map_legend_defended: "Blocked attacks",
+        map_legend_flows: "Monitored traffic flows",
+        map_metric1: "Active attack attempts now",
+        map_metric2: "Share of attacks targeting Jordan blocked",
+        map_metric3: "Average response time for critical incidents",
+        map_panel_body:
+          "This map is updated with near real-time data from national CSIRTs and global partners, while preserving institutional confidentiality.",
+        map_cta: "Open advanced threat dashboard",
+        footer_copy: "© 2025 National Cyber Security Center – All rights reserved.",
+      },
+    };
+
+    function applyLanguage(lang) {
+      const isArabic = lang === "ar";
+      const dict = translations[lang] || translations.ar;
+
+      document.documentElement.lang = isArabic ? "ar" : "en";
+      document.documentElement.dir = isArabic ? "rtl" : "ltr";
+
+      // Generic data-i18n mapping
+      Object.keys(dict).forEach((key) => {
+        document.querySelectorAll("[data-i18n='" + key + "']").forEach((el) => {
+          el.innerHTML = dict[key];
+        });
+      });
+
+      // Hero title glitch text sync
+      const heroTitle = document.getElementById("hero-title");
+      if (heroTitle && dict.hero_title) {
+        heroTitle.setAttribute("data-glitch", dict.hero_title);
+      }
+
+      // Language toggle thumb state
+      const langToggle = document.getElementById("language-toggle");
+      if (langToggle) {
+        langToggle.classList.toggle("lang-en-active", !isArabic);
+      }
+
+      const label = document.querySelector("[data-lang-toggle-label]");
+      if (label) {
+        label.textContent = isArabic ? "عربي" : "EN";
+      }
+
+      localStorage.setItem(LANG_KEY, lang);
+    }
+
+    function initLanguageToggle() {
+      const toggles = document.querySelectorAll("[data-lang-toggle]");
+      if (!toggles.length) return;
+
+      const saved = localStorage.getItem(LANG_KEY) || "ar";
+      applyLanguage(saved);
+
+      toggles.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const current = localStorage.getItem(LANG_KEY) || "ar";
+          const next = current === "ar" ? "en" : "ar";
+          applyLanguage(next);
+        });
+      });
+    }
+
+    // =========================================================
+    // SCROLL REVEAL & AMBIENT GLOW
+    // =========================================================
+    function initScrollReveal() {
+      const elements = document.querySelectorAll(".scroll-reveal");
+      if (!elements.length) return;
+
+      const observer = new IntersectionObserver(
+        (entries, obs) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+              obs.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.15 }
+      );
+
+      elements.forEach((el) => observer.observe(el));
+    }
+
+    function initAmbientGlow() {
+      const sections = document.querySelectorAll("section");
+      if (!sections.length) return;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const id = entry.target.id;
+            let color = "rgba(0, 191, 255, 0.18)";
+            if (id === "alerts") color = "rgba(255, 56, 100, 0.18)";
+            if (id === "cyber-map-section") color = "rgba(57, 255, 20, 0.2)";
+            if (id === "services" || id === "news") color = "rgba(136, 146, 176, 0.15)";
+            document.documentElement.style.setProperty("--ambient-glow-color", color);
+          });
+        },
+        { threshold: 0.4 }
+      );
+
+      sections.forEach((s) => observer.observe(s));
+    }
+
+    // =========================================================
+    // VALUES THREAD + THREAT SIMULATION
+    // =========================================================
+    function initValuesThreadAndThreats(reducedMotion) {
+      const thread = document.querySelector(".values-thread");
+      const polys = document.querySelectorAll(".threat-poly");
+      if (!thread || !polys.length) return;
+
+      const observer = new IntersectionObserver(
+        (entries, obs) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              thread.classList.add("active");
+              obs.unobserve(entry.target);
+              if (!reducedMotion) startThreatLoop(polys);
+            }
+          });
+        },
+        { threshold: 0.4 }
+      );
+
+      observer.observe(thread);
+    }
+
+    function startThreatLoop(polys) {
+      let index = 0;
+      setInterval(() => {
+        const poly = polys[index % polys.length];
+        poly.classList.add("disintegrate");
+        setTimeout(() => poly.classList.remove("disintegrate"), 1200);
+        index++;
+      }, 2200);
+    }
+
+    // =========================================================
+    // CLICK PARTICLES (MICRO INTERACTION)
+    // =========================================================
+    function initClickParticles(reducedMotion) {
+      if (reducedMotion) return;
+
+      document.addEventListener("click", (e) => {
+        const clickable = e.target.closest(".clickable");
+        if (!clickable) return;
+
+        for (let i = 0; i < 5; i++) {
+          const p = document.createElement("div");
+          p.className = "click-particle";
+          const angle = (Math.PI * 2 * i) / 5;
+          const dx = Math.cos(angle) * 14;
+          const dy = Math.sin(angle) * 14;
+          p.style.setProperty("--dx", dx + "px");
+          p.style.setProperty("--dy", dy + "px");
+          p.style.left = e.clientX + "px";
+          p.style.top = e.clientY + "px";
+          document.body.appendChild(p);
+          p.addEventListener("animationend", () => p.remove());
+        }
+      });
+    }
+
+    // =========================================================
+    // INIT
+    // =========================================================
+    document.addEventListener("DOMContentLoaded", () => {
+      const reducedMotion = prefersReducedMotion();
+
+      initCybergate(reducedMotion);
+      initStats(reducedMotion);
+      initAlertTicker(reducedMotion);
+      initMobileMenu();
+      initThemeToggle();
+      initLanguageToggle();
+      initScrollReveal();
+      initAmbientGlow();
+      initValuesThreadAndThreats(reducedMotion);
+      initClickParticles(reducedMotion);
+    });
+  </script>
+</body>
+</html>
+
+
