@@ -1,0 +1,2279 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>المركز الوطني للأمن السيبراني – National Cyber Security Center</title>
+
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'electric-blue': '#00BFFF',
+              'neon-green': '#39FF14',
+              'alert-red': '#FF3864',
+            },
+            fontFamily: {
+              sans: ['IBM Plex Sans Arabic', 'IBM Plex Sans', 'system-ui'],
+              plexmono: ['IBM Plex Mono', 'ui-monospace', 'SFMono-Regular'],
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      /* =========================================
+         1. GLOBAL VARIABLES & THEMES
+         ========================================= */
+      :root {
+        /* Light mode base */
+        --bg-primary: #f0f3f7;
+        --bg-elevated: rgba(255, 255, 255, 0.9);
+        --bg-elevated-soft: rgba(255, 255, 255, 0.85);
+        --glass-bg: rgba(255, 255, 255, 0.78);
+        --glass-border: rgba(148, 163, 184, 0.5);
+        --glass-shadow: 0 18px 40px rgba(15, 23, 42, 0.14);
+        --text-color: #020617;
+        --text-muted: #64748b;
+        --accent-blue: #00bfff;
+        --accent-green: #39ff14;
+        --accent-red: #ff3864;
+        --hud-line: rgba(148, 163, 184, 0.55);
+        --micro-grid: rgba(148, 163, 184, 0.16);
+        --ambient-glow-color: rgba(0, 191, 255, 0.16);
+      }
+
+      body.dark-mode {
+        --bg-primary: #020617;
+        --bg-elevated: rgba(15, 23, 42, 0.96);
+        --bg-elevated-soft: rgba(15, 23, 42, 0.9);
+        --glass-bg: rgba(15, 23, 42, 0.9);
+        --glass-border: rgba(148, 163, 184, 0.55);
+        --glass-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        --text-color: #e5e7eb;
+        --text-muted: #9ca3af;
+        --hud-line: rgba(75, 85, 99, 0.7);
+        --micro-grid: rgba(51, 65, 85, 0.45);
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: 'IBM Plex Sans Arabic', 'IBM Plex Sans', system-ui, -apple-system, BlinkMacSystemFont;
+        background: var(--bg-primary);
+        color: var(--text-color);
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Global Background Effects (Grid & Glow) */
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image: linear-gradient(to right, var(--micro-grid) 1px, transparent 1px),
+                          linear-gradient(to bottom, var(--micro-grid) 1px, transparent 1px);
+        background-size: 32px 32px;
+        opacity: 0.6;
+        z-index: -2;
+      }
+
+      body::after {
+        content: '';
+        position: fixed;
+        inset: -10%;
+        background: radial-gradient(circle at 20% 20%, var(--ambient-glow-color), transparent 55%);
+        mix-blend-mode: screen;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      .global-scanlines {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image: repeating-linear-gradient(to bottom, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.08) 1px, transparent 1px, transparent 3px);
+        mix-blend-mode: soft-light;
+        opacity: 0.6;
+        z-index: -3;
+      }
+
+      .hex-column {
+        position: fixed;
+        top: 20%;
+        width: 130px;
+        font-family: 'IBM Plex Mono', ui-monospace;
+        font-size: 11px;
+        line-height: 1.6;
+        letter-spacing: 0.15em;
+        color: rgba(148, 163, 184, 0.55);
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        z-index: -2;
+      }
+      .hex-column-left { left: 12px; }
+      .hex-column-right { right: 12px; }
+
+      /* =========================================
+         2. UTILITIES & SHARED CLASSES
+         ========================================= */
+      .clickable { cursor: pointer; }
+
+      /* Glassmorphism Primitives */
+      .glass-morphic {
+        background: var(--glass-bg);
+        border-radius: 1.5rem;
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--glass-shadow);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+      }
+
+      /* Shared Glass Styles */
+      .hud-stat, .alert-card, .wireframe-card, .map-container, 
+      .footer-cta, .footer-orb-toggle, .value-front, .value-back, 
+      .news-card, .stat-card {
+        background: var(--glass-bg);
+        border-radius: 1.5rem;
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--glass-shadow);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+      }
+
+      /* Accessibility Focus */
+      a:focus-visible, button:focus-visible, [role='button']:focus-visible {
+        outline: 2px solid #00bfff;
+        outline-offset: 3px;
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8);
+      }
+
+      /* Scroll Reveal Animations */
+      .scroll-reveal {
+        opacity: 0;
+        filter: blur(3px);
+        transform: translateY(32px);
+        transition: opacity 0.75s ease-out, transform 0.75s ease-out, filter 0.75s ease-out, box-shadow 0.75s ease-out;
+        will-change: opacity, transform, filter;
+      }
+      .scroll-reveal[data-sr='slide-up'] { transform: translateY(40px); }
+      .scroll-reveal[data-sr='slide-left'] { transform: translateX(40px); }
+      .scroll-reveal[data-sr='slide-right'] { transform: translateX(-40px); }
+      .scroll-reveal[data-sr='scale-in'] { transform: scale(0.88); }
+      .scroll-reveal[data-sr='tilt'] { transform: translateY(40px) rotate(-1.8deg); }
+      .scroll-reveal[data-sr='glitch'] { transform: translateY(28px); }
+      
+      .scroll-reveal.is-visible {
+        opacity: 1;
+        filter: blur(0);
+        transform: translate(0, 0) scale(1) rotate(0deg);
+      }
+      .scroll-reveal.is-visible[data-sr='scale-in'] {
+        box-shadow: 0 0 0 1px rgba(0, 191, 255, 0.4), 0 20px 48px rgba(15, 23, 42, 0.22);
+      }
+
+      /* Click Particles */
+      .click-particle {
+        position: fixed;
+        width: 4px; height: 4px;
+        border-radius: 999px;
+        background: var(--accent-blue);
+        pointer-events: none;
+        z-index: 70;
+        opacity: 0;
+        animation: particleFly 480ms ease-out forwards;
+      }
+      @keyframes particleFly {
+        0% { opacity: 1; transform: translate(0, 0) scale(1); }
+        100% { opacity: 0; transform: translate(var(--dx, 0px), var(--dy, -18px)) scale(0.4); }
+      }
+
+      /* =========================================
+         3. LOADING SCREEN (CYBERGATE)
+         ========================================= */
+      .cybergate-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        background: radial-gradient(circle at top, rgba(0, 191, 255, 0.16), transparent 55%),
+                    radial-gradient(circle at bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.95));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: auto;
+        opacity: 1;
+        transition: opacity 0.6s ease-out;
+      }
+      .cybergate-center {
+        position: relative;
+        text-align: center;
+        color: #e5f2ff;
+      }
+      .cybergate-matrix {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+        opacity: 0.25;
+        background-size: 20px 20px;
+        background-image: linear-gradient(to bottom, rgba(0,255,140,0.18) 0px, transparent 2px);
+        animation: matrixScroll 1.6s linear infinite;
+        filter: blur(1px);
+      }
+      @keyframes matrixScroll {
+        0% { background-position-y: 0; }
+        100% { background-position-y: 100%; }
+      }
+      .cybergate-logo-wrap {
+        position: relative;
+        width: 130px; height: 130px;
+        margin-inline: auto;
+        border-radius: 999px;
+        background: radial-gradient(circle at center, rgba(0, 191, 255, 0.18), rgba(15, 23, 42, 0.98));
+        box-shadow: 0 0 40px rgba(0, 191, 255, 0.9), 0 0 70px rgba(138, 43, 226, 0.7);
+        overflow: hidden;
+      }
+      .cybergate-logo {
+        position: absolute !important;
+        top: 50% !important; left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 70% !important; height: auto !important;
+        object-fit: contain;
+        z-index: 3;
+      }
+      .cybergate-start .cybergate-logo { animation: logoEnter 1.1s ease-out forwards; }
+      @keyframes logoEnter {
+        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); filter: blur(4px) brightness(1.8); }
+        50% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+        100% { opacity: 1; transform: translate(-50%, -50%) scale(1); filter: blur(0) brightness(1); }
+      }
+      .cybergate-iris {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        border: 1px dashed rgba(148, 163, 184, 0.7);
+        box-shadow: inset 0 0 30px rgba(0, 191, 255, 0.4), 0 0 30px rgba(138, 43, 226, 0.5);
+        animation: irisPulse 2.3s ease-in-out infinite;
+      }
+      @keyframes irisPulse {
+        0% { transform: scale(0.95); opacity: 0.6; }
+        50% { transform: scale(1.02); opacity: 1; }
+        100% { transform: scale(0.95); opacity: 0.6; }
+      }
+      .cybergate-loading-bar {
+        width: 160px; height: 5px;
+        border-radius: 10px;
+        margin: 1rem auto 0 auto;
+        background: rgba(148, 163, 184, 0.35);
+        overflow: hidden;
+        position: relative;
+        z-index: 2;
+      }
+      .cybergate-loading-fill {
+        height: 100%; width: 0%;
+        background: linear-gradient(90deg, #00bfff, #39ff14);
+        box-shadow: 0 0 16px rgba(0, 191, 255, 0.7);
+        animation: loadingFill 2.2s ease-out forwards;
+      }
+      @keyframes loadingFill {
+        0% { width: 0%; }
+        50% { width: 60%; }
+        100% { width: 100%; }
+      }
+      .cybergate-caption {
+        margin-top: 1rem;
+        font-family: 'IBM Plex Mono', ui-monospace;
+        font-size: 11px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: rgba(226, 232, 240, 0.9);
+        opacity: 0;
+      }
+      .cybergate-start .cybergate-caption { animation: captionReveal 0.9s ease-out 0.9s forwards; }
+      @keyframes captionReveal {
+        0% { opacity: 0; transform: translateY(12px); letter-spacing: 0.3em; filter: blur(3px); }
+        100% { opacity: 1; transform: translateY(0); letter-spacing: 0.2em; filter: blur(0); }
+      }
+      .cybergate-shockwave {
+        position: absolute;
+        inset: -60px;
+        border-radius: 999px;
+        border: 1px solid rgba(0, 191, 255, 0.3);
+        opacity: 0;
+      }
+      .cybergate-start .cybergate-shockwave { animation: shockwave 1.8s ease-out forwards; }
+      @keyframes shockwave {
+        0% { transform: scale(0.5); opacity: 0.6; }
+        100% { transform: scale(1.5); opacity: 0; }
+      }
+      .cybergate-start { animation: gateFade 0.6s ease-out 2s forwards; }
+      @keyframes gateFade {
+        to { opacity: 0; visibility: hidden; pointer-events: none; }
+      }
+      /* State Classes for Cybergate */
+      body.cybergate-active > *:not(#cybergate-overlay) { opacity: 0 !important; pointer-events: none !important; }
+      body.cybergate-active { overflow: hidden !important; }
+      body.cybergate-reveal { opacity: 1; overflow: auto; }
+
+      /* =========================================
+         4. NAVBAR & NAVIGATION
+         ========================================= */
+      .command-ribbon {
+        top: 0; inset-inline: 0; width: 100%;
+        z-index: 40;
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+        background: linear-gradient(to right, rgba(255, 255, 255, 0.9), rgba(240, 249, 255, 0.9));
+      }
+      body.dark-mode .command-ribbon {
+        background: linear-gradient(to right, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.94));
+      }
+      .command-ribbon-inner {
+        max-width: 100%;
+        margin-inline: auto;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0.6rem 1.25rem; gap: 1.25rem;
+      }
+      .command-ribbon-brand { display: flex; align-items: center; gap: 0.75rem; }
+      .brand-logo {
+        width: 36px; height: 36px;
+        border-radius: 999px;
+        padding: 4px;
+        background: radial-gradient(circle at center, rgba(0, 191, 255, 0.3), rgba(255, 255, 255, 0.95));
+        box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.5), 0 0 25px rgba(0, 191, 255, 0.8);
+      }
+      .brand-title { font-size: 0.85rem; line-height: 1.3; font-weight: 600; }
+      .brand-subtitle { font-size: 0.7rem; color: var(--text-muted); }
+      
+      /* Nav Links */
+      .nav-links { display: flex; align-items: center; gap: 1.2rem; font-size: 0.85rem; }
+      .nav-link { position: relative; padding-inline: 0.25rem; color: var(--text-muted); transition: color 0.2s ease; }
+      .nav-link::after {
+        content: ''; position: absolute; inset-inline: 0; bottom: -0.25rem; height: 2px;
+        border-radius: 999px;
+        background: linear-gradient(to right, transparent, rgba(0, 191, 255, 0.9), transparent);
+        transform: scaleX(0); transform-origin: center; transition: transform 0.2s ease;
+      }
+      .nav-link:hover { color: var(--accent-blue); }
+      .nav-link:hover::after { transform: scaleX(1); }
+
+      /* HUD in Nav */
+      .nav-hud { display: flex; align-items: center; gap: 0.75rem; }
+      .nav-hud-badge {
+        font-family: 'IBM Plex Mono', ui-monospace;
+        font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+        padding: 0.3rem 0.65rem; border-radius: 999px;
+        background: rgba(0, 191, 255, 0.08);
+        color: var(--accent-blue); border: 1px solid rgba(0, 191, 255, 0.5);
+      }
+      .nav-data-stream { display: none; font-family: 'IBM Plex Mono', ui-monospace; font-size: 0.65rem; letter-spacing: 0.08em; color: var(--text-muted); }
+      @media (min-width: 1024px) { .nav-data-stream { display: flex; gap: 1.25rem; } }
+      
+      .nav-dot {
+        width: 6px; height: 6px; border-radius: 999px; background: var(--accent-green);
+        box-shadow: 0 0 10px rgba(57, 255, 20, 0.9), 0 0 18px rgba(57, 255, 20, 0.7);
+      }
+      .nav-dot-red {
+        background: var(--accent-red);
+        box-shadow: 0 0 10px rgba(255, 56, 100, 0.9), 0 0 18px rgba(255, 56, 100, 0.7);
+      }
+
+      /* Toggles (Theme & Lang) */
+      .toggle-orb {
+        position: relative; width: 32px; height: 32px; border-radius: 999px;
+        display: inline-flex; align-items: center; justify-content: center;
+        background: radial-gradient(circle at top, rgba(255, 255, 255, 0.95), rgba(226, 232, 240, 0.98));
+        border: 1px solid rgba(148, 163, 184, 0.7);
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.7);
+        overflow: hidden; cursor: pointer; transition: transform 0.18s ease, box-shadow 0.18s ease;
+      }
+      body.dark-mode .toggle-orb {
+        background: radial-gradient(circle at top, rgba(30, 64, 175, 0.6), rgba(15, 23, 42, 0.95));
+        border-color: rgba(96, 165, 250, 0.6);
+      }
+      .toggle-orb:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 24px rgba(0, 191, 255, 0.35), 0 0 22px rgba(0, 191, 255, 0.7) !important;
+      }
+      .theme-icon {
+        width: 20px; height: 20px; color: var(--accent-blue);
+        opacity: 0; transform: scale(0.9); transition: opacity 0.18s ease, transform 0.18s ease;
+      }
+      .toggle-orb svg { display: block !important; margin: auto !important; }
+      [data-theme='light'] .theme-icon-sun, html:not([data-theme]) .theme-icon-sun { opacity: 1; transform: scale(1); }
+      [data-theme='dark'] .theme-icon-moon { opacity: 1; transform: scale(1); }
+
+      .lang-toggle-inner {
+        position: relative; width: 32px !important; height: 14px !important;
+        margin: 0 auto !important; border-radius: 999px;
+        background: rgba(15, 23, 42, 0.05); border: 1px solid rgba(148, 163, 184, 0.6);
+      }
+      .lang-thumb {
+        position: absolute; top: 1px; right: 1px;
+        width: 14px !important; height: 12px !important;
+        border-radius: 999px; background: var(--accent-blue);
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8), 0 0 15px rgba(0, 191, 255, 0.8);
+        transition: transform 0.18s ease, background 0.18s ease;
+      }
+      .lang-en-active .lang-thumb {
+        transform: translateX(-16px) !important;
+        background: var(--accent-green);
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8), 0 0 15px rgba(57, 255, 20, 0.8);
+      }
+      .lang-label {
+        position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+        font-size: 10px; font-weight: 600; color: #020617;
+      }
+      body.dark-mode .lang-label { color: #e5e7eb; }
+
+      /* Mobile Menu */
+      #mobile-menu-btn { display: none; }
+      .mobile-menu-panel {
+        background: var(--bg-elevated);
+        border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+        backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      }
+      body.dark-mode .mobile-menu-panel { background: var(--bg-elevated); }
+      @media (max-width: 1024px) {
+        .command-ribbon-inner { padding-block: 0.65rem; }
+        .nav-links, .nav-hud { display: none; }
+        #mobile-menu-btn { display: inline-flex; }
+      }
+
+      /* =========================================
+         5. HERO SECTION
+         ========================================= */
+      #hero { padding-top: 5.2rem; padding-bottom: 4rem; }
+      .hero-grid {
+        /* === NEW: Full Width Hero === */
+        width: 100%;
+        max-width: 100%; /* Changed from 1200px */
+        margin-inline: auto;
+        padding-inline: 2.5rem; /* Increased padding */
+        padding-top: 2.5rem;
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+        gap: 2.75rem;
+        align-items: center;
+      }
+      .hero-scanline {
+        position: absolute; inset: 0;
+        background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.09) 0px, rgba(0, 0, 0, 0.09) 1px, transparent 2px);
+        opacity: 0; pointer-events: none; z-index: 0;
+        animation: heroScanlineIn 0.6s ease-out forwards;
+      }
+      @keyframes heroScanlineIn { 0% { opacity: 0; } 100% { opacity: 0.25; } }
+      
+      /* Hero Pill */
+      .hero-pill {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        padding: 0.3rem 0.85rem; border-radius: 999px;
+        font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+        background: rgba(0, 191, 255, 0.08); color: var(--accent-blue);
+        border: 1px solid rgba(0, 191, 255, 0.7); font-family: 'IBM Plex Mono', ui-monospace;
+        box-shadow: 0 0 18px rgba(0, 191, 255, 0.45);
+        opacity: 0; transform: scale(0.88);
+      }
+      .hero-pill.pop-in { animation: pillPopIn 0.45s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
+      @keyframes pillPopIn {
+        0% { opacity: 0; transform: scale(0.88); }
+        70% { opacity: 1; transform: scale(1.08); }
+        100% { transform: scale(1); opacity: 1; }
+      }
+
+      /* Hero Title & Glitch */
+      .hero-title-wrapper {
+        margin-top: 1.3rem; position: relative; padding: 0.6rem 0.1rem;
+        opacity: 0; transform: translateY(22px); overflow: hidden;
+      }
+      .hero-title-wrapper.slide-in { animation: titleSlideIn 0.5s ease-out forwards; }
+      @keyframes titleSlideIn {
+        0% { opacity: 0; transform: translateY(16px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+      /* Sweep line effect */
+      .hero-title-wrapper.slide-in::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(90deg, transparent 0%, rgba(0,191,255,0.5) 50%, transparent 100%);
+        transform: translateX(-100%); animation: sweepLine 0.6s ease-out;
+      }
+      @keyframes sweepLine {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(140%); }
+      }
+      .hero-title {
+        font-size: clamp(2.2rem, 3.2vw, 3rem); line-height: 1.1; font-weight: 800;
+        color: #020617; text-shadow: 0 0 22px rgba(0, 191, 255, 0.4);
+      }
+      body.dark-mode .hero-title { color: #e5e7eb; }
+      
+      /* Title Decrypt Animation */
+      .hero-title.decrypting { opacity: 1; position: relative; }
+      .hero-title.decrypting span {
+        display: inline-block; opacity: 0; transform: translateY(12px);
+        filter: blur(3px); animation: decryptLetter 0.6s forwards;
+      }
+      @keyframes decryptLetter {
+        0% { opacity: 0; transform: translateY(12px); filter: blur(3px); }
+        100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+      }
+      
+      /* Glitch Text Effect */
+      .cyber-glitch-text { position: relative; display: inline-block; }
+      .cyber-glitch-text::before, .cyber-glitch-text::after {
+        content: attr(data-glitch); position: absolute; inset: 0;
+        mix-blend-mode: screen; clip-path: inset(0 0 0 0); opacity: 0;
+      }
+      .cyber-glitch-text::before { color: #00bfff; transform: translate(1px, -1px); }
+      .cyber-glitch-text::after { color: #39ff14; transform: translate(-1px, 1px); }
+      .glitch-active::before { animation: glitchShift 1.8s infinite steps(2, end); }
+      .glitch-active::after { animation: glitchShift 1.8s infinite steps(3, end) 100ms; }
+      @keyframes glitchShift {
+        0%, 80%, 100% { opacity: 0; clip-path: inset(0 0 0 0); }
+        5% { opacity: 1; clip-path: inset(0 0 40% 0); }
+        25% { clip-path: inset(60% 0 0 0); }
+        45% { clip-path: inset(0 60% 0 0); }
+        65% { clip-path: inset(0 0 0 60%); }
+      }
+      
+      /* Corners */
+      .cyber-corners::before, .cyber-corners::after {
+        content: ''; position: absolute; width: 60px; height: 14px;
+        border: 1px solid rgba(148, 163, 184, 0.7); border-bottom: none;
+      }
+      .cyber-corners::before { inset-inline-start: 0; top: 0; border-inline-end: none; }
+      .cyber-corners::after { inset-inline-end: 0; top: 0; border-inline-start: none; }
+
+      /* Description & Buttons */
+      .hero-description {
+        margin-top: 1.3rem; font-size: 0.95rem; color: var(--text-muted);
+        max-width: 35rem; opacity: 0; transform: translateY(22px);
+      }
+      .hero-description.fade-in { animation: heroDescIn 0.6s ease-out forwards; }
+      @keyframes heroDescIn {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+      .hero-buttons {
+        margin-top: 1.7rem; display: flex; flex-wrap: wrap; gap: 0.9rem;
+        opacity: 0; transform: translateY(22px);
+      }
+      .hero-buttons.materialize { animation: buttonsMaterialize 0.55s ease-out forwards; }
+      @keyframes buttonsMaterialize {
+        0% { opacity: 0; filter: blur(10px); transform: translateY(12px); }
+        100% { opacity: 1; filter: blur(0); transform: translateY(0); }
+      }
+      
+      /* Custom Buttons */
+      .btn-primary {
+        position: relative; padding: 0.7rem 1.4rem; border-radius: 999px;
+        background: linear-gradient(135deg, #00bfff, #39ff14);
+        color: #0b1120; font-weight: 600;
+        box-shadow: 0 0 24px rgba(0, 191, 255, 0.75), 0 0 35px rgba(57, 255, 20, 0.6);
+        border: none; font-size: 0.9rem;
+      }
+      .btn-primary::after {
+        content: ''; position: absolute; inset: 0; border-radius: inherit;
+        border: 1px solid rgba(255, 255, 255, 0.7); opacity: 0.8;
+      }
+      .btn-primary:hover { transform: translateY(-1px); }
+      .btn-ghost {
+        padding: 0.7rem 1.4rem; border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.7); background: rgba(255, 255, 255, 0.6);
+        color: var(--text-color); font-size: 0.9rem; font-weight: 500;
+      }
+      body.dark-mode .btn-ghost { background: rgba(15, 23, 42, 0.8); }
+      
+      /* Meta Row */
+      .hero-meta-row {
+        margin-top: 1.8rem; display: flex; flex-wrap: wrap; gap: 1rem;
+        align-items: center; font-size: 0.78rem; color: var(--text-muted);
+      }
+      .hero-meta-pill {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        padding: 0.3rem 0.7rem; border-radius: 999px;
+        border: 1px dashed rgba(148, 163, 184, 0.7); opacity: 0; transform: translateX(-18px);
+      }
+      .hero-meta-pill.hud-in { animation: metaPing 0.45s ease-out forwards; }
+      @keyframes metaPing {
+        0% { opacity: 0; transform: translateX(-18px) scale(0.9); }
+        80% { opacity: 1; transform: translateX(0) scale(1.07); }
+        100% { transform: scale(1); }
+      }
+      .hero-meta-pill span { font-family: 'IBM Plex Mono', ui-monospace; letter-spacing: 0.1em; }
+
+      /* Hero Hologram */
+      #hero-hologram {
+        position: relative; max-width: 360px; margin-inline: auto;
+        opacity: 0; transform: scale(0.94); filter: blur(6px) brightness(0.8);
+      }
+      #hero-hologram.beam-up { animation: holoBeamUp 1s ease-out forwards; }
+      @keyframes holoBeamUp {
+        0% { opacity: 0; transform: scale(0.9); filter: blur(8px) brightness(0.7); }
+        60% { opacity: 1; filter: blur(2px) brightness(1.2); }
+        100% { transform: scale(1); filter: blur(0) brightness(1); }
+      }
+      .holo-materialized {
+        animation: holoScanIn 1.4s ease-out forwards, hologramFloat 8s ease-in-out infinite 1.4s, hologramPulse 5s ease-in-out infinite 1.4s alternate;
+      }
+      .holo-core {
+        position: relative; border-radius: 1.5rem; overflow: hidden; padding: 1.25rem;
+        background: radial-gradient(circle at top, rgba(0, 191, 255, 0.26), transparent 60%), var(--bg-elevated-soft);
+        border: 1px solid rgba(0, 191, 255, 0.35); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      }
+      .holo-grid {
+        position: absolute; inset: 0;
+        background-image: linear-gradient(to right, rgba(148, 163, 184, 0.35) 1px, transparent 1px),
+                          linear-gradient(to bottom, rgba(148, 163, 184, 0.35) 1px, transparent 1px);
+        background-size: 18px 18px; opacity: 0.4; mix-blend-mode: soft-light;
+      }
+      .holo-avatar {
+        position: relative; z-index: 1; border-radius: 1.25rem;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 64, 175, 0.95));
+        padding: 1rem; color: #e5e7eb; font-size: 0.8rem;
+      }
+      .pulse-ring {
+        position: absolute; top: 50%; left: 50%;
+        border-radius: 999px; border: 1px solid rgba(0, 191, 255, 0.38);
+        transform: translate(-50%, -50%); opacity: 0;
+      }
+      .ring-1 { width: 120px; height: 120px; animation: pulseRing 5s linear infinite; }
+      .ring-2 { width: 220px; height: 220px; animation: pulseRing 5s linear infinite 1.2s; }
+      .ring-3 { width: 330px; height: 330px; animation: pulseRing 5s linear infinite 2.4s; }
+      @keyframes holoScanIn {
+        0% { opacity: 0; transform: translateY(40px) scale(0.9); clip-path: inset(50% 0 50% 0); filter: brightness(2) hue-rotate(90deg); }
+        40% { clip-path: inset(0 0 0 0); opacity: 0.7; transform: translateY(-10px) scale(1.05); }
+        100% { opacity: 0.9; transform: translateY(0) scale(1); filter: brightness(1) hue-rotate(0deg); }
+      }
+      @keyframes hologramFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-18px); } }
+      @keyframes hologramPulse {
+        0% { filter: drop-shadow(0 0 14px rgba(0, 191, 255, 0.7)) drop-shadow(0 0 30px rgba(138, 43, 226, 0.45)); }
+        100% { filter: drop-shadow(0 0 28px rgba(0, 191, 255, 0.9)) drop-shadow(0 0 45px rgba(138, 43, 226, 0.7)); }
+      }
+      @keyframes pulseRing {
+        0% { opacity: 0.2; transform: translate(-50%, -50%) scale(0.85); }
+        40% { opacity: 0.7; }
+        100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+      }
+
+      /* =========================================
+         6. NEWS SECTION
+         ========================================= */
+      .news-card { position: relative; overflow: hidden; }
+      .news-ribbon {
+        position: absolute; inset-inline-start: 0; top: 0;
+        padding: 0.28rem 0.65rem; background: rgba(0, 191, 255, 0.9);
+        color: #0b1120; font-size: 0.7rem; font-family: 'IBM Plex Mono', ui-monospace;
+        border-bottom-right-radius: 0.75rem; z-index: 10;
+      }
+
+      /* =========================================
+         7. VALUES SECTION (3D CARDS)
+         ========================================= */
+      .perspective-1000 { perspective: 1000px; }
+      .transform-style-3d { transform-style: preserve-3d; }
+      .backface-hidden { backface-visibility: hidden; }
+      .flipper { transition: transform 0.7s ease; will-change: transform; }
+      .group:hover .flipper {
+        transform: rotateY(180deg) scale(1.02);
+        transition: transform 0.8s cubic-bezier(0.19,1,0.22,1);
+      }
+      .rotate-y-180 { transform: rotateY(180deg); }
+      
+      /* Back Content Reconstruct */
+      .reconstruct { position: relative; overflow: hidden; font-weight: bold; }
+      .reconstruct span {
+        display: block; opacity: 0; transform: translateY(12px);
+        animation: reconstructLine 0.65s ease forwards;
+      }
+      .reconstruct span:nth-child(2) { animation-delay: 0.1s; }
+      .reconstruct span:nth-child(3) { animation-delay: 0.2s; }
+      @keyframes reconstructLine { to { opacity: 1; transform: translateY(0); } }
+      
+      /* Values Thread */
+      .values-thread { position: relative; margin-top: 2.8rem; }
+      .values-thread::before {
+        content: ''; position: absolute; left: 10%; right: 10%; top: 50%; height: 2px;
+        background: linear-gradient(90deg, transparent 0%, rgba(0, 191, 255, 0.7) 10%, rgba(138, 43, 226, 0.8) 50%, rgba(0, 191, 255, 0.7) 90%, transparent 100%);
+        opacity: 0; transform-origin: left center; transform: scaleX(0.3);
+      }
+      .values-thread.active::before { opacity: 1; animation: threadPulse 3s ease-in-out infinite; }
+      @keyframes threadPulse {
+        0% { transform: scaleX(0.4); box-shadow: 0 0 8px rgba(0, 191, 255, 0.4); }
+        50% { transform: scaleX(1); box-shadow: 0 0 18px rgba(0, 191, 255, 0.7), 0 0 26px rgba(138, 43, 226, 0.6); }
+        100% { transform: scaleX(0.4); box-shadow: 0 0 8px rgba(0, 191, 255, 0.4); }
+      }
+
+      /* Value Entrance Animation */
+      #value .group {
+        opacity: 0; transform: translateY(28px) scale(0.96);
+        transition: opacity 0.65s ease, transform 0.65s cubic-bezier(0.19,1,0.22,1);
+      }
+      #value.is-visible .group { opacity: 1; transform: translateY(0) scale(1); }
+      #value .group:nth-child(1) { transition-delay: 0ms; }
+      #value .group:nth-child(2) { transition-delay: 120ms; }
+      #value .group:nth-child(3) { transition-delay: 240ms; }
+
+      /* Value Icon Glow */
+      .value-front svg {
+        filter: drop-shadow(0 0 6px rgba(0,191,255,0.55));
+        animation: iconPulse 2.4s ease-in-out infinite;
+      }
+      @keyframes iconPulse {
+        0% { filter: drop-shadow(0 0 4px rgba(0,191,255,0.35)); transform: scale(1); }
+        50% { filter: drop-shadow(0 0 10px rgba(0,191,255,0.85)); transform: scale(1.06); }
+        100% { filter: drop-shadow(0 0 4px rgba(0,191,255,0.35)); transform: scale(1); }
+      }
+      .group:hover .value-front svg { filter: drop-shadow(0 0 16px rgba(0,191,255,1)); transition: all 0.3s ease-in-out; }
+      
+      .value-back {
+        position: relative; backdrop-filter: blur(10px);
+        border: 1px solid rgba(148,163,184,0.45);
+        box-shadow: inset 0 0 22px rgba(0,191,255,0.18);
+        background: radial-gradient(circle at top left, rgba(0, 191, 255, 0.2), var(--glass-bg));
+      }
+      .value-back::before {
+        content: ""; position: absolute; inset: 0;
+        background-image: url('ncsc_logo.png'); background-size: 60%;
+        background-position: center; background-repeat: no-repeat; opacity: 0.2; pointer-events: none;
+      }
+
+      /* =========================================
+         8. SERVICES SECTION
+         ========================================= */
+      .service-card {
+        position: relative; height: 260px; border-radius: 1.4rem;
+        backdrop-filter: blur(18px); border: 1px solid rgba(148,163,184,0.45);
+        box-shadow: 0 8px 24px rgba(15,23,42,0.12), 0 0 0 1px rgba(0,191,255,0.2);
+        transform-style: preserve-3d; transform: translateZ(0);
+        transition: transform .55s cubic-bezier(.19,1,.22,1), box-shadow .55s ease;
+        overflow: hidden;
+      }
+      .service-card:hover {
+        transform: translateY(-10px) rotateX(8deg) rotateY(-6deg) scale(1.04);
+        box-shadow: 0 24px 50px rgba(15,23,42,0.25), 0 0 22px rgba(0,191,255,0.55);
+      }
+      .service-inner {
+        padding: 2rem 1.4rem; height: 100%; display: flex; flex-direction: column;
+        align-items: center; text-align: center; gap: .8rem;
+        position: relative; z-index: 2;
+      }
+      .service-icon {
+        width: 64px; height: 64px; padding: 12px; border-radius: 50%;
+        background: rgba(0,191,255,0.1); border: 1px solid rgba(0,191,255,0.45);
+        box-shadow: 0 0 14px rgba(0,191,255,0.4); display: flex; justify-content: center; align-items: center;
+        transition: transform .45s ease, box-shadow .45s ease;
+      }
+      .service-icon img { width: 32px; height: 32px; object-fit: contain; filter: drop-shadow(0 0 4px rgba(0,191,255,.6)); }
+      .service-card:hover .service-icon {
+        transform: scale(1.15); box-shadow: 0 0 18px rgba(0,191,255,.85), 0 0 30px rgba(57,255,20,.45);
+      }
+      .service-title { font-size: .9rem; font-weight: 700; color: #0f172a; }
+      .service-text { font-size: .78rem; color: #475569; line-height: 1.4; }
+      
+      /* HUD Corners for Service Cards */
+      .service-card::before, .service-card::after {
+        content: ""; position: absolute; width: 18px; height: 18px;
+        border: 1px solid rgba(0,191,255,0.6); pointer-events: none;
+      }
+      .service-card::before { top: 10px; left: 10px; border-right: 0; border-bottom: 0; }
+      /* Fix: Overriding the ::after pseudo element to handle scanline separately in services if needed, 
+         but here we merge scanline into a separate pseudo or handle carefully. 
+         The original code reused ::after for both corner and scanline which is conflicting.
+         I will use a child element concept or just keep the corner logic separate. 
+         Original code had conflict. I will fix it by using ::after for scanline and ::before for corner (top-left).
+         For the bottom-right corner, I will omit it or use a child element to preserve the scanline effect.*/
+      .service-card::after {
+        right: 10px; bottom: 10px; border-left: 0; border-top: 0;
+        /* Scanline override from original code block */
+        animation: scanMove 4s linear infinite; opacity: 0.05;
+      }
+      @keyframes scanMove { 0% { transform: translateY(-120%); } 100% { transform: translateY(120%); } }
+
+      /* =========================================
+         9. STATS SECTION
+         ========================================= */
+      .hud-stat {
+        transform: translateY(20px); opacity: 0; transition: all .6s cubic-bezier(.19,1,.22,1);
+      }
+      #stats.is-visible .hud-stat { transform: translateY(0); opacity: 1; }
+      .hud-stat-content {
+        backdrop-filter: blur(18px); border-radius: 1.4rem; border: 1px solid rgba(148,163,184,0.35);
+        padding: 2rem; box-shadow: 0 12px 32px rgba(15,23,42,0.15), 0 0 0 1px rgba(0,191,255,0.25);
+        transition: transform .45s ease;
+      }
+      .hud-stat-content:hover { transform: scale(1.04); }
+      .hud-ring {
+        position: relative; width: 150px; height: 150px; border-radius: 50%; margin: auto;
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'IBM Plex Mono'; font-size: 1.4rem; font-weight: 600; color: var(--accent-blue);
+      }
+      .hud-ring::before {
+        content: ""; position: absolute; inset: 14px; border-radius: inherit;
+        border: 2px dashed rgba(0,191,255,0.35);
+      }
+      .hud-ring::after {
+        content: ""; position: absolute; inset: 0; border-radius: inherit;
+        border: 4px solid transparent; border-top-color: var(--accent-blue);
+        filter: drop-shadow(0 0 10px rgba(0,191,255,0.8));
+        transform: rotate(0deg); transform-origin: center; transition: transform 1s ease-out;
+      }
+      .hud-ring .spark {
+        position: absolute; width: 10px; height: 10px; background: var(--accent-blue);
+        border-radius: 50%; filter: drop-shadow(0 0 10px rgba(0,191,255,1));
+        animation: sparkRotate 3s linear infinite;
+      }
+      @keyframes sparkRotate { from { transform: rotate(0deg) translateY(-65px); } to { transform: rotate(360deg) translateY(-65px); } }
+      .hud-ring .scan {
+        position: absolute; width: 100%; height: 100%; inset: 0; border-radius: inherit;
+        background: linear-gradient(to bottom, rgba(0,191,255,0.15), transparent 60%);
+        mix-blend-mode: screen; opacity: .15; animation: scanMotion 3s linear infinite;
+      }
+      @keyframes scanMotion { 0% { transform: translateY(-50%); } 100% { transform: translateY(50%); } }
+      .live-counter {
+        background: linear-gradient(90deg, #00bfff, #39ff14);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        font-size: 1.7rem; font-weight: 700;
+      }
+
+      /* =========================================
+         10. ALERTS SECTION
+         ========================================= */
+      #alerts { position: relative; overflow: hidden; background: white; }
+      #alerts::before {
+        content: ""; position: absolute; inset: 0;
+        background: radial-gradient(circle at 20% 30%, rgba(255,56,100,0.18), transparent 60%),
+                    radial-gradient(circle at 80% 60%, rgba(255,56,100,0.18), transparent 65%);
+        opacity: 0.35; pointer-events: none; z-index: 0;
+      }
+      #alerts::after {
+        content: ""; position: absolute; inset: 0;
+        background-image: linear-gradient(45deg, rgba(255,56,100,0.18) 1px, transparent 1px),
+                          linear-gradient(-45deg, rgba(255,56,100,0.18) 1px, transparent 1px);
+        background-size: 34px 34px; opacity: 0.18; animation: meshMove 22s linear infinite;
+        pointer-events: none; z-index: 0;
+      }
+      @keyframes meshMove { 0% { transform: translateY(0); } 100% { transform: translateY(40px); } }
+      
+      .alert-mesh-dots { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+      .alert-mesh-dots span {
+        position: absolute; width: 6px; height: 6px; background: rgba(255,56,100,0.9);
+        border-radius: 50%; box-shadow: 0 0 12px rgba(255,56,100,1);
+        animation: pulseDot 2.4s ease-in-out infinite;
+      }
+      @keyframes pulseDot { 0%,100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.55); opacity: 1; } }
+      
+      .alert-card {
+        position: relative; overflow: hidden; backdrop-filter: blur(14px);
+        border: 1px solid rgba(255,56,100,0.35); border-radius: 1.4rem;
+        transition: transform .5s cubic-bezier(.19,1,.22,1), box-shadow .45s ease, border-color .45s ease;
+        z-index: 2;
+      }
+      .alert-card:hover {
+        transform: translateY(-10px) scale(1.02) rotateX(4deg);
+        box-shadow: 0 18px 45px rgba(15,23,42,0.25), 0 0 20px rgba(255,56,100,0.55);
+        border-color: rgba(255,56,100,0.8);
+      }
+      .alert-card::before {
+        content:""; position:absolute; width:18px; height:18px; top:10px; left:10px;
+        border:1px solid rgba(255,56,100,0.55); border-bottom:0; border-right:0; pointer-events:none; z-index: 3;
+      }
+      .alert-card::after {
+        content:""; position:absolute; inset:0;
+        background:linear-gradient(to bottom, rgba(255,56,100,0.10), transparent 60%);
+        opacity:0.12; animation: alertScan 4s linear infinite; z-index: 1;
+      }
+      @keyframes alertScan { 0% { transform: translateY(-50%); } 100% { transform: translateY(50%); } }
+      
+      .alert-severity-bar {
+        position: absolute; inset-inline-start: 0; top: 0; bottom: 0; width: 3px;
+        background: linear-gradient(to bottom, rgba(255, 56, 100, 0.2), rgba(255, 56, 100, 0.9));
+        box-shadow: 0 0 12px rgba(255,56,100,.8); animation: barGlow 2.6s ease-in-out infinite;
+      }
+      @keyframes barGlow { 0%,100% { opacity: .6; } 50% { opacity: 1; } }
+      
+      /* Marquee Bar */
+      .alert-marquee-bar {
+        position: relative; overflow: hidden; border-radius: 999px;
+        border: 1px solid rgba(255,56,100,0.6); padding-block: 0.35rem; padding-inline: 0.8rem;
+        margin-bottom: 1.5rem; box-shadow: 0 0 12px rgba(255,56,100,0.4); z-index: 3;
+      }
+      .alert-marquee-bar::after {
+        content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(255,56,100,0.35), transparent);
+        mix-blend-mode: overlay; animation: marqueeFlicker 2.4s infinite; opacity: 0.18; pointer-events: none;
+      }
+      @keyframes marqueeFlicker { 0%,100% { opacity: .18; } 50% { opacity: .35; } }
+      .alert-ticker {
+        display: inline-flex; gap: 2.5rem; white-space: nowrap;
+        animation: tickerMove 28s linear infinite;
+      }
+      @keyframes tickerMove { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+      
+      /* Staggered Entrance */
+      #alerts .alert-card { opacity: 0; transform: translateY(24px) scale(.96); }
+      #alerts.is-visible .alert-card:nth-child(1) { transition-delay: 0ms; opacity: 1; transform: translateY(0) scale(1); }
+      #alerts.is-visible .alert-card:nth-child(2) { transition-delay: 150ms; opacity: 1; transform: translateY(0) scale(1); }
+      #alerts.is-visible .alert-card:nth-child(3) { transition-delay: 300ms; opacity: 1; transform: translateY(0) scale(1); }
+
+      /* =========================================
+         11. CYBER MAP SECTION
+         ========================================= */
+      .map-layout-wrapper {
+        max-width: 1200px; margin-inline: auto; display: grid; gap: 2rem;
+        grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: stretch;
+      }
+      .map-container { position: relative; overflow: hidden; padding: 1.3rem; }
+      #jordan-map-base { width: 100%; border-radius: 1.1rem; border: 1px solid rgba(148, 163, 184, 0.5); }
+      .map-overlay-svg { position: absolute; inset: 1.3rem; pointer-events: none; }
+      .city-node { stroke: rgba(148, 163, 184, 0.8); stroke-width: 2; }
+      .amman-node { fill: rgba(57, 255, 20, 0.9); box-shadow: 0 0 18px rgba(57, 255, 20, 0.9), 0 0 30px rgba(0, 191, 255, 0.9); }
+      .attack-node { fill: rgba(255, 56, 100, 0.9); animation: pulseAttack 2.6s ease-in-out infinite; }
+      .city-label { fill: #0f172a; font-family: 'IBM Plex Sans', system-ui; }
+      body.dark-mode .city-label { fill: #e5e7eb; }
+      .attack-label { fill: rgba(127, 29, 29, 0.9); }
+      .amman-label { font-weight: 600; }
+      .defense-beam {
+        stroke: rgba(0, 191, 255, 0.8); stroke-width: 2; stroke-linecap: round;
+        stroke-dasharray: 10 8; animation: beamFlow 2.4s linear infinite;
+      }
+      @keyframes pulseAttack { 0% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.3); opacity: 1; } 100% { transform: scale(1); opacity: 0.7; } }
+      @keyframes beamFlow { 0% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 180; } }
+      
+      /* Map Panel & Glitch */
+      .map-panel { display: flex; flex-direction: column; gap: 1rem; padding: 1.2rem 1.3rem; }
+      #map-legend { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.8rem; }
+      .legend-item { display: flex; align-items: center; gap: 0.35rem; }
+      .legend-color { width: 10px; height: 10px; border-radius: 999px; }
+      .legend-color.red { background: var(--accent-red); box-shadow: 0 0 10px rgba(255, 56, 100, 0.9), 0 0 18px rgba(255, 56, 100, 0.7); }
+      .legend-color.green { background: var(--accent-green); box-shadow: 0 0 10px rgba(57, 255, 20, 0.9), 0 0 18px rgba(57, 255, 20, 0.7); }
+      .legend-color.blue { background: var(--accent-blue); box-shadow: 0 0 10px rgba(0, 191, 255, 0.9), 0 0 18px rgba(0, 191, 255, 0.7); }
+      .map-stat { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); }
+      .map-stat strong { font-family: 'IBM Plex Mono', ui-monospace; color: var(--accent-blue); }
+      
+      /* Map Glitch Halo */
+      #cyber-map-section.scroll-reveal::before {
+        content: ''; position: absolute; inset-inline: 10%; top: 2rem; height: 160px;
+        border-radius: 999px;
+        background: radial-gradient(circle at center, rgba(0, 191, 255, 0.35), transparent 60%);
+        mix-blend-mode: screen; opacity: 0; filter: blur(4px);
+      }
+      #cyber-map-section.scroll-reveal.is-visible::before { animation: sectionGlitch 1.4s steps(2, end) forwards; }
+      @keyframes sectionGlitch {
+        0% { opacity: 0; transform: translateX(0); }
+        25% { opacity: 1; transform: translateX(-4px); }
+        45% { transform: translateX(4px); }
+        65% { transform: translateX(-2px); }
+        100% { opacity: 0.6; transform: translateX(0); }
+      }
+
+      /* =========================================
+         12. FOOTER & BACK TO TOP
+         ========================================= */
+      .footer-cta { max-width: 1200px; margin-inline: auto; }
+      #back-to-top {
+        position: fixed; bottom: 1.5rem; inset-inline-end: 1.25rem; z-index: 50;
+        width: 3rem; height: 3rem; border-radius: 999px; border: 1px solid rgba(57, 255, 20, 0.5);
+        background: radial-gradient(circle at center, rgba(57, 255, 20, 0.16), var(--bg-elevated));
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.35), 0 0 18px rgba(57, 255, 20, 0.8);
+        cursor: pointer; transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+      }
+      #back-to-top img { width: 1.8rem; height: 1.8rem; object-fit: contain; filter: drop-shadow(0 0 4px rgba(57, 255, 20, 0.5)); }
+      #back-to-top.hidden-button { opacity: 0; pointer-events: none; transform: translateY(10px) scale(0.9); }
+      #back-to-top:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.55), 0 0 30px rgba(57, 255, 20, 1);
+      }
+      #back-to-top:hover img { filter: drop-shadow(0 0 12px rgba(57, 255, 20, 0.9)); }
+
+      /* =========================================
+         13. RESPONSIVE & DARK MODE OVERRIDES
+         ========================================= */
+      /* Text Overrides for Dark Mode */
+      body.dark-mode .text-slate-900 { color: #e5e7eb !important; }
+      body.dark-mode .text-slate-800 { color: #e5e7eb !important; }
+      body.dark-mode .text-slate-700 { color: #d1d5db !important; }
+      body.dark-mode .text-slate-600 { color: #9ca3af !important; }
+      body.dark-mode .text-slate-500 { color: #9ca3af !important; }
+      body.dark-mode .bg-white { background-color: rgba(15, 23, 42, 0.96) !important; }
+      body.dark-mode .bg-red-50 { background-color: rgba(127, 29, 29, 0.55) !important; }
+
+      /* Media Queries */
+      @media (max-width: 1024px) {
+        .hero-grid { grid-template-columns: minmax(0, 1fr); padding-top: 2rem; }
+        .map-layout-wrapper { grid-template-columns: minmax(0, 1fr); }
+      }
+      @media (max-width: 768px) {
+        #hero { padding-top: 4.7rem; padding-bottom: 3rem; }
+        .hero-grid { padding-inline: 1rem; }
+        .hero-title { font-size: 1.9rem; }
+        .hero-meta-row { flex-direction: column; align-items: flex-start; }
+        .values-thread::before { left: 16%; right: 16%; }
+        .map-layout-wrapper { padding-inline: 0.25rem; }
+        #back-to-top { bottom: 1rem; inset-inline-end: 0.9rem; }
+      }
+      @media (max-width: 640px) {
+        .command-ribbon-inner { flex-wrap: nowrap; }
+        .brand-title { font-size: 0.8rem; }
+        .brand-subtitle { display: none; }
+        .hero-description { font-size: 0.85rem; }
+      }
+
+      /* =========================================
+         إضافات التحسينات الجديدة (New Enhancements)
+         ========================================= */
+
+      /* 1. خلفية الجزيئات التفاعلية */
+      #interactive-bg {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        z-index: -2; pointer-events: none; opacity: 0.5;
+      }
+
+      /* 2. مؤثر المسح الأمني (Cyber Scan) */
+      .scanning-effect { position: relative; overflow: hidden; }
+      .scanning-effect::after {
+        content: ''; position: absolute; top: -100px; left: 0; right: 0; height: 60px;
+        background: linear-gradient(to bottom, transparent, var(--accent-blue), transparent);
+        opacity: 0.4; pointer-events: none; mix-blend-mode: screen;
+        z-index: 10;
+        transform: translateY(-100%);
+      }
+      .scroll-reveal.is-visible.scanning-effect::after {
+        animation: scanDown 1.5s ease-in-out forwards;
+      }
+      @keyframes scanDown {
+        0% { transform: translateY(-150%); opacity: 0; }
+        10% { opacity: 0.6; }
+        90% { opacity: 0.6; }
+        100% { transform: translateY(500%); opacity: 0; } 
+      }
+
+      /* 3. خريطة 3D (Holographic Tilt) */
+      .map-tilt-wrapper {
+        transition: transform 0.1s ease-out;
+        transform-style: preserve-3d;
+        will-change: transform;
+      }
+      /* جعل العناصر تبرز للخارج */
+      .map-tilt-wrapper .map-overlay-svg {
+        transform: translateZ(40px);
+      }
+
+      /* 4. شريط الأخبار اللاصق (Sticky Ticker) */
+      .alert-marquee-bar.is-sticky {
+        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+        width: 90%; max-width: 800px; z-index: 100;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        background: var(--bg-elevated); border: 2px solid var(--accent-red);
+        animation: slideUpSticky 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      }
+      @keyframes slideUpSticky {
+        from { transform: translate(-50%, 100%); opacity: 0; }
+        to { transform: translate(-50%, 0); opacity: 1; }
+      }
+
+      /* 5. نافذة مركز القيادة (Command Palette) */
+      #command-palette {
+        position: fixed; inset: 0; z-index: 200;
+        background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+        display: none; align-items: flex-start; justify-content: center; padding-top: 10vh;
+      }
+      #command-palette.open { display: flex; animation: fadeIn 0.2s; }
+      .cmd-window {
+        width: 100%; max-width: 600px;
+        background: var(--bg-elevated); border: 1px solid var(--glass-border);
+        border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        overflow: hidden; display: flex; flex-direction: column;
+      }
+      .cmd-input {
+        width: 100%; padding: 1rem 1.5rem; border: none; background: transparent;
+        border-bottom: 1px solid var(--glass-border); font-size: 1.1rem;
+        color: var(--text-color); outline: none; font-family: 'IBM Plex Sans Arabic';
+      }
+      .cmd-list { padding: 0.5rem; max-height: 300px; overflow-y: auto; }
+      .cmd-item {
+        padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center;
+        border-radius: 6px; cursor: pointer; color: var(--text-muted); transition: 0.1s;
+      }
+      .cmd-item:hover, .cmd-item.active { background: var(--accent-blue); color: #fff; }
+      .cmd-shortcut { font-family: 'IBM Plex Mono'; font-size: 0.75rem; opacity: 0.7; }
+
+      /* 6. تحسين صور الأخبار */
+      .news-image-container {
+        height: 160px; overflow: hidden; position: relative; border-radius: 0.5rem; margin-bottom: 1rem;
+      }
+      .news-image {
+        width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;
+      }
+      .news-card:hover .news-image { transform: scale(1.1); }
+    </style>
+  </head>
+
+  <body class="antialiased bg-[var(--bg-primary)] text-[var(--text-color)]">
+    <!-- 1. خلفية الكانفاس -->
+    <canvas id="interactive-bg"></canvas>
+
+    <!-- 2. نافذة مركز القيادة (مخفية) -->
+    <div id="command-palette">
+      <div class="cmd-window">
+        <input type="text" class="cmd-input" placeholder="اكتب أمراً أو ابحث... (مثال: تنبيهات، أخبار)" id="cmd-input">
+        <div class="cmd-list" id="cmd-results">
+          <div class="cmd-item" data-link="#hero"><span>الذهاب للرئيسية</span><span class="cmd-shortcut">Home</span></div>
+          <div class="cmd-item" data-link="#news"><span>آخر الأخبار</span><span class="cmd-shortcut">News</span></div>
+          <div class="cmd-item" data-link="#alerts"><span>فحص التنبيهات</span><span class="cmd-shortcut">Alerts</span></div>
+          <div class="cmd-item" data-link="#services"><span>الخدمات الإلكترونية</span><span class="cmd-shortcut">Svcs</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="global-scanlines" aria-hidden="true"></div>
+    <div class="hex-column hex-column-left" aria-hidden="true">
+      C1 A7 2F 9B E3 6D 7A 11 3C 8E 9F 22 7B
+    </div>
+    <div class="hex-column hex-column-right" aria-hidden="true">
+      4D 1A 6C FA 93 B2 08 7E 55 AF 0C 9D 3E
+    </div>
+
+    <div id="cybergate-overlay" class="cybergate-overlay">
+      <div class="cybergate-center">
+        <div class="cybergate-matrix"></div>
+        <div class="cybergate-logo-wrap">
+          <img
+            src="NCSC_LOGO.png"
+            alt="National Cyber Security Center – seven-pointed star logo"
+            class="cybergate-logo"
+          />
+          <div class="cybergate-iris"></div>
+        </div>
+        <div class="cybergate-loading-bar">
+          <div class="cybergate-loading-fill"></div>
+        </div>
+        <p class="cybergate-caption">
+          NATIONAL CYBER SECURITY CENTER • JORDAN
+        </p>
+        <div class="cybergate-shockwave"></div>
+      </div>
+    </div>
+
+    <nav class="command-ribbon fixed">
+      <div class="command-ribbon-inner">
+        <div class="command-ribbon-brand">
+          <div class="brand-logo">
+            <img
+              src="NCSC_LOGO.png"
+              alt="NCSC Logo"
+              class="w-full h-full object-contain"
+            />
+          </div>
+          <div>
+            <div class="brand-title" data-i18n="brand_title">
+              المركز الوطني للأمن السيبراني
+            </div>
+            <div class="brand-subtitle" data-i18n="brand_title_en">
+              National Cyber Security Center
+            </div>
+          </div>
+        </div>
+
+        <ul class="nav-links">
+          <li><a href="#hero" class="nav-link" data-i18n="nav_home">الرئيسية</a></li>
+          <li><a href="#news" class="nav-link" data-i18n="nav_news">الأخبار</a></li>
+          <li><a href="#value" class="nav-link" data-i18n="nav_about">عن المركز</a></li>
+          <li><a href="#services" class="nav-link" data-i18n="nav_services">خدماتنا</a></li>
+          <li><a href="#stats" class="nav-link" data-i18n="nav_stats">الإحصائيات</a></li>
+          <li><a href="#alerts" class="nav-link" data-i18n="nav_alerts">التنبيهات</a></li>
+          <li><a href="#cyber-map-section" class="nav-link" data-i18n="nav_map">الخريطة</a></li>
+        </ul>
+
+        <div class="nav-hud">
+          <div class="hidden lg:flex items-center gap-2">
+            <span class="nav-hud-badge" data-i18n="nav_security">الأمان:</span>
+            <div class="nav-data-stream">
+              <span class="flex items-center gap-1">
+                <span class="nav-dot"></span>
+                <span data-i18n="nav_stream1">%99.97 حماية فعّالة</span>
+              </span>
+              <span class="flex items-center gap-1">
+                <span class="nav-dot"></span>
+                <span data-i18n="nav_stream2">+ 42 تهديداً موقوفاً/دقيقة</span>
+              </span>
+              <span class="flex items-center gap-1">
+                <span class="nav-dot nav-dot-red"></span>
+                <span data-i18n="nav_stream3">لا تنبيهات حرجة غير معالجة</span>
+              </span>
+            </div>
+          </div>
+
+          <button type="button" class="toggle-orb clickable" data-theme-toggle aria-label="تبديل النمط الفاتح/الداكن">
+            <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.535-7.535L17.12 6.12M6.88 17.12l-1.414 1.414m0-12.02L6.88 6.88m10.24 10.24 1.414 1.414" />
+            </svg>
+            <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+
+          <button type="button" id="language-toggle" class="toggle-orb clickable" data-lang-toggle aria-label="تبديل اللغة">
+            <div class="lang-toggle-inner">
+              <div class="lang-thumb"></div>
+              <span class="lang-label" data-lang-toggle-label>عربي</span>
+            </div>
+          </button>
+
+          <button id="mobile-menu-btn" class="toggle-orb lg:hidden" type="button" aria-label="فتح القائمة">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-700" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="mobile-menu" class="mobile-menu-panel lg:hidden hidden">
+        <div class="max-w-6xl mx-auto px-4 py-3 space-y-2 text-sm">
+          <a href="#hero" class="block py-1 text-slate-700" data-i18n="nav_home">الرئيسية</a>
+          <a href="#news" class="block py-1 text-slate-700" data-i18n="nav_news">الأخبار</a>
+          <a href="#value" class="block py-1 text-slate-700" data-i18n="nav_about">عن المركز</a>
+          <a href="#services" class="block py-1 text-slate-700" data-i18n="nav_services">خدماتنا</a>
+          <a href="#stats" class="block py-1 text-slate-700" data-i18n="nav_stats">الإحصائيات</a>
+          <a href="#alerts" class="block py-1 text-slate-700" data-i18n="nav_alerts">التنبيهات</a>
+          <a href="#cyber-map-section" class="block py-1 text-slate-700" data-i18n="nav_map">الخريطة</a>
+        </div>
+      </div>
+    </nav>
+
+    <section id="hero" class="scanning-effect">
+      <div class="hero-scanline"></div>
+      <div class="hero-grid">
+        <div class="space-y-2">
+          <div id="hero-pill" class="hero-pill" data-i18n="hero_pill_secure">
+            منصة وطنية متقدمة لرصد التهديدات السيبرانية لحظةً بلحظة
+          </div>
+          <div id="hero-title-wrapper" class="hero-title-wrapper cyber-corners">
+            <h1 id="hero-title" class="hero-title cyber-glitch-text" data-glitch="درع المملكة الرقمي لمواجهة تهديدات الفضاء السيبراني" data-i18n="hero_title">
+              درع المملكة الرقمي لمواجهة تهديدات الفضاء السيبراني
+            </h1>
+          </div>
+          <p id="hero-description" class="hero-description text-slate-600" data-i18n="hero_desc">
+            المركز الوطني للأمن السيبراني في الأردن يقود منظومة حماية وطنية متكاملة، ترصد التهديدات السيبرانية وتستجيب لها لحماية مؤسسات الدولة وقطاع الأعمال والمواطنين.
+          </p>
+          <div id="hero-buttons" class="hero-buttons">
+            <button class="btn-primary clickable" data-i18n="hero_cta_primary">ابدأ الحماية الآن</button>
+            <button class="btn-ghost clickable" data-i18n="hero_cta_secondary">اختبر مستوى أمانك (مجاناً)</button>
+          </div>
+          <div class="hero-meta-row">
+            <div class="hero-meta-pill">
+              <span class="nav-dot"></span>
+              <span data-i18n="hero_meta1">مراقبة مستمرة 24/7/365</span>
+            </div>
+            <div class="hero-meta-pill">
+              <span class="nav-dot nav-dot-red"></span>
+              <span data-i18n="hero_meta2">زمن استجابة أقل من 6 دقائق</span>
+            </div>
+          </div>
+        </div>
+        <div id="hero-hologram">
+          <div class="holo-core">
+            <div class="holo-grid" aria-hidden="true"></div>
+            <div class="holo-avatar">
+              <p class="text-xs text-slate-200 mb-2">
+                <span class="font-plexmono text-electric-blue">NCSC-CORE:</span>
+                <span class="ml-1" data-i18n="hero_holo_line1">تحليلات آنية لتهديدات الفضاء السيبراني مع ذكاء اصطناعي مخصص للبيئة الوطنية.</span>
+              </p>
+              <p class="text-[11px] text-slate-300">
+                <span class="font-plexmono text-emerald-300">STATUS:</span>
+                <span class="ml-1" data-i18n="hero_holo_line2">جميع القطاعات الحيوية في حالة حماية معززة • لا حوادث حرجة مفتوحة حالياً.</span>
+              </p>
+            </div>
+            <div class="pulse-ring ring-1" aria-hidden="true"></div>
+            <div class="pulse-ring ring-2" aria-hidden="true"></div>
+            <div class="pulse-ring ring-3" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="news" class="py-20 scroll-reveal scanning-effect" data-sr="slide-up" aria-labelledby="news-title">
+      <div class="max-w-6xl mx-auto px-4">
+        <h2 id="news-title" class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4" data-i18n="news_title">
+          أحدث الأخبار والمستجدات
+        </h2>
+        <p class="text-center text-slate-600 mb-12 max-w-2xl mx-auto text-sm md:text-base" data-i18n="news_subtitle">
+          مبادرات وطنية، شراكات دولية، وتشريعات جديدة تعزّز مناعة الفضاء السيبراني في المملكة.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <article class="news-card p-5 scroll-reveal" data-sr="slide-up">
+            <span class="news-ribbon" data-i18n="news_badge1">مستجد</span>
+            <!-- إضافة الصورة -->
+            <div class="news-image-container">
+                <img src="https://placehold.co/600x400/0f172a/00bfff?text=Cyber+News" alt="News Image" class="news-image">
+            </div>
+            <h3 class="mt-6 mb-2 text-sm font-bold text-slate-900" data-i18n="news_card1_title">إطلاق منصة وطنية لاختبار جاهزية الهجمات السيبرانية</h3>
+            <p class="text-xs text-slate-700 mb-3" data-i18n="news_card1_body">إطلاق منصة تتيح للجهات الحكومية والخاصة محاكاة هجمات سيبرانية واختبار جاهزيتها الدفاعية وفق معايير وطنية.</p>
+            <a href="#" class="inline-flex items-center gap-1 text-electric-blue text-[11px] font-semibold" data-i18n="news_readmore">قراءة المزيد →</a>
+          </article>
+          <article class="news-card p-5 scroll-reveal" data-sr="slide-up">
+            <span class="news-ribbon" data-i18n="news_badge2">تعاون</span>
+            <!-- إضافة الصورة -->
+            <div class="news-image-container">
+                <img src="https://placehold.co/600x400/0f172a/39ff14?text=Cooperation" alt="News Image" class="news-image">
+            </div>
+            <h3 class="mt-6 mb-2 text-sm font-bold text-slate-900" data-i18n="news_card2_title">مذكرة تفاهم مع مراكز دولية للأمن السيبراني</h3>
+            <p class="text-xs text-slate-700 mb-3" data-i18n="news_card2_body">توقيع اتفاقيات تعاون لتبادل الخبرات والإنذارات المبكرة حول أحدث حملات الاختراق العالمية.</p>
+            <a href="#" class="inline-flex items-center gap-1 text-electric-blue text-[11px] font-semibold" data-i18n="news_readmore">قراءة المزيد →</a>
+          </article>
+          <article class="news-card p-5 scroll-reveal" data-sr="slide-up">
+            <span class="news-ribbon" data-i18n="news_badge3">تشريع</span>
+            <!-- إضافة الصورة -->
+            <div class="news-image-container">
+                <img src="https://placehold.co/600x400/0f172a/ff3864?text=Regulations" alt="News Image" class="news-image">
+            </div>
+            <h3 class="mt-6 mb-2 text-sm font-bold text-slate-900" data-i18n="news_card3_title">تحديث الأطر التنظيمية لحماية البنى التحتية الحرجة</h3>
+            <p class="text-xs text-slate-700 mb-3" data-i18n="news_card3_body">إصدار تعليمات جديدة تلزم القطاعات الحيوية برفع معايير الحماية والامتثال لأفضل الممارسات العالمية.</p>
+            <a href="#" class="inline-flex items-center gap-1 text-electric-blue text-[11px] font-semibold" data-i18n="news_readmore">قراءة المزيد →</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="value" class="py-20 scroll-reveal scanning-effect" data-sr="tilt" aria-labelledby="values-title">
+      <div class="max-w-6xl mx-auto px-4">
+        <h2 id="values-title" class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4" data-i18n="values_title">
+          قيمنا الأساسية: <span class="text-electric-blue">درعك الرقمي</span>
+        </h2>
+        <p class="text-center text-slate-600 mb-14 max-w-2xl mx-auto text-sm md:text-base" data-i18n="values_subtitle">
+          ندمج بين التكنولوجيا المتقدمة والجاهزية الوطنية لنمنحك طبقات حماية متكاملة ضد التهديدات السيبرانية.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="group perspective-1000 scroll-reveal" data-sr="slide-up">
+            <div class="relative h-72 flipper transform-style-3d rounded-2xl">
+              <div class="absolute inset-0 backface-hidden value-front p-6 flex flex-col items-center justify-center text-center">
+                <svg class="w-12 h-12 text-electric-blue mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <h3 class="text-lg font-bold text-slate-900 mb-2" data-i18n="values_card1_title">استجابة سريعة للحوادث</h3>
+                <p class="text-sm text-slate-600" data-i18n="values_card1_body">فرق وطنية متخصصة تعمل على مدار الساعة للاستجابة للحوادث السيبرانية والتخفيف من أثرها بأسرع وقت ممكن.</p>
+              </div>
+              <div class="absolute inset-0 rotate-y-180 backface-hidden value-back p-6 flex items-center justify-center text-center">
+                <div class="reconstruct text-sm text-slate-700">
+                  <span data-i18n="values_card1_back_line1">• وقت استجابة أولي أقل من 15 دقيقة</span>
+                  <span data-i18n="values_card1_back_line2">• بروتوكولات موحدة مع كل القطاعات</span>
+                  <span data-i18n="values_card1_back_line3">• تنسيق مباشر مع غرف العمليات الوطنية</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="group perspective-1000 scroll-reveal" data-sr="slide-up">
+            <div class="relative h-72 flipper transform-style-3d rounded-2xl">
+              <div class="absolute inset-0 backface-hidden value-front p-6 flex flex-col items-center justify-center text-center">
+                <svg class="w-12 h-12 text-electric-blue mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.657 0 3-1.567 3-3.5S13.657 4 12 4 9 5.567 9 7.5 10.343 11 12 11zM5 20c0-2.761 3.134-5 7-5s7 2.239 7 5" />
+                </svg>
+                <h3 class="text-lg font-bold text-slate-900 mb-2" data-i18n="values_card2_title">حوكمة وتشريعات واضحة</h3>
+                <p class="text-sm text-slate-600" data-i18n="values_card2_body">أطر تشريعية ومعايير وطنية تضمن اتساق السياسات الأمنية مع أفضل الممارسات العالمية.</p>
+              </div>
+              <div class="absolute inset-0 rotate-y-180 backface-hidden value-back p-6 flex items-center justify-center text-center">
+                <div class="reconstruct text-sm text-slate-700">
+                  <span data-i18n="values_card2_back_line1">• مواءمة مع المعايير الدولية (ISO, NIST)</span>
+                  <span data-i18n="values_card2_back_line2">• أطر امتثال مخصصة للقطاعات الحساسة</span>
+                  <span data-i18n="values_card2_back_line3">• متابعة دورية لقياس النضج الأمني</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="group perspective-1000 scroll-reveal" data-sr="slide-up">
+            <div class="relative h-72 flipper transform-style-3d rounded-2xl">
+              <div class="absolute inset-0 backface-hidden value-front p-6 flex flex-col items-center justify-center text-center">
+                <svg class="w-12 h-12 text-electric-blue mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.343-3 3v7h6v-7c0-1.657-1.343-3-3-3z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11V9a7 7 0 0114 0v2" />
+                </svg>
+                <h3 class="text-lg font-bold text-slate-900 mb-2" data-i18n="values_card3_title">ثقة رقمية للمواطن والمؤسسة</h3>
+                <p class="text-sm text-slate-600" data-i18n="values_card3_body">بنية تحتية موثوقة تعزز ثقة المواطنين والمؤسسات بالخدمات الرقمية الحكومية والمالية.</p>
+              </div>
+              <div class="absolute inset-0 rotate-y-180 backface-hidden value-back p-6 flex items-center justify-center text-center">
+                <div class="reconstruct text-sm text-slate-700">
+                  <span data-i18n="values_card3_back_line1">• حماية المعاملات والخدمات الإلكترونية</span>
+                  <span data-i18n="values_card3_back_line2">• حملات توعية وطنية مستمرة</span>
+                  <span data-i18n="values_card3_back_line3">• دعم فني وتدريب للجهات الحكومية والقطاع الخاص</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="values-thread"></div>
+      </div>
+    </section>
+
+    <section id="services" class="py-20 scroll-reveal bg-white scanning-effect" data-sr="slide-left" aria-labelledby="services-title">
+      <div class="max-w-6xl mx-auto px-4">
+        <h2 id="services-title" class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4" data-i18n="services_title">
+          حلولنا المتكاملة للأمن السيبراني
+        </h2>
+        <p class="text-center text-slate-600 mb-14 max-w-2xl mx-auto text-sm md:text-base" data-i18n="services_subtitle">
+          من السياسات والتشريعات إلى إدارة الحوادث والاستجابة للأزمات، نرافق رحلتك في كل طبقات الحماية.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-7">
+          <div class="service-card scroll-reveal" data-sr="slide-up">
+            <div class="service-inner">
+              <div class="service-icon"><img src="soc.png" alt="icon"></div>
+              <h3 class="service-title" data-i18n="services_card1_title">مركز عمليات أمنية وطنية (SOC)</h3>
+              <p class="service-text" data-i18n="services_card1_body">مراقبة آنية للبنى التحتية...</p>
+            </div>
+          </div>
+          <div class="service-card scroll-reveal" data-sr="slide-up">
+            <div class="service-inner">
+              <div class="service-icon"><img src="icons/soc.svg" alt="icon"></div>
+              <h3 class="service-title" data-i18n="services_card2_title">إدارة الهوية والوصول</h3>
+              <p class="service-text" data-i18n="services_card2_body">أطر تحكم بالوصول متعددة الطبقات تدعم المصادقة القوية وإدارة الامتيازات.</p>
+            </div>
+          </div>
+          <div class="service-card scroll-reveal" data-sr="slide-up">
+            <div class="service-inner">
+              <div class="service-icon"><img src="icons/soc.svg" alt="icon"></div>
+              <h3 class="service-title" data-i18n="services_card3_title">تقييم الثغرات والاختبارات الدورية</h3>
+              <p class="service-text" data-i18n="services_card3_body">اختبارات اختراق منظمة وتقييم دوري للثغرات وفق أولويات المخاطر الفعلية.</p>
+            </div>
+          </div>
+          <div class="service-card scroll-reveal" data-sr="slide-up">
+            <div class="service-inner">
+              <div class="service-icon"><img src="icons/soc.svg" alt="icon"></div>
+              <h3 class="service-title" data-i18n="services_card4_title">التوعية و التدريب السيبراني</h3>
+              <p class="service-text" data-i18n="services_card4_body">برامج تدريبية متخصصة للكوادر الفنية والإدارية لرفع الوعي بمخاطر الأمن السيبراني.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="stats" class="py-20 scroll-reveal scanning-effect" data-sr="scale-in" aria-labelledby="stats-title">
+      <div class="max-w-6xl mx-auto px-4">
+        <h2 id="stats-title" class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4" data-i18n="stats_title">
+          إنجازاتنا بالأرقام
+        </h2>
+        <p class="text-center text-slate-600 mb-14 max-w-2xl mx-auto text-sm md:text-base" data-i18n="stats_subtitle">
+          مؤشرات حية تعكس حجم الحماية التي نوفرها لقطاعات الحكومة والقطاع الخاص داخل المملكة وخارجها.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-7 text-center">
+          <div class="hud-stat scroll-reveal" data-sr="slide-up">
+            <div class="hud-stat-content p-7">
+              <div class="hud-ring" data-progress-color="rgba(0,191,255,0.9)">
+                <div class="spark"></div><div class="scan"></div>
+                <span class="live-counter" data-target="14830921">0</span>
+              </div>
+              <h4 class="text-lg text-slate-900 font-bold mt-2" data-i18n="stats_card1_title">هجمة تم إيقافها</h4>
+            </div>
+          </div>
+          <div class="hud-stat scroll-reveal" data-sr="slide-up">
+            <div class="hud-stat-content p-7">
+              <div class="hud-ring" data-progress-color="rgba(0,191,255,0.9)">
+                <div class="spark"></div><div class="scan"></div>
+                <span class="live-counter" data-target="95402">0</span>
+              </div>
+              <h4 class="text-lg text-slate-900 font-bold mt-2" data-i18n="stats_card2_title">تهديد جديد مكتشف (شهرياً)</h4>
+            </div>
+          </div>
+          <div class="hud-stat scroll-reveal" data-sr="slide-up">
+            <div class="hud-stat-content p-7">
+              <div class="hud-ring" data-progress-color="rgba(0,191,255,0.9)">
+                <div class="spark"></div><div class="scan"></div>
+                <span class="live-counter" data-target="42">0</span>
+              </div>
+              <h4 class="text-lg text-slate-900 font-bold mt-2" data-i18n="stats_card3_title">دولة مغطاة بالخدمة</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="alerts" class="py-20 bg-white scroll-reveal scanning-effect" data-sr="slide-right" aria-labelledby="alerts-title">
+      <div class="alert-mesh-dots">
+        <span style="top:18%; left:22%;"></span>
+        <span style="top:10%; left:90%; animation-delay:.4s;"></span>
+        <span style="top:65%; left:33%; animation-delay:1s;"></span>
+        <span style="top:90%; left:82%; animation-delay:1.4s;"></span>
+      </div>
+      <div class="max-w-6xl mx-auto px-4">
+        <h2 id="alerts-title" class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4" data-i18n="alerts_title">
+          أحدث التنبيهات الأمنية
+        </h2>
+        <p class="text-center text-slate-600 mb-10 max-w-2xl mx-auto text-sm md:text-base" data-i18n="alerts_subtitle">
+          مراقبة حية لأخطر الثغرات والهجمات، مع توصيات استجابة فورية وقابلة للتطبيق في بيئة عملك.
+        </p>
+        <div class="alert-marquee-bar">
+          <span class="alert-marquee-label">
+            <span class="nav-dot nav-dot-red"></span>
+            <span data-i18n="alerts_marquee_label">تنبيه فوري</span>
+          </span>
+          <div class="alert-ticker">
+            <span data-i18n="alerts_ticker_item1">CVE-2025-1123 – ثغرة حرجة في بروتوكولات TLS قيد الاستغلال.</span>
+            <span data-i18n="alerts_ticker_item2">حملة تصيّد موجهة تستهدف البريد الحكومي – يُنصح بالتحقق المتقدم من الروابط.</span>
+            <span data-i18n="alerts_ticker_item3">تحديثات أمنية حرجة متاحة لأنظمة البنية التحتية الافتراضية.</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <article class="alert-card rounded-2xl shadow-lg scroll-reveal clickable" data-sr="slide-up">
+            <div class="alert-severity-bar" aria-hidden="true"></div>
+            <div class="px-5 py-2 bg-red-50 border-b border-alert-red/50 flex justify-between items-center">
+              <span class="font-plexmono text-alert-red text-[11px]">13 نوفمبر 2025</span>
+              <span class="text-[11px] text-white px-2 py-0.5 rounded-full bg-alert-red" data-i18n="alerts_high">عالي الخطورة</span>
+            </div>
+            <div class="p-5">
+              <div class="flex items-center gap-3 mb-2">
+                <svg class="w-8 h-8 text-alert-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M4.938 19h14.124c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.206 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <h3 class="text-sm font-bold text-slate-900" data-i18n="alerts_card1_title">ثغرة حرجة – CVE-2025-1123</h3>
+              </div>
+              <p class="text-xs text-slate-700 mb-3" data-i18n="alerts_card1_body">ثغرة في بروتوكولات TLS قد تسمح بتجاوز المصادقة في بعض منصات الخوادم إذا لم يتم تحديثها فوراً.</p>
+              <div class="flex justify-between items-center">
+                <span class="text-[11px] text-slate-500 flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span data-i18n="alerts_scope_global">النطاق: عالمي</span>
+                </span>
+                <a href="#" class="text-alert-red text-[11px] font-semibold hover:text-slate-900" data-i18n="alerts_details">تفاصيل ←</a>
+              </div>
+            </div>
+          </article>
+          <article class="alert-card rounded-2xl shadow-lg scroll-reveal clickable" data-sr="slide-up">
+            <div class="alert-severity-bar" aria-hidden="true"></div>
+            <div class="px-5 py-2 bg-red-50 border-b border-alert-red/50 flex justify-between items-center">
+              <span class="font-plexmono text-alert-red text-[11px]">12 نوفمبر 2025</span>
+              <span class="text-[11px] text-white px-2 py-0.5 rounded-full bg-alert-red" data-i18n="alerts_high">عالي الخطورة</span>
+            </div>
+            <div class="p-5">
+              <div class="flex items-center gap-3 mb-2">
+                <svg class="w-8 h-8 text-alert-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h3 class="text-sm font-bold text-slate-900" data-i18n="alerts_card2_title">فيروس جديد – ShadowWorm</h3>
+              </div>
+              <p class="text-xs text-slate-700 mb-3" data-i18n="alerts_card2_body">برمجية خبيثة تنتشر عبر البريد الإلكتروني وتستهدف بوابات البريد غير المحدثة بأنظمة ويندوز.</p>
+              <div class="flex justify-between items-center">
+                <span class="text-[11px] text-slate-500 flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span data-i18n="alerts_scope_region">النطاق: أوروبا</span>
+                </span>
+                <a href="#" class="text-alert-red text-[11px] font-semibold hover:text-slate-900" data-i18n="alerts_details">تفاصيل ←</a>
+              </div>
+            </div>
+          </article>
+          <article class="alert-card rounded-2xl shadow-lg scroll-reveal clickable" data-sr="slide-up">
+            <div class="alert-severity-bar" aria-hidden="true"></div>
+            <div class="px-5 py-2 bg-red-50 border-b border-alert-red/50 flex justify-between items-center">
+              <span class="font-plexmono text-alert-red text-[11px]">10 نوفمبر 2025</span>
+              <span class="text-[11px] text-white px-2 py-0.5 rounded-full bg-alert-red" data-i18n="alerts_medium">متوسطة الخطورة</span>
+            </div>
+            <div class="p-5">
+              <div class="flex items-center gap-3 mb-2">
+                <svg class="w-8 h-8 text-alert-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h16v4H4zm0 6h16v4H4zm0 6h10v4H4z" />
+                </svg>
+                <h3 class="text-sm font-bold text-slate-900" data-i18n="alerts_card3_title">هجمات DDoS منسّقة</h3>
+              </div>
+              <p class="text-xs text-slate-700 mb-3" data-i18n="alerts_card3_body">استهداف مراكز بيانات رئيسية في المنطقة بهجمات حجب خدمة واسعة النطاق تم صدّها بنجاح.</p>
+              <div class="flex justify-between items-center">
+                <span class="text-[11px] text-slate-500 flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+                  </svg>
+                  <span data-i18n="alerts_scope_global">النطاق: عالمي</span>
+                </span>
+                <a href="#" class="text-alert-red text-[11px] font-semibold hover:text-slate-900" data-i18n="alerts_details">تفاصيل ←</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="cyber-map-section" class="py-20 scroll-reveal relative scanning-effect" data-sr="glitch" aria-labelledby="map-title">
+      <div class="max-w-6xl mx-auto px-4">
+        <h2 id="map-title" class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4" data-i18n="map_title">
+          خريطة التهديدات السيبرانية في الأردن (شبه لحظية)
+        </h2>
+        <p class="text-center text-slate-600 mb-12 max-w-2xl mx-auto text-sm md:text-base" data-i18n="map_subtitle">
+          متابعة آنية لمحاولات الهجوم وأصولها وأنماطها حول العالم مع إبراز ما يستهدف المملكة وقطاعاتها الحيوية (الحكومة، المالية، الطاقة، الصحة).
+        </p>
+      </div>
+      <div class="map-layout-wrapper px-4">
+        <div class="map-container glass-morphic" id="holo-map-container">
+          <!-- Tilt Wrapper for 3D Effect -->
+          <div class="map-tilt-wrapper">
+            <div id="map-legend">
+              <div class="legend-item">
+                <span class="legend-color red"></span>
+                <span class="text-xs" data-i18n="map_legend_attacks">محاولات هجوم نشطة</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color green"></span>
+                <span class="text-xs" data-i18n="map_legend_defended">هجمات تم صدّها</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color blue"></span>
+                <span class="text-xs" data-i18n="map_legend_flows">حركة مرور مراقَبة</span>
+              </div>
+            </div>
+            <img id="jordan-map-base" src="Jormap2.png" alt="خريطة الأردن - تمثيل أسلوبي للقطاعات الحيوية" />
+            <svg class="map-overlay-svg" viewBox="0 0 800 480" aria-hidden="true">
+              <text x="400" y="90" class="city-label" font-size="12">Gov</text>
+              <text x="520" y="190" class="city-label" font-size="12">Finance</text>
+              <text x="320" y="230" class="city-label" font-size="12">Energy</text>
+              <text x="440" y="310" class="city-label" font-size="12">Health</text>
+              <circle cx="410" cy="210" r="10" class="city-node amman-node"></circle>
+              <text x="410" y="240" class="city-label amman-label" font-size="13">عمّان</text>
+              <circle cx="260" cy="120" r="7" class="city-node"></circle>
+              <text x="300" y="165" class="city-label" font-size="12">إربد</text>
+              <circle cx="520" cy="220" r="7" class="city-node"></circle>
+              <text x="520" y="245" class="city-label" font-size="12">الزرقاء</text>
+              <circle cx="360" cy="340" r="7" class="city-node"></circle>
+              <text x="360" y="365" class="city-label" font-size="12">العقبة</text>
+              <circle cx="260" cy="120" r="8" class="city-node attack-node"></circle>
+              <text x="260" y="145" class="city-label attack-label" font-size="12">تهديد شمالي</text>
+              <circle cx="560" cy="260" r="8" class="city-node attack-node"></circle>
+              <text x="560" y="285" class="city-label attack-label" font-size="12">تهديد إقليمي</text>
+              <circle cx="300" cy="340" r="8" class="city-node attack-node"></circle>
+              <text x="300" y="365" class="city-label attack-label" font-size="12">تهديد جنوبي</text>
+              <path id="beam-irbid" class="defense-beam" d="M260 120 Q330 165 410 210" />
+              <path id="beam-zarqa" class="defense-beam" d="M560 260 Q490 230 410 210" />
+              <path id="beam-aqaba" class="defense-beam" d="M300 340 Q355 280 410 210" />
+            </svg>
+          </div>
+        </div>
+        <aside class="map-panel glass-morphic scroll-reveal" data-sr="slide-left">
+          <h3 class="text-sm font-bold text-slate-900 mb-2" data-i18n="map_panel_title">مركز عمليات التهديدات الوطني</h3>
+          <p class="text-xs text-slate-700" data-i18n="map_panel_body">
+            يتم تحديث هذه الخريطة بأسلوب شبه لحظي بالاعتماد على بيانات حقيقية من الجهات الوطنية والشركاء الدوليين، مع الحفاظ على الخصوصية.
+          </p>
+          <div class="space-y-2 mt-4">
+            <div class="map-stat"><span data-i18n="map_metric1">محاولات هجوم نشطة الآن</span><strong>324</strong></div>
+            <div class="map-stat"><span data-i18n="map_metric2">نسبة الهجمات المستهدِفة للمملكة التي تم صدّها</span><strong>99.3%</strong></div>
+            <div class="map-stat"><span data-i18n="map_metric3">متوسط زمن الاستجابة للحوادث الحرجة</span><strong>7 ثوانٍ</strong></div>
+          </div>
+          <button class="btn-ghost mt-4 w-full clickable text-[13px]" data-i18n="map_cta">عرض لوحة التهديدات المتقدمة</button>
+        </aside>
+      </div>
+    </section>
+
+    <footer class="mt-16 pb-10 pt-8">
+      <div class="footer-cta glass-morphic px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <h3 class="text-sm md:text-base font-bold text-slate-900 mb-1" data-i18n="footer_cta_title">هل تحتاج إلى دعم فوري في حادثة سيبرانية؟</h3>
+          <p class="text-xs md:text-sm text-slate-600" data-i18n="footer_cta_body">فريق الاستجابة الوطني جاهز لمساعدتك في تقييم الحادثة واحتوائها واستعادة الأنظمة بأمان.</p>
+        </div>
+        <button class="btn-primary clickable text-[13px]" data-i18n="nav_contact">تواصل مع فريق الاستجابة</button>
+      </div>
+      <div class="max-w-6xl mx-auto px-6 mt-6 text-center text-[11px] text-slate-500">
+        <p data-i18n="footer_copy">© 2025 المركز الوطني للأمن السيبراني - جميع الحقوق محفوظة.</p>
+      </div>
+    </footer>
+
+    <button id="back-to-top" class="hidden-button" aria-label="العودة إلى أعلى الصفحة">
+      <img src="NCSC_LOGO.png" alt="العودة للأعلى - شعار المركز" />
+    </button>
+
+    <script>
+      /* =========================================================
+         0. INITIAL STATE & CONSTANTS
+         ========================================================= */
+      document.body.classList.add("cybergate-active");
+      const THEME_KEY = "ncsc-theme";
+      const LANG_KEY = "ncsc-lang";
+
+      /* =========================================================
+         1. TRANSLATIONS (AR / EN)
+         ========================================================= */
+      const translations = {
+        ar: {
+          brand_title: "المركز الوطني للأمن السيبراني",
+          brand_title_en: "National Cyber Security Center",
+          nav_home: "الرئيسية",
+          nav_news: "الأخبار",
+          nav_about: "عن المركز",
+          nav_services: "خدماتنا",
+          nav_stats: "الإحصائيات",
+          nav_alerts: "التنبيهات",
+          nav_map: "الخريطة",
+          nav_security: "الأمان:",
+          nav_stream1: "%99.97 حماية فعّالة",
+          nav_stream2: "+ 42 تهديداً موقوفاً/دقيقة",
+          nav_stream3: "لا تنبيهات حرجة غير معالجة",
+          hero_pill: "منصة وطنية متقدمة لرصد التهديدات السيبرانية لحظةً بلحظة",
+          hero_title: "درع المملكة الرقمي لمواجهة تهديدات الفضاء السيبراني",
+          hero_desc: "المركز الوطني للأمن السيبراني في الأردن يقود منظومة حماية وطنية متكاملة، ترصد التهديدات السيبرانية وتستجيب لها لحماية مؤسسات الدولة وقطاع الأعمال والمواطنين.",
+          hero_cta_primary: "ابدأ الحماية الآن",
+          hero_cta_secondary: "اختبر مستوى أمانك (مجاناً)",
+          hero_meta1: "مراقبة مستمرة 24/7/365",
+          hero_meta2: "زمن استجابة أقل من 6 دقائق",
+          hero_holo_line1: "تحليلات آنية لتهديدات الفضاء السيبراني مع ذكاء اصطناعي مخصص للبيئة الوطنية.",
+          hero_holo_line2: "جميع القطاعات الحيوية في حالة حماية معززة • لا حوادث حرجة مفتوحة حالياً.",
+          news_title: "أحدث الأخبار والمستجدات",
+          news_subtitle: "مبادرات وطنية، شراكات دولية، وتشريعات جديدة تعزّز مناعة الفضاء السيبراني في المملكة.",
+          news_badge1: "مستجد",
+          news_badge2: "تعاون",
+          news_badge3: "تشريع",
+          news_card1_title: "إطلاق منصة وطنية لاختبار جاهزية الهجمات السيبرانية",
+          news_card1_body: "إطلاق منصة تتيح للجهات الحكومية والخاصة محاكاة هجمات سيبرانية واختبار جاهزيتها الدفاعية وفق معايير وطنية.",
+          news_card2_title: "مذكرة تفاهم مع مراكز دولية للأمن السيبراني",
+          news_card2_body: "توقيع اتفاقيات تعاون لتبادل الخبرات والإنذارات المبكرة حول أحدث حملات الاختراق العالمية.",
+          news_card3_title: "تحديث الأطر التنظيمية لحماية البنى التحتية الحرجة",
+          news_card3_body: "إصدار تعليمات جديدة تلزم القطاعات الحيوية برفع معايير الحماية والامتثال لأفضل الممارسات العالمية.",
+          news_readmore: "قراءة المزيد →",
+          values_title: 'قيمنا الأساسية: <span class="text-electric-blue">درعك الرقمي</span>',
+          values_subtitle: "ندمج بين التكنولوجيا المتقدمة والجاهزية الوطنية لنمنحك طبقات حماية متكاملة ضد التهديدات السيبرانية.",
+          values_card1_title: "استجابة سريعة للحوادث",
+          values_card1_body: "فرق وطنية متخصصة تعمل على مدار الساعة للاستجابة للحوادث السيبرانية والتخفيف من أثرها بأسرع وقت ممكن.",
+          values_card1_back_line1: "• وقت استجابة أولي أقل من 15 دقيقة",
+          values_card1_back_line2: "• بروتوكولات موحدة مع كل القطاعات",
+          values_card1_back_line3: "• تنسيق مباشر مع غرف العمليات الوطنية",
+          values_card2_title: "حوكمة وتشريعات واضحة",
+          values_card2_body: "أطر تشريعية ومعايير وطنية تضمن اتساق السياسات الأمنية مع أفضل الممارسات العالمية.",
+          values_card2_back_line1: "• مواءمة مع المعايير الدولية (ISO, NIST)",
+          values_card2_back_line2: "• أطر امتثال مخصصة للقطاعات الحساسة",
+          values_card2_back_line3: "• متابعة دورية لقياس النضج الأمني",
+          values_card3_title: "ثقة رقمية للمواطن والمؤسسة",
+          values_card3_body: "بنية تحتية موثوقة تعزز ثقة المواطنين والمؤسسات بالخدمات الرقمية الحكومية والمالية.",
+          values_card3_back_line1: "• حماية المعاملات والخدمات الإلكترونية",
+          values_card3_back_line2: "• حملات توعية وطنية مستمرة",
+          values_card3_back_line3: "• دعم فني وتدريب للجهات الحكومية والقطاع الخاص",
+          services_title: "حلولنا المتكاملة للأمن السيبراني",
+          services_subtitle: "من السياسات والتشريعات إلى إدارة الحوادث والاستجابة للأزمات، نرافق رحلتك في كل طبقات الحماية.",
+          services_card1_title: "مركز عمليات أمنية وطنية (SOC)",
+          services_card1_body: "مراقبة آنية للبنى التحتية الحيوية مع تنبيهات ذكية مبنية على التحليلات السلوكية.",
+          services_card2_title: "إدارة الهوية والوصول",
+          services_card2_body: "أطر تحكم بالوصول متعددة الطبقات تدعم المصادقة القوية وإدارة الامتيازات.",
+          services_card3_title: "تقييم الثغرات والاختبارات الدورية",
+          services_card3_body: "اختبارات اختراق منظمة وتقييم دوري للثغرات وفق أولويات المخاطر الفعلية.",
+          services_card4_title: "التوعية والتدريب السيبراني",
+          services_card4_body: "برامج تدريبية متخصصة للكوادر الفنية والإدارية لرفع الوعي بمخاطر الأمن السيبراني.",
+          stats_title: "إنجازاتنا بالأرقام",
+          stats_subtitle: "مؤشرات حية تعكس حجم الحماية التي نوفرها لقطاعات الحكومة والقطاع الخاص داخل المملكة وخارجها.",
+          stats_card1_title: "هجمة تم إيقافها",
+          stats_card2_title: "تهديد جديد مكتشف (شهرياً)",
+          stats_card3_title: "دولة مغطاة بالخدمة",
+          alerts_title: "أحدث التنبيهات الأمنية",
+          alerts_subtitle: "مراقبة حية لأخطر الثغرات والهجمات، مع توصيات استجابة فورية وقابلة للتطبيق في بيئة عملك.",
+          alerts_marquee_label: "تنبيه فوري",
+          alerts_ticker_item1: "CVE-2025-1123 – ثغرة حرجة في بروتوكولات TLS قيد الاستغلال.",
+          alerts_ticker_item2: "حملة تصيّد موجهة تستهدف البريد الحكومي – يُنصح بالتحقق المتقدم من الروابط.",
+          alerts_ticker_item3: "تحديثات أمنية حرجة متاحة لأنظمة البنية التحتية الافتراضية.",
+          alerts_high: "عالي الخطورة",
+          alerts_medium: "متوسطة الخطورة",
+          alerts_scope_global: "النطاق: عالمي",
+          alerts_scope_region: "النطاق: أوروبا",
+          alerts_details: "تفاصيل ←",
+          map_title: "خريطة التهديدات السيبرانية في الأردن (شبه لحظية)",
+          map_subtitle: "متابعة آنية لمحاولات الهجوم وأصولها وأنماطها حول العالم مع إبراز ما يستهدف المملكة وقطاعاتها الحيوية (الحكومة، المالية، الطاقة، الصحة).",
+          map_legend_attacks: "محاولات هجوم نشطة",
+          map_legend_defended: "هجمات تم صدّها",
+          map_legend_flows: "حركة مرور مراقَبة",
+          map_panel_title: "مركز عمليات التهديدات الوطني",
+          map_panel_body: "يتم تحديث هذه الخريطة بأسلوب شبه لحظي بالاعتماد على بيانات حقيقية من الجهات الوطنية والشركاء الدوليين، مع الحفاظ على الخصوصية.",
+          map_metric1: "محاولات هجوم نشطة الآن",
+          map_metric2: "نسبة الهجمات المستهدِفة للمملكة التي تم صدّها",
+          map_metric3: "متوسط زمن الاستجابة للحوادث الحرجة",
+          map_cta: "عرض لوحة التهديدات المتقدمة",
+          footer_cta_title: "هل تحتاج إلى دعم فوري في حادثة سيبرانية؟",
+          footer_cta_body: "فريق الاستجابة الوطني جاهز لمساعدتك في تقييم الحادثة واحتوائها واستعادة الأنظمة بأمان.",
+          nav_contact: "تواصل مع فريق الاستجابة",
+          footer_copy: "© 2025 المركز الوطني للأمن السيبراني - جميع الحقوق محفوظة."
+        },
+        en: {
+          brand_title: "National Cyber Security Center",
+          brand_title_en: "National Cyber Security Center",
+          nav_home: "Home",
+          nav_news: "News",
+          nav_about: "About",
+          nav_services: "Services",
+          nav_stats: "Statistics",
+          nav_alerts: "Alerts",
+          nav_map: "Cyber Map",
+          nav_security: "Security:",
+          nav_stream1: "99.97% Effective Protection",
+          nav_stream2: "+42 Threats Blocked / minute",
+          nav_stream3: "No critical unresolved alerts",
+          hero_pill: "National advanced platform for real-time cyber threat monitoring.",
+          hero_title: "The Kingdom’s Digital Shield Against Cyber Space Threats",
+          hero_desc: "The National Cyber Security Center in Jordan leads an integrated national defense ecosystem that detects and responds to cyber threats to protect government entities, businesses, and citizens.",
+          hero_cta_primary: "Start Protection Now",
+          hero_cta_secondary: "Test Your Security Level (Free)",
+          hero_meta1: "24/7/365 Continuous Monitoring",
+          hero_meta2: "Response time under 6 minutes",
+          hero_holo_line1: "Real-time cyber threat analytics powered by AI tuned to the national environment.",
+          hero_holo_line2: "All critical sectors are under enhanced protection • No open critical incidents at the moment.",
+          news_title: "Latest Cyber News & Updates",
+          news_subtitle: "National initiatives, international partnerships, and new regulations that strengthen Jordan’s cyber resilience.",
+          news_badge1: "Update",
+          news_badge2: "Partnership",
+          news_badge3: "Regulation",
+          news_card1_title: "Launching a National Cyber Attack Readiness Testing Platform",
+          news_card1_body: "A new platform that allows public and private entities to simulate cyber attacks and test their defensive readiness against national standards.",
+          news_card2_title: "MoU Signed with International Cyber Security Centers",
+          news_card2_body: "Cooperation agreements to exchange expertise and early warnings about the latest global attack campaigns.",
+          news_card3_title: "Updated Regulatory Frameworks for Critical Infrastructure Protection",
+          news_card3_body: "New guidelines that require critical sectors to raise security standards and comply with global best practices.",
+          news_readmore: "Read more →",
+          values_title: 'Our Core Values: <span class="text-electric-blue">Your Digital Shield</span>',
+          values_subtitle: "We combine advanced technology with national readiness to deliver multi-layer protection against cyber threats.",
+          values_card1_title: "Rapid Incident Response",
+          values_card1_body: "Specialized national teams working around the clock to respond to cyber incidents and minimize their impact.",
+          values_card1_back_line1: "• Initial response time under 15 minutes",
+          values_card1_back_line2: "• Unified playbooks across all sectors",
+          values_card1_back_line3: "• Direct coordination with national command centers",
+          values_card2_title: "Clear Governance & Regulations",
+          values_card2_body: "Regulatory frameworks and national standards that align security policies with global best practices.",
+          values_card2_back_line1: "• Aligned with ISO & NIST standards",
+          values_card2_back_line2: "• Tailored compliance for critical sectors",
+          values_card2_back_line3: "• Periodic assessments of cyber maturity",
+          values_card3_title: "Digital Trust for Citizens & Organizations",
+          values_card3_body: "A trusted digital infrastructure that enhances confidence in governmental and financial digital services.",
+          values_card3_back_line1: "• Protection for online services & transactions",
+          values_card3_back_line2: "• Ongoing nationwide awareness campaigns",
+          values_card3_back_line3: "• Technical support & training for public and private sectors",
+          services_title: "Our Integrated Cyber Security Solutions",
+          services_subtitle: "From policies and regulation to incident management and crisis response, we support you across every protection layer.",
+          services_card1_title: "National Security Operations Center (SOC)",
+          services_card1_body: "Real-time monitoring of critical infrastructure with smart, behavior-based alerts.",
+          services_card2_title: "Identity & Access Management",
+          services_card2_body: "Multi-layer access control frameworks supporting strong authentication and privilege management.",
+          services_card3_title: "Vulnerability Assessment & Testing",
+          services_card3_body: "Structured penetration testing and periodic vulnerability assessments prioritized by real risk.",
+          services_card4_title: "Cyber Awareness & Training",
+          services_card4_body: "Specialized training programs for technical and administrative staff to raise cyber security awareness.",
+          stats_title: "Our Impact in Numbers",
+          stats_subtitle: "Live indicators reflecting the scale of protection we provide to government and private sectors inside and outside the Kingdom.",
+          stats_card1_title: "Attacks Blocked",
+          stats_card2_title: "New Threats Detected Monthly",
+          stats_card3_title: "Countries Covered by Our Services",
+          alerts_title: "Latest Security Alerts",
+          alerts_subtitle: "Live monitoring of critical vulnerabilities and attacks, with instant, actionable response recommendations.",
+          alerts_marquee_label: "Instant Alert",
+          alerts_ticker_item1: "CVE-2025-1123 – Critical TLS protocol vulnerability currently under active exploitation.",
+          alerts_ticker_item2: "Targeted phishing campaign against government mail systems – advanced link validation recommended.",
+          alerts_ticker_item3: "Critical security updates available for virtual infrastructure platforms.",
+          alerts_high: "High Severity",
+          alerts_medium: "Medium Severity",
+          alerts_scope_global: "Scope: Global",
+          alerts_scope_region: "Scope: Europe",
+          alerts_details: "Details ←",
+          map_title: "Cyber Threat Map of Jordan (Near Real-Time)",
+          map_subtitle: "Live view of attack attempts, origins, and patterns worldwide, highlighting targeting of the Kingdom’s critical sectors (government, finance, energy, health).",
+          map_legend_attacks: "Active Attack Attempts",
+          map_legend_defended: "Blocked Attacks",
+          map_legend_flows: "Monitored Traffic Flows",
+          map_panel_title: "National Threat Operations Center",
+          map_panel_body: "This map is updated in near real-time based on trusted data from national entities and international partners, while preserving privacy.",
+          map_metric1: "Active attack attempts now",
+          map_metric2: "Blocked attacks targeting the Kingdom",
+          map_metric3: "Average response time for critical incidents",
+          map_cta: "Open Advanced Threat Dashboard",
+          footer_cta_title: "Need Immediate Support for a Cyber Incident?",
+          footer_cta_body: "The national incident response team is ready to help you assess, contain, and safely recover your systems.",
+          nav_contact: "Contact the Response Team",
+          footer_copy: "© 2025 National Cyber Security Center – All rights reserved."
+        }
+      };
+
+      /* =========================================================
+         2. UTILITY FUNCTIONS
+         ========================================================= */
+      function prefersReducedMotion() {
+        return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      }
+
+      /* =========================================================
+         3. LOADING SCREEN (Cybergate Logic)
+         ========================================================= */
+      let heroStarted = false;
+
+      function startHeroSequence() {
+        if (heroStarted) return;
+        heroStarted = true;
+        const pill = document.getElementById("hero-pill");
+        const titleWrapper = document.getElementById("hero-title-wrapper");
+        const title = document.getElementById("hero-title");
+        const desc = document.getElementById("hero-description");
+        const buttons = document.getElementById("hero-buttons");
+        const holo = document.getElementById("hero-hologram");
+
+        if (pill) { pill.style.opacity = 1; pill.style.transform = "translateY(0)"; }
+        if (titleWrapper) { titleWrapper.style.opacity = 1; titleWrapper.style.transform = "translateY(0)"; }
+        if (title) title.classList.add("glitch-active");
+        if (desc) { desc.style.opacity = 1; desc.style.transform = "translateY(0)"; }
+        if (buttons) { buttons.style.opacity = 1; buttons.style.transform = "translateY(0)"; }
+        if (holo) holo.classList.add("holo-materialized");
+      }
+
+      function initCybergate(reducedMotion) {
+        const overlay = document.getElementById("cybergate-overlay");
+        if (!overlay) {
+          document.body.classList.remove("cybergate-active");
+          startHeroSequence();
+          return;
+        }
+        document.body.classList.add("cybergate-active");
+        if (reducedMotion) {
+          overlay.style.display = "none";
+          document.body.classList.remove("cybergate-active");
+          startHeroSequence();
+          return;
+        }
+        requestAnimationFrame(() => { overlay.classList.add("cybergate-start"); });
+        setTimeout(() => { overlay.style.opacity = "0"; }, 1400);
+        setTimeout(() => {
+          overlay.style.display = "none";
+          document.body.classList.remove("cybergate-active");
+          document.body.classList.add("cybergate-reveal");
+          startHeroSequence();
+        }, 2000);
+      }
+
+      /* =========================================================
+         4. SECTION LOGIC: STATS
+         ========================================================= */
+      function initStats(reducedMotion) {
+        const stats = document.querySelectorAll(".hud-ring");
+        stats.forEach((ring) => {
+          const targetEl = ring.querySelector(".live-counter");
+          const target = Number(targetEl.dataset.target);
+          let current = 0;
+          const duration = 1800;
+          const step = target / (duration / 16);
+          function animate() {
+            current += step;
+            if (current >= target) current = target;
+            targetEl.textContent = Math.floor(current).toLocaleString();
+            const progressDeg = (current / target) * 360;
+            ring.style.setProperty("--progress", progressDeg);
+            if (current < target) requestAnimationFrame(animate);
+          }
+          animate();
+        });
+      }
+
+      /* =========================================================
+         5. SECTION LOGIC: ALERTS
+         ========================================================= */
+      function initAlertTicker(reducedMotion) {
+        const ticker = document.querySelector(".alert-ticker");
+        if (!ticker) return;
+        if (!ticker.dataset.cloned) {
+          ticker.innerHTML = ticker.innerHTML + ticker.innerHTML;
+          ticker.dataset.cloned = "true";
+        }
+        if (reducedMotion) ticker.style.animationPlayState = "paused";
+      }
+
+      /* =========================================================
+         6. UI: THEME & LANGUAGE TOGGLES
+         ========================================================= */
+      function applyTheme(theme) {
+        document.body.classList.toggle("dark-mode", theme === "dark");
+        document.documentElement.dataset.theme = theme;
+        localStorage.setItem(THEME_KEY, theme);
+      }
+
+      function initThemeToggle() {
+        const btn = document.querySelector("[data-theme-toggle]");
+        if (!btn) return;
+        const saved = localStorage.getItem(THEME_KEY) || "light";
+        applyTheme(saved);
+        btn.addEventListener("click", () => {
+          const current = localStorage.getItem(THEME_KEY) || "light";
+          applyTheme(current === "light" ? "dark" : "light");
+        });
+      }
+
+      function applyLanguage(lang) {
+        const isArabic = lang === "ar";
+        const dict = translations[lang];
+        if (!dict) return;
+        document.documentElement.lang = isArabic ? "ar" : "en";
+        document.documentElement.dir = isArabic ? "rtl" : "ltr";
+        Object.entries(dict).forEach(([key, text]) => {
+          document.querySelectorAll('[data-i18n="' + key + '"]').forEach((el) => (el.innerHTML = text));
+        });
+        const hero = document.getElementById("hero-title");
+        if (hero && dict.hero_title) {
+          hero.setAttribute("data-glitch", dict.hero_title);
+        }
+        const toggle = document.getElementById("language-toggle");
+        const label = document.querySelector("[data-lang-toggle-label]");
+        if (toggle) toggle.classList.toggle("lang-en-active", !isArabic);
+        if (label) label.textContent = isArabic ? "عربي" : "EN";
+        localStorage.setItem(LANG_KEY, lang);
+      }
+
+      function initLanguageToggle() {
+        const btn = document.getElementById("language-toggle");
+        if (!btn) return;
+        const saved = localStorage.getItem(LANG_KEY) || "ar";
+        applyLanguage(saved);
+        btn.addEventListener("click", () => {
+          const current = localStorage.getItem(LANG_KEY) || "ar";
+          applyLanguage(current === "ar" ? "en" : "ar");
+        });
+      }
+
+      /* =========================================================
+         7. UI: NAVIGATION & INTERACTION
+         ========================================================= */
+      function initMobileMenu() {
+        const btn = document.getElementById("mobile-menu-btn");
+        const panel = document.getElementById("mobile-menu");
+        if (!btn || !panel) return;
+        btn.addEventListener("click", () => panel.classList.toggle("hidden"));
+      }
+
+      function initBackToTop() {
+        const btn = document.getElementById("back-to-top");
+        const hero = document.getElementById("hero");
+        if (!btn || !hero) return;
+        function check() {
+          const rect = hero.getBoundingClientRect();
+          if (rect.bottom < -50) btn.classList.remove("hidden-button");
+          else btn.classList.add("hidden-button");
+        }
+        window.addEventListener("scroll", check);
+        check();
+        btn.addEventListener("click", () => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      }
+
+      /* =========================================================
+         8. VISUAL EFFECTS (Scroll & Particles)
+         ========================================================= */
+      function initScrollReveal() {
+        const items = document.querySelectorAll(".scroll-reveal");
+        if (!items.length) return;
+        const observer = new IntersectionObserver(
+          (entries, o) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add("is-visible");
+              o.unobserve(entry.target);
+            });
+          },
+          { threshold: 0.2 }
+        );
+        items.forEach((el) => observer.observe(el));
+      }
+
+      function initAmbientGlow() {
+        const sections = document.querySelectorAll("section");
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (!e.isIntersecting) return;
+              const id = e.target.id;
+              let color = "rgba(0,191,255,0.18)";
+              if (id === "alerts") color = "rgba(255,56,100,0.18)";
+              if (id === "cyber-map-section") color = "rgba(57,255,20,0.2)";
+              if (id === "services" || id === "news") color = "rgba(148,163,184,0.13)";
+              document.documentElement.style.setProperty("--ambient-glow-color", color);
+            });
+          },
+          { threshold: 0.35 }
+        );
+        sections.forEach((s) => observer.observe(s));
+      }
+
+      function initClickParticles(reducedMotion) {
+        if (reducedMotion) return;
+        document.addEventListener("click", (e) => {
+          const target = e.target.closest(".clickable");
+          if (!target) return;
+          for (let i = 0; i < 6; i++) {
+            const p = document.createElement("div");
+            p.className = "click-particle";
+            const angle = (Math.PI * 2 * i) / 6;
+            p.style.setProperty("--dx", `${Math.cos(angle) * 16}px`);
+            p.style.setProperty("--dy", `${Math.sin(angle) * 16}px`);
+            p.style.left = e.clientX + "px";
+            p.style.top = e.clientY + "px";
+            document.body.appendChild(p);
+            p.addEventListener("animationend", () => p.remove());
+          }
+        });
+      }
+
+      /* =========================================================
+         إضافات الوظائف الجديدة (New Functions)
+         ========================================================= */
+
+      /* 1. رسم الخلفية التفاعلية */
+      function initParticles() {
+        const canvas = document.getElementById('interactive-bg');
+        if(!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let mouse = { x: null, y: null };
+
+        function resize() {
+          width = canvas.width = window.innerWidth;
+          height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        window.addEventListener('mousemove', (e) => {
+          mouse.x = e.clientX;
+          mouse.y = e.clientY;
+        });
+
+        const particles = [];
+        const spacing = 70; // المسافة بين النقاط
+
+        for (let x = 0; x < window.innerWidth; x += spacing) {
+          for (let y = 0; y < window.innerHeight; y += spacing) {
+            particles.push({ x, y, originX: x, originY: y, alpha: 0.1 });
+          }
+        }
+
+        function animate() {
+          ctx.clearRect(0, 0, width, height);
+          particles.forEach(p => {
+            const dx = mouse.x - p.x;
+            const dy = mouse.y - p.y;
+            const distance = Math.sqrt(dx*dx + dy*dy);
+            const maxDist = 150;
+
+            if (distance < maxDist) {
+              p.alpha = 0.6 - (distance / maxDist) * 0.6;
+              p.x = p.originX - (dx * 0.05); // حركة بسيطة عند الاقتراب
+              p.y = p.originY - (dy * 0.05);
+            } else {
+              p.alpha = 0.05;
+              p.x = p.originX;
+              p.y = p.originY;
+            }
+            
+            ctx.fillStyle = `rgba(0, 191, 255, ${p.alpha})`;
+            ctx.fillRect(p.x, p.y, 2, 2);
+          });
+          requestAnimationFrame(animate);
+        }
+        animate();
+      }
+
+      /* 2. خريطة 3D التفاعلية */
+      function init3DMap() {
+        const container = document.getElementById('holo-map-container');
+        if (!container) return;
+        const wrapper = container.querySelector('.map-tilt-wrapper');
+
+        container.addEventListener('mousemove', (e) => {
+          const rect = container.getBoundingClientRect();
+          const x = e.clientX - rect.left; 
+          const y = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+
+          // حساب الميلان (بحد أقصى 10 درجات)
+          const rotateX = ((y - centerY) / centerY) * -10; 
+          const rotateY = ((x - centerX) / centerX) * 10;
+
+          wrapper.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+        });
+
+        container.addEventListener('mouseleave', () => {
+          wrapper.style.transform = `rotateX(0deg) rotateY(0deg) scale(1)`;
+        });
+      }
+
+      /* 3. شريط الأخبار الذكي */
+      function initStickyTicker() {
+        const ticker = document.querySelector('.alert-marquee-bar');
+        if(!ticker) return;
+        
+        // نفترض وجود تنبيه خطر (يمكن ربطه بـ API لاحقاً)
+        const isCritical = true; 
+
+        window.addEventListener('scroll', () => {
+          if (!isCritical) return;
+          if (window.scrollY > 400) {
+            ticker.classList.add('is-sticky');
+          } else {
+            ticker.classList.remove('is-sticky');
+          }
+        });
+      }
+
+      /* 4. مركز القيادة (Command Palette) */
+      function initCommandPalette() {
+        const palette = document.getElementById('command-palette');
+        const input = document.getElementById('cmd-input');
+        const items = document.querySelectorAll('.cmd-item');
+
+        document.addEventListener('keydown', (e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            palette.classList.toggle('open');
+            if (palette.classList.contains('open')) input.focus();
+          }
+          if (e.key === 'Escape') palette.classList.remove('open');
+        });
+
+        palette.addEventListener('click', (e) => {
+          if(e.target === palette) palette.classList.remove('open');
+        });
+
+        items.forEach(item => {
+          item.addEventListener('click', () => {
+            const link = item.dataset.link;
+            if(link) window.location.href = link;
+            palette.classList.remove('open');
+          });
+        });
+      }
+
+      /* =========================================================
+         9. MAIN INITIALIZATION
+         ========================================================= */
+      document.addEventListener("DOMContentLoaded", () => {
+        const reduced = prefersReducedMotion();
+        initCybergate(reduced);
+        initStats(reduced);
+        initAlertTicker(reduced);
+        initMobileMenu();
+        initThemeToggle();
+        initLanguageToggle();
+        initScrollReveal();
+        initAmbientGlow();
+        initClickParticles(reduced);
+        initBackToTop();
+        
+        // === استدعاء الدوال الجديدة ===
+        initParticles();      // الخلفية
+        init3DMap();          // الخريطة
+        //initStickyTicker();   // الشريط اللاصق
+        initCommandPalette(); // البحث السريع
+      });
+    </script>
+  </body>
+</html>
