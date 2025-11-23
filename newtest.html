@@ -754,7 +754,7 @@
       }
       .value-back::before {
         content: ""; position: absolute; inset: 0;
-        background-image: url('NCSC_LOGO.png'); background-size: 60%;
+        background-image: url('ncsc_logo.png'); background-size: 60%;
         background-position: center; background-repeat: no-repeat; opacity: 0.2; pointer-events: none;
       }
 
@@ -986,6 +986,317 @@
         100% { opacity: 0.6; transform: translateX(0); }
       }
 
+      
+
+/* ===================== */
+/* Cyber Map – Layout    */
+/* ===================== */
+
+#cyber-map-section .map-layout-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+#cyber-map-section .map-container {
+  max-width: 900px;
+  position: relative;
+  padding: 0 20px;
+  border-radius: 16px;
+  box-shadow: 0 0 40px rgba(0, 191, 255, 0.12);
+  overflow: hidden;
+}
+
+/* مفتاح الخارطة (الليجند) */
+#map-legend {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: var(--glass-bg);
+  border: 1px solid rgba(0, 191, 255, 0.35);
+  border-right: 4px solid #00bfff;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 0.8rem;
+  z-index: 10;
+  box-shadow: 0 0 14px rgba(0, 191, 255, 0.35);
+}
+
+.light-mode #map-legend {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+#map-legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  color: var(--text-color);
+}
+
+#map-legend .legend-item:last-child {
+  margin-bottom: 0;
+}
+
+.legend-color {
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+.legend-color.red {
+  background-color: #ff3864;
+  box-shadow: 0 0 10px #ff3864;
+}
+
+.legend-color.green {
+  background-color: #39ff14;
+  box-shadow: 0 0 10px #39ff14;
+}
+
+.legend-color.blue {
+  background-color: #00bfff;
+  box-shadow: 0 0 10px #00bfff;
+}
+
+/* ===================== */
+/* Cyber Map – Image     */
+/* ===================== */
+
+#jordan-map-base {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: auto;
+  transform: translate(-50%, -50%);
+  opacity: 0.85;
+  filter: drop-shadow(0 0 16px rgba(0, 255, 127, 0.6));
+  z-index: 1;
+
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(0, 0, 0, 0.8) 15%,
+    rgba(0, 0, 0, 1) 30%,
+    rgba(0, 0, 0, 1) 70%,
+    rgba(0, 0, 0, 0.8) 85%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(0, 0, 0, 0.8) 15%,
+    rgba(0, 0, 0, 1) 30%,
+    rgba(0, 0, 0, 1) 70%,
+    rgba(0, 0, 0, 0.8) 85%,
+    transparent 100%
+  );
+}
+
+.map-overlay-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 480px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ===================== */
+/* Cyber Map – Nodes & Beams */
+/* ===================== */
+
+.city-node {
+  fill: #ff3864;
+  stroke: #ff3864;
+  stroke-width: 1;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.city-node:hover {
+  r: 11px;
+  filter: drop-shadow(0 0 10px #ff3864);
+}
+
+.city-label {
+  font-family: "Changa", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  fill: #e5e7eb;
+  text-anchor: middle;
+  pointer-events: none;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+}
+
+.light-mode .city-label {
+  fill: #111827;
+}
+
+/* عمّان – مركز الدفاع */
+.amman-node {
+  fill: #39ff14;
+  stroke: #ffffff;
+  stroke-width: 3;
+  animation: pulseGreen 2s infinite;
+}
+
+.amman-label {
+  fill: #39ff14;
+  font-size: 18px;
+  font-weight: 800;
+  text-shadow: 0 0 14px #39ff14;
+}
+
+/* نقاط الهجوم */
+.attack-node {
+  animation: pulseRed 1.5s infinite;
+}
+
+.attack-label {
+  fill: #ff3864;
+  text-shadow: 0 0 10px #ff3864;
+}
+
+/* خطوط الدفاع */
+.defense-beam {
+  stroke: #39ff14;
+  stroke-width: 5;
+  stroke-linecap: round;
+  fill: none;
+  opacity: 0;
+  filter: drop-shadow(0 0 10px #39ff14)
+    drop-shadow(0 0 28px rgba(57, 255, 20, 0.7));
+  animation: cometBeam 2.4s linear infinite;
+}
+
+/* نبض عمّان */
+@keyframes pulseGreen {
+  0% {
+    r: 10px;
+    opacity: 1;
+    filter: drop-shadow(0 0 8px #39ff14);
+  }
+  50% {
+    r: 14px;
+    opacity: 0.85;
+    filter: drop-shadow(0 0 22px #39ff14);
+  }
+  100% {
+    r: 10px;
+    opacity: 1;
+    filter: drop-shadow(0 0 8px #39ff14);
+  }
+}
+
+/* نبض نقاط الهجوم */
+@keyframes pulseRed {
+  0% {
+    r: 8px;
+    opacity: 1;
+    filter: drop-shadow(0 0 6px #ff3864);
+  }
+  50% {
+    r: 12px;
+    opacity: 0.7;
+    filter: drop-shadow(0 0 16px #ff3864);
+  }
+  100% {
+    r: 8px;
+    opacity: 1;
+    filter: drop-shadow(0 0 6px #ff3864);
+  }
+}
+
+/* حركة الشهب الخضراء */
+@keyframes cometBeam {
+  0% {
+    stroke-dasharray: 0 500;
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  70% {
+    stroke-dasharray: 500 0;
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dasharray: 500 0;
+    stroke-dashoffset: -500;
+    opacity: 0;
+  }
+}
+
+/* اختلاف التوقيت لكل شعاع */
+#beam-irbid {
+  animation-delay: 0.1s;
+  animation-duration: 2.2s;
+}
+#beam-zarqa {
+  animation-delay: 0.5s;
+  animation-duration: 2.5s;
+}
+#beam-mafraq {
+  animation-delay: 1s;
+  animation-duration: 2.8s;
+}
+#beam-tafila {
+  animation-delay: 1.5s;
+  animation-duration: 2.3s;
+}
+#beam-aqaba {
+  animation-delay: 2s;
+  animation-duration: 3s;
+}
+
+/* كروت الإحصائيات فوق الخارطة */
+#cyber-map-section .stat-card {
+  background: var(--glass-bg);
+  border-radius: 16px;
+  border: 1px solid rgba(0, 191, 255, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.light-mode #cyber-map-section .stat-card {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+#cyber-map-section .stat-card.attacks {
+  border-color: rgba(255, 56, 100, 0.85);
+  box-shadow: 0 0 18px rgba(255, 56, 100, 0.4);
+}
+
+#cyber-map-section .stat-card.defenses {
+  border-color: rgba(57, 255, 20, 0.85);
+  box-shadow: 0 0 18px rgba(57, 255, 20, 0.4);
+}
+
+#cyber-map-section .stat-card.average {
+  border-color: rgba(0, 191, 255, 0.9);
+  box-shadow: 0 0 18px rgba(0, 191, 255, 0.45);
+}
+
+#cyber-map-section .stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+#cyber-map-section .stat-label {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
       /* =========================================
          12. FOOTER & BACK TO TOP
          ========================================= */
@@ -1077,6 +1388,8 @@
       /* جعل العناصر تبرز للخارج */
       .map-tilt-wrapper .map-overlay-svg {
         transform: translateZ(40px);
+margin-right: -7%;
+    PADDING-BOTTOM: 12%;
       }
 
       /* 4. شريط الأخبار اللاصق (Sticky Ticker) */
@@ -1270,7 +1583,7 @@
             منصة وطنية متقدمة لرصد التهديدات السيبرانية لحظةً بلحظة
           </div>
           <div id="hero-title-wrapper" class="hero-title-wrapper cyber-corners">
-            <h1 id="hero-title" class="hero-title cyber-glitch-text" data-glitch="درع المملكة الرقمي لمواجهة تهديدات الفضاء السيبراني" data-i18n="hero_title">
+            <h1 id="hero-title" class="hero-title cyber" data-glitch="درع المملكة الرقمي لمواجهة تهديدات الفضاء السيبراني" data-i18n="hero_title">
               درع المملكة الرقمي لمواجهة تهديدات الفضاء السيبراني
             </h1>
           </div>
@@ -1425,41 +1738,37 @@
       </div>
     </section>
 
-    <section id="services" class="py-20 scroll-reveal bg-white scanning-effect" data-sr="slide-left" aria-labelledby="services-title">
+    <section id="services" class="py-20 scroll-reveal bg-white scanning-effect is-visible" data-sr="slide-left" aria-labelledby="services-title">
       <div class="max-w-6xl mx-auto px-4">
-        <h2 id="services-title" class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4" data-i18n="services_title">
-          حلولنا المتكاملة للأمن السيبراني
-        </h2>
-        <p class="text-center text-slate-600 mb-14 max-w-2xl mx-auto text-sm md:text-base" data-i18n="services_subtitle">
-          من السياسات والتشريعات إلى إدارة الحوادث والاستجابة للأزمات، نرافق رحلتك في كل طبقات الحماية.
-        </p>
+        <h2 id="services-title" class="text-3xl md:text-4xl font-bold text-center text-slate-900 mb-4" data-i18n="services_title">حلولنا المتكاملة للأمن السيبراني</h2>
+        <p class="text-center text-slate-600 mb-14 max-w-2xl mx-auto text-sm md:text-base" data-i18n="services_subtitle">من السياسات والتشريعات إلى إدارة الحوادث والاستجابة للأزمات، نرافق رحلتك في كل طبقات الحماية.</p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-7">
-          <div class="service-card scroll-reveal" data-sr="slide-up">
+          <div class="service-card scroll-reveal is-visible" data-sr="slide-up">
             <div class="service-inner">
               <div class="service-icon"><img src="soc.png" alt="icon"></div>
-              <h3 class="service-title" data-i18n="services_card1_title">مركز عمليات أمنية وطنية (SOC)</h3>
-              <p class="service-text" data-i18n="services_card1_body">مراقبة آنية للبنى التحتية...</p>
+              <h3 class="text-lg font-bold text-slate-900 mb-2" data-i18n="services_card1_title">مركز عمليات أمنية وطنية (SOC)</h3>
+              <p class="text-xs text-slate-700 mb-3" data-i18n="services_card1_body">مراقبة آنية للبنى التحتية الحيوية مع تنبيهات ذكية مبنية على التحليلات السلوكية.</p>
             </div>
           </div>
-          <div class="service-card scroll-reveal" data-sr="slide-up">
+          <div class="service-card scroll-reveal is-visible" data-sr="slide-up">
             <div class="service-inner">
               <div class="service-icon"><img src="icons/soc.svg" alt="icon"></div>
-              <h3 class="service-title" data-i18n="services_card2_title">إدارة الهوية والوصول</h3>
-              <p class="service-text" data-i18n="services_card2_body">أطر تحكم بالوصول متعددة الطبقات تدعم المصادقة القوية وإدارة الامتيازات.</p>
+              <h3 class="text-lg font-bold text-slate-900 mb-2" data-i18n="services_card2_title">إدارة الهوية والوصول</h3>
+              <p class="text-xs text-slate-700 mb-3" data-i18n="services_card2_body">أطر تحكم بالوصول متعددة الطبقات تدعم المصادقة القوية وإدارة الامتيازات.</p>
             </div>
           </div>
-          <div class="service-card scroll-reveal" data-sr="slide-up">
+          <div class="service-card scroll-reveal is-visible" data-sr="slide-up">
             <div class="service-inner">
               <div class="service-icon"><img src="icons/soc.svg" alt="icon"></div>
-              <h3 class="service-title" data-i18n="services_card3_title">تقييم الثغرات والاختبارات الدورية</h3>
-              <p class="service-text" data-i18n="services_card3_body">اختبارات اختراق منظمة وتقييم دوري للثغرات وفق أولويات المخاطر الفعلية.</p>
+              <h3 class="text-lg font-bold text-slate-900 mb-2" data-i18n="services_card3_title">تقييم الثغرات والاختبارات الدورية</h3>
+              <p class="text-xs text-slate-700 mb-3" data-i18n="services_card3_body">اختبارات اختراق منظمة وتقييم دوري للثغرات وفق أولويات المخاطر الفعلية.</p>
             </div>
           </div>
-          <div class="service-card scroll-reveal" data-sr="slide-up">
+          <div class="service-card scroll-reveal is-visible" data-sr="slide-up">
             <div class="service-inner">
               <div class="service-icon"><img src="icons/soc.svg" alt="icon"></div>
-              <h3 class="service-title" data-i18n="services_card4_title">التوعية و التدريب السيبراني</h3>
-              <p class="service-text" data-i18n="services_card4_body">برامج تدريبية متخصصة للكوادر الفنية والإدارية لرفع الوعي بمخاطر الأمن السيبراني.</p>
+              <h3 class="text-lg font-bold text-slate-900 mb-2" data-i18n="services_card4_title">التوعية والتدريب السيبراني</h3>
+              <p class="text-xs text-slate-700 mb-3" data-i18n="services_card4_body">برامج تدريبية متخصصة للكوادر الفنية والإدارية لرفع الوعي بمخاطر الأمن السيبراني.</p>
             </div>
           </div>
         </div>
@@ -1638,30 +1947,143 @@
                 <span class="text-xs" data-i18n="map_legend_flows">حركة مرور مراقَبة</span>
               </div>
             </div>
-            <img id="jordan-map-base" src="jormap2.png" alt="خريطة الأردن - تمثيل أسلوبي للقطاعات الحيوية" />
-            <svg class="map-overlay-svg" viewBox="0 0 800 480" aria-hidden="true">
-              <text x="400" y="90" class="city-label" font-size="12">Gov</text>
-              <text x="520" y="190" class="city-label" font-size="12">Finance</text>
-              <text x="320" y="230" class="city-label" font-size="12">Energy</text>
-              <text x="440" y="310" class="city-label" font-size="12">Health</text>
-              <circle cx="410" cy="210" r="10" class="city-node amman-node"></circle>
-              <text x="410" y="240" class="city-label amman-label" font-size="13">عمّان</text>
-              <circle cx="260" cy="120" r="7" class="city-node"></circle>
-              <text x="300" y="165" class="city-label" font-size="12">إربد</text>
-              <circle cx="520" cy="220" r="7" class="city-node"></circle>
-              <text x="520" y="245" class="city-label" font-size="12">الزرقاء</text>
-              <circle cx="360" cy="340" r="7" class="city-node"></circle>
-              <text x="360" y="365" class="city-label" font-size="12">العقبة</text>
-              <circle cx="260" cy="120" r="8" class="city-node attack-node"></circle>
-              <text x="260" y="145" class="city-label attack-label" font-size="12">تهديد شمالي</text>
-              <circle cx="560" cy="260" r="8" class="city-node attack-node"></circle>
-              <text x="560" y="285" class="city-label attack-label" font-size="12">تهديد إقليمي</text>
-              <circle cx="300" cy="340" r="8" class="city-node attack-node"></circle>
-              <text x="300" y="365" class="city-label attack-label" font-size="12">تهديد جنوبي</text>
-              <path id="beam-irbid" class="defense-beam" d="M260 120 Q330 165 410 210" />
-              <path id="beam-zarqa" class="defense-beam" d="M560 260 Q490 230 410 210" />
-              <path id="beam-aqaba" class="defense-beam" d="M300 340 Q355 280 410 210" />
-            </svg>
+             <!-- صورة خارطة الأردن -->
+          <img
+            id="jordan-map-base"
+            src="jormap2.png"
+            alt="خارطة الأردن السيبرانية"
+          style="
+    max-width: 116% !important;
+"/>
+
+          <!-- تراكب SVG -->
+          <svg
+            class="map-overlay-svg"
+            viewBox="0 0 1000 1000"
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <g id="map-elements-group" transform="translate(-50, 0) scale(0.95)">
+              <!-- (المسار الأساسي للأردن مخفي لأن الصورة تقوم بالمهمة) -->
+              <path
+                class="jordan-border"
+                style="display: none;"
+                d="M 500 480 
+                       L 300 200 
+                       L 650 200 
+                       L 700 350 
+                       L 700 650 
+                       L 600 750 
+                       L 400 900 
+                       L 350 850
+                       L 300 700
+                       L 350 550
+                       Z"
+              ></path>
+
+              <!-- إربد -->
+              <circle
+                id="irbid"
+                class="city-node attack-node"
+                cx="356"
+                cy="310"
+                r="8"
+              ></circle>
+              <text class="city-label attack-label" x="360" y="290">
+                إربد
+              </text>
+
+              <!-- الزرقاء -->
+              <circle
+                id="zarqa"
+                class="city-node attack-node"
+                cx="590"
+                cy="420"
+                r="8"
+              ></circle>
+              <text class="city-label attack-label" x="600" y="400">
+                الزرقاء
+              </text>
+
+              <!-- المفرق -->
+              <circle
+                id="mafraq"
+                class="city-node attack-node"
+                cx="700"
+                cy="250"
+                r="8"
+              ></circle>
+              <text class="city-label attack-label" x="700" y="230">
+                المفرق
+              </text>
+
+              <!-- معان (الطفيلة في الوصف الأصلي لكن اللابل معان) -->
+              <circle
+                id="tafila"
+                class="city-node attack-node"
+                cx="500"
+                cy="700"
+                r="8"
+              ></circle>
+              <text class="city-label attack-label" x="500" y="730">
+                معان
+              </text>
+
+              <!-- العقبة -->
+              <circle
+                id="aqaba"
+                class="city-node attack-node"
+                cx="370"
+                cy="860"
+                r="8"
+              ></circle>
+              <text class="city-label attack-label" x="370" y="890">
+                العقبة
+              </text>
+
+              <!-- عمّان (مركز الدفاع) -->
+              <circle
+                id="amman"
+                class="city-node amman-node"
+                cx="500"
+                cy="500"
+                r="10"
+              ></circle>
+              <text class="city-label amman-label" x="500" y="470">
+                عمّان (المركز)
+              </text>
+
+              <!-- مسارات الدفاع -->
+              <path
+                id="beam-irbid"
+                class="defense-beam"
+                d="M 500 500 L 356 310"
+              ></path>
+
+              <path
+                id="beam-zarqa"
+                class="defense-beam"
+                d="M 500 500 L 590 420"
+              ></path>
+
+              <path
+                id="beam-mafraq"
+                class="defense-beam"
+                d="M 500 500 L 700 250"
+              ></path>
+
+              <path
+                id="beam-tafila"
+                class="defense-beam"
+                d="M 500 500 L 500 700"
+              ></path>
+
+              <path
+                id="beam-aqaba"
+                class="defense-beam"
+                d="M 500 500 L 370 860"
+              ></path>
+            </g>
+          </svg>
           </div>
         </div>
         <aside class="map-panel glass-morphic scroll-reveal" data-sr="slide-left">
@@ -2276,6 +2698,4 @@
       });
     </script>
   </body>
-
 </html>
-
