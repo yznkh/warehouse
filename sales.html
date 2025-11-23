@@ -147,9 +147,21 @@ body::after {
    2. UTILITIES & GLASSMORPHISM
    ========================================================= */
 
-.clickable {
+  .clickable {
   cursor: pointer;
 }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 
 /* Glassmorphism base */
 .glass-morphic {
@@ -2542,17 +2554,24 @@ body.dark-mode .bg-red-50 {
     <canvas id="interactive-bg"></canvas>
 
     <!-- 2. نافذة مركز القيادة (مخفية) -->
-    <div id="command-palette">
-      <div class="cmd-window">
-        <input type="text" class="cmd-input" placeholder="اكتب أمراً أو ابحث... (مثال: تنبيهات، أخبار)" id="cmd-input">
-        <div class="cmd-list" id="cmd-results">
-          <div class="cmd-item" data-link="#hero"><span>الذهاب للرئيسية</span><span class="cmd-shortcut">Home</span></div>
-          <div class="cmd-item" data-link="#news"><span>آخر الأخبار</span><span class="cmd-shortcut">News</span></div>
-          <div class="cmd-item" data-link="#alerts"><span>فحص التنبيهات</span><span class="cmd-shortcut">Alerts</span></div>
-          <div class="cmd-item" data-link="#services"><span>الخدمات الإلكترونية</span><span class="cmd-shortcut">Svcs</span></div>
+      <div id="command-palette" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="cmd-input">
+        <div class="cmd-window">
+          <label class="sr-only" for="cmd-input">مركز القيادة - البحث أو تنفيذ الأوامر</label>
+          <input
+            type="text"
+            class="cmd-input"
+            placeholder="اكتب أمراً أو ابحث... (مثال: تنبيهات، أخبار)"
+            id="cmd-input"
+            aria-describedby="cmd-results"
+          />
+          <div class="cmd-list" id="cmd-results" role="listbox">
+            <div class="cmd-item" data-link="#hero" role="option" tabindex="0"><span>الذهاب للرئيسية</span><span class="cmd-shortcut">Home</span></div>
+            <div class="cmd-item" data-link="#news" role="option" tabindex="0"><span>آخر الأخبار</span><span class="cmd-shortcut">News</span></div>
+            <div class="cmd-item" data-link="#alerts" role="option" tabindex="0"><span>فحص التنبيهات</span><span class="cmd-shortcut">Alerts</span></div>
+            <div class="cmd-item" data-link="#services" role="option" tabindex="0"><span>الخدمات الإلكترونية</span><span class="cmd-shortcut">Svcs</span></div>
+          </div>
         </div>
       </div>
-    </div>
 
     <div class="global-scanlines" aria-hidden="true"></div>
     <div class="hex-column hex-column-left" aria-hidden="true">
@@ -3741,33 +3760,51 @@ body.dark-mode .bg-red-50 {
         });
       }
 
-      /* 4. مركز القيادة (Command Palette) */
-      function initCommandPalette() {
-        const palette = document.getElementById('command-palette');
-        const input = document.getElementById('cmd-input');
-        const items = document.querySelectorAll('.cmd-item');
+        /* 4. مركز القيادة (Command Palette) */
+        function initCommandPalette() {
+          const palette = document.getElementById('command-palette');
+          const input = document.getElementById('cmd-input');
+          const items = document.querySelectorAll('.cmd-item');
 
-        document.addEventListener('keydown', (e) => {
-          if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-            e.preventDefault();
-            palette.classList.toggle('open');
-            if (palette.classList.contains('open')) input.focus();
-          }
-          if (e.key === 'Escape') palette.classList.remove('open');
-        });
+          if (!palette || !input) return;
 
-        palette.addEventListener('click', (e) => {
-          if(e.target === palette) palette.classList.remove('open');
-        });
+          const setPaletteVisibility = (isOpen) => {
+            palette.classList.toggle('open', isOpen);
+            palette.setAttribute('aria-hidden', (!isOpen).toString());
 
-        items.forEach(item => {
-          item.addEventListener('click', () => {
-            const link = item.dataset.link;
-            if(link) window.location.href = link;
-            palette.classList.remove('open');
+            if (isOpen) {
+              input.focus();
+            }
+          };
+
+          document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+              e.preventDefault();
+              setPaletteVisibility(!palette.classList.contains('open'));
+            }
+            if (e.key === 'Escape') setPaletteVisibility(false);
           });
-        });
-      }
+
+          palette.addEventListener('click', (e) => {
+            if(e.target === palette) setPaletteVisibility(false);
+          });
+
+          items.forEach(item => {
+            const navigate = () => {
+              const link = item.dataset.link;
+              if(link) window.location.href = link;
+              setPaletteVisibility(false);
+            };
+
+            item.addEventListener('click', navigate);
+            item.addEventListener('keydown', (event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                navigate();
+              }
+            });
+          });
+        }
 
       /* =========================================================
          9. MAIN INITIALIZATION
