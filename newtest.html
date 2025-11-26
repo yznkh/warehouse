@@ -3852,6 +3852,18 @@ body.cybergate-reveal .hud-panel-right {
          ========================================================= */
       const translations = {
         ar: {
+           news_items: [
+      'مؤشر الأمن السيبراني الأردني يسجل أعلى تقييم.',
+      'المركز يعلن عن برنامج مكافآت للثغرات الجديدة.',
+      'نجاح تمرين Cyber Shield 2025.',
+      'نشر نظام ذكي لرصد التهديدات على مستوى المملكة.',
+      'حملة وطنية للتوعية ضد الهندسة الاجتماعية.',
+      'نشر لوائح جديدة لحماية البنية التحتية الحيوية.',
+      'إحباط هجوم سيبراني مدعوم من دولة أجنبية.',
+      'توقيع شراكة مع وكالة دولية للدفاع السيبراني.',
+      'افتتاح مركز أبحاث التشفير الكمومي في عمّان.',
+      'المركز يضم دفعة جديدة من خبراء الأمن السيبراني.',
+    ],
           brand_title: "المركز الوطني للأمن السيبراني",
           brand_title_en: "National Cyber Security Center",
           nav_home: "الرئيسية",
@@ -3946,6 +3958,19 @@ body.cybergate-reveal .hud-panel-right {
           footer_copy: "© 2025 المركز الوطني للأمن السيبراني - جميع الحقوق محفوظة."
         },
         en: {
+          
+           news_items: [
+      'Jordan’s Cybersecurity Index reaches its highest rating.',
+      'NCSC announces new zero-day vulnerability bounty program.',
+      'Cyber Shield 2025 exercise successfully concludes.',
+      'AI-Powered Threat Detection deployed nationwide.',
+      'National awareness campaign targets social engineering.',
+      'New regulations for critical infrastructure security published.',
+      'Successful thwarting of a major foreign state-sponsored attack.',
+      'Partnership signed with international cyber defense agency.',
+      'Quantium cryptography research center opens in Amman.',
+      'The NCSC recruits its newest cohort of cyber experts.',
+    ],
           brand_title: "National Cyber Security Center",
           brand_title_en: "National Cyber Security Center",
           nav_home: "Home",
@@ -4552,41 +4577,24 @@ function initPulseNewsSequence() {
 
       
       
-      function initStickyTicker() {
+     function initStickyTicker() {
   const isRTL = document.documentElement.getAttribute('dir') === 'rtl';
-  
-  // الأخبار العشوائية
-  const newsItems = [
-    'Jordan’s Cybersecurity Index reaches its highest rating.',
-    'NCSC announces new zero-day vulnerability bounty program.',
-    'Cyber Shield 2025 exercise successfully concludes.',
-    'AI-Powered Threat Detection deployed nationwide.',
-    'National awareness campaign targets social engineering.',
-    'New regulations for critical infrastructure security published.',
-    'Successful thwarting of a major foreign state-sponsored attack.',
-    'Partnership signed with international cyber defense agency.',
-    'Quantium cryptography research center opens in Amman.',
-    'The NCSC recruits its newest cohort of cyber experts.',
-  ];
+  const currentLang = document.documentElement.lang || 'en'; // أو استخدم متغيرك الخاص
 
-  // دالة إنشاء محتوى الأخبار وتكراره لضمان الحركة المستمرة
+  const newsItems = translations[currentLang].news_items;
+
   function createTickerContent(container, content) {
-    const totalItems = newsItems.length;
-    // نحتاج تكرار المحتوى عدة مرات (على الأقل مرتين)
-    for (let i = 0; i < 4; i++) { 
-      content.forEach((item, index) => {
-        
-        // عنصر الخبر
+    for (let i = 0; i < 4; i++) {
+      content.forEach(item => {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'ticker-item';
         itemDiv.textContent = item;
 
-        // شعار المركز (قبل الخبر)
         const logoImg = document.createElement('img');
-        logoImg.src = 'NCSC_LOGO.png'; // تأكد من مسار الشعار
+        logoImg.src = 'NCSC_LOGO.png';
         logoImg.alt = 'NCSC Logo';
         logoImg.className = 'ticker-logo';
-        
+
         container.appendChild(logoImg);
         container.appendChild(itemDiv);
       });
@@ -4597,24 +4605,20 @@ function initPulseNewsSequence() {
   const ltrContainer = document.getElementById('ticker-content-ltr');
   const tickerWrap = document.getElementById('sticky-ticker');
 
-  // تعبئة محتوى الأخبار
   createTickerContent(rtlContainer, newsItems);
   createTickerContent(ltrContainer, newsItems);
-  
-  // تطبيق الحركة والإخفاء بناءً على الاتجاه
+
   if (isRTL) {
-    // الحركة من اليسار لليمين
     rtlContainer.classList.add('rtl-active');
     ltrContainer.style.display = 'none';
     tickerWrap.setAttribute('dir', 'rtl');
-
   } else {
-    // الحركة من اليمين لليسار
     ltrContainer.classList.add('ltr-active');
     rtlContainer.style.display = 'none';
     tickerWrap.setAttribute('dir', 'ltr');
   }
 }
+
       /* =========================================================
          9. MAIN INITIALIZATION
          ========================================================= */
